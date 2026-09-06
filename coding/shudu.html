@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>苗苗的数独游戏</title>
+<style>
+*{margin:0;padding:0;box-sizing:border-box}
+body{background:linear-gradient(160deg,#e9eef5,#d3dcea);min-height:100vh;display:flex;justify-content:center;align-items:center;padding:16px;font-family:-apple-system,"Segoe UI","PingFang SC","Microsoft YaHei",sans-serif}
+.box{background:#fdfefe;border-radius:20px;padding:22px 20px 24px;width:100%;max-width:480px;box-shadow:0 10px 36px rgba(30,58,95,0.14);border:1px solid #e2e8f0;border-top:4px solid #1e3a5f}
+.top{display:flex;justify-content:space-between;align-items:center;margin-bottom:8px}
+.title{color:#1e3a5f;font-size:19px;font-weight:800;letter-spacing:.5px}
+.time{color:#64748b;font-size:13px}
+.time b{color:#1e3a5f}
+.lbl{color:#64748b;font-size:13px;margin-bottom:10px;font-weight:500}
+.lbl b{color:#1e3a5f}
+.wrap{position:relative;width:100%;aspect-ratio:1;background:#dde5ef;border-radius:12px;padding:3px;margin-bottom:12px;box-shadow:inset 0 1px 4px rgba(30,58,95,0.10)}
+.brd{display:grid;grid-template-columns:repeat(9,1fr);gap:1px;width:100%;height:100%;background:#b9c6d8;border-radius:9px;overflow:hidden}
+.c{background:#ffffff;display:flex;align-items:center;justify-content:center;font-size:clamp(18px,4.5vw,26px);font-weight:500;color:#334155;cursor:pointer;user-select:none;transition:background .12s ease}
+.c:hover{background:#eef3fa}
+.sel{background:#fde68a!important}
+.hl{background:#eaf1fb}
+.sn{background:#d7e4f7}
+.gv{color:#0f172a;font-weight:700}
+.ur{color:#2563eb;font-weight:600}
+.er{color:#dc2626!important;background:#fdeaea!important}
+.r2{border-right:2px solid #8ba0ba}
+.b2{border-bottom:2px solid #8ba0ba}
+.pad{display:grid;grid-template-columns:repeat(9,1fr);gap:5px;margin-bottom:10px}
+.pad button{aspect-ratio:1;border:1px solid #dde5ef;border-radius:9px;font-size:clamp(16px,3.5vw,21px);font-weight:600;cursor:pointer;background:#f3f6fb;color:#2563eb;transition:all .15s ease}
+.pad button:hover{background:#dbe7f7;border-color:#b9c6d8;transform:translateY(-1px)}
+.act{display:flex;gap:6px;flex-wrap:wrap}
+.act button{flex:1;min-width:50px;padding:9px 0;border:1px solid #dde5ef;border-radius:9px;font-size:13px;font-weight:600;cursor:pointer;background:#f3f6fb;color:#475569;display:flex;align-items:center;justify-content:center;gap:4px;transition:all .15s ease}
+.act button:hover{background:#e4ecf7;color:#1e3a5f}
+.act .p{background:#1e3a5f;border-color:#1e3a5f;color:#fff}
+.act .p:hover{background:#2c4a75;color:#fff}
+.ov{display:none;position:absolute;inset:0;background:rgba(253,254,254,0.96);border-radius:12px;z-index:10;flex-direction:column;align-items:center;justify-content:center;color:#334155}
+.ov.s{display:flex}
+.ov .i{font-size:54px;margin-bottom:6px}
+.ov h2{font-size:28px;margin-bottom:4px;color:#1e3a5f;font-weight:800}
+.ov p{color:#64748b;font-size:15px;margin-bottom:14px}
+.ov .r{display:flex;gap:10px}
+.ov .r button{padding:10px 28px;border:none;border-radius:10px;background:#1e3a5f;color:#fff;font-size:15px;font-weight:600;cursor:pointer;transition:transform .15s ease}
+.ov .r button:hover{transform:scale(1.04)}
+.ov .r .s{background:#e2e8f0;color:#475569}
+@media(max-width:420px){.box{padding:14px 10px 18px;border-radius:16px}}
+</style>
+</head>
+<body>
+
+<div class="box">
+  <div class="top">
+    <div class="title">🌸 苗苗的数独</div>
+    <div class="time">⏱ <b id="tm">00:00</b></div>
+  </div>
+  <div class="lbl" id="lbl">简单 · 第 <b>1</b> 题 / 共 2 题</div>
+
+  <div class="wrap">
+    <div class="brd" id="brd"></div>
+    <div class="ov" id="win">
+      <div class="i">🏆</div>
+      <h2>全对！过关！</h2>
+      <p id="wt">用时 00:00</p>
+      <div class="r">
+        <button class="s" id="sw">📷 分享截图</button>
+        <button id="nw">下一题 →</button>
+      </div>
+    </div>
+    <div class="ov" id="fail">
+      <div class="i">😅</div>
+      <h2>有错误哦</h2>
+      <p>标红的格子填错了，全部清空重新来</p>
+      <div class="r"><button id="retry">重新做</button></div>
+    </div>
+  </div>
+
+  <div class="pad" id="pad"></div>
+
+  <div class="act">
+    <button id="u">↩ 撤销</button>
+    <button id="r">⟳ 重来</button>
+    <button id="s">📷 分享</button>
+    <button class="p" id="c">✅ 检查</button>
+    <button id="p">← 上一题</button>
+    <button class="p" id="n">下一题 →</button>
+  </div>
+</div>
+
+<script>
+// ===== 数独生成引擎 =====
+function shf(a){for(var i=a.length-1;i>0;i--){var j=Math.floor(Math.random()*(i+1));var t=a[i];a[i]=a[j];a[j]=t}}
+function ok(b,r,c,n){for(var i=0;i<9;i++){if(b[r][i]===n)return false;if(b[i][c]===n)return false}var R=Math.floor(r/3)*3,C=Math.floor(c/3)*3;for(var i=R;i<R+3;i++)for(var j=C;j<C+3;j++)if(b[i][j]===n)return false;return true}
+function fb(b){for(var r=0;r<9;r++)for(var c=0;c<9;c++)if(b[r][c]===0){var n=[1,2,3,4,5,6,7,8,9];shf(n);for(var k=0;k<9;k++){var v=n[k];if(ok(b,r,c,v)){b[r][c]=v;if(fb(b))return true;b[r][c]=0}}return false}return true}
+function gp(d){var s=[[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0],[0,0,0,0,0,0,0,0,0]];fb(s);var p=[];for(var r=0;r<9;r++){p[r]=[];for(var c=0;c<9;c++)p[r][c]=s[r][c]}var cl=[];for(var r=0;r<9;r++)for(var c=0;c<9;c++)cl.push([r,c]);shf(cl);var nu=d==='e'?42:33;for(var i=0;i<81-nu;i++)p[cl[i][0]][cl[i][1]]=0;return{b:p,s:s}}
+// ===== 生成3道题 =====
+var PD=[gp('e'),gp('e'),gp('e')];
+
+// ===== 游戏 =====
+var idx = 0, brd = [], sol = [], gvn = [], sel = null, his = [], cmp = false, tmr = 0, tmid = null;
+var eBrd = document.getElementById('brd'), ePad = document.getElementById('pad'), eTm = document.getElementById('tm');
+var eLbl = document.getElementById('lbl'), eWin = document.getElementById('win'), eWT = document.getElementById('wt');
+var eFail = document.getElementById('fail');
+
+// 数字键盘
+for (var i = 1; i <= 9; i++) {
+  var b = document.createElement('button');
+  b.textContent = i; b._num = i;
+  ePad.appendChild(b);
+}
+
+function load(k) {
+  if (tmid) clearInterval(tmid);
+  idx = k; cmp = false; sel = null; his = []; tmr = 0;
+  eWin.classList.remove('s'); eFail.classList.remove('s');
+
+  var d = PD[k];
+  brd = []; for (var r = 0; r < 9; r++) { brd[r] = []; for (var c = 0; c < 9; c++) brd[r][c] = d.b[r][c]; }
+  sol = []; for (var r = 0; r < 9; r++) { sol[r] = []; for (var c = 0; c < 9; c++) sol[r][c] = d.s[r][c]; }
+  gvn = []; for (var r = 0; r < 9; r++) { gvn[r] = []; for (var c = 0; c < 9; c++) gvn[r][c] = d.b[r][c] !== 0; }
+
+  var lb = '简单', nu = k + 1, tt = 3;
+  eLbl.innerHTML = lb + ' · 第 <b>' + nu + '</b> 题 / 共 ' + tt + ' 题';
+
+  ren();
+  sel = { r: 4, c: 4 };
+  ren();
+  eTm.textContent = '00:00';
+  tmid = setInterval(function() { tmr++; var m=('0'+Math.floor(tmr/60)).slice(-2), s=('0'+(tmr%60)).slice(-2); eTm.textContent = m+':'+s; }, 1000);
+}
+
+function ren() {
+  eBrd.innerHTML = '';
+  for (var r = 0; r < 9; r++) {
+    for (var c = 0; c < 9; c++) {
+      var el = document.createElement('div');
+      el.className = 'c';
+      if (c % 3 === 2 && c !== 8) el.classList.add('r2');
+      if (r % 3 === 2 && r !== 8) el.classList.add('b2');
+
+      var v = brd[r][c];
+      if (v > 0) { el.textContent = v; el.classList.add(gvn[r][c] ? 'gv' : 'ur'); }
+
+      if (sel) {
+        if (r === sel.r && c === sel.c) el.classList.add('sel');
+        else if (r === sel.r || c === sel.c) el.classList.add('hl');
+        else if (v > 0 && brd[sel.r][sel.c] > 0 && v === brd[sel.r][sel.c]) el.classList.add('sn');
+      }
+
+      el._r = r; el._c = c;
+      el.onclick = function() { if (cmp) return; sel = { r: this._r, c: this._c }; ren(); };
+      eBrd.appendChild(el);
+    }
+  }
+}
+
+function put(n) {
+  if (cmp || !sel) return;
+  var r = sel.r, c = sel.c;
+  if (gvn[r][c]) return;
+  if (brd[r][c] !== 0) his.push({ r: r, c: c, v: brd[r][c] });
+  else his.push({ r: r, c: c, v: 0 });
+  brd[r][c] = n;
+  ren();
+}
+
+function chk() {
+  if (cmp) return;
+  var empty = false;
+  for (var r = 0; r < 9; r++) for (var c = 0; c < 9; c++) if (!gvn[r][c] && brd[r][c] === 0) empty = true;
+  if (empty) { alert('还有空格没填！'); return; }
+
+  var errs = [];
+  for (var r = 0; r < 9; r++) for (var c = 0; c < 9; c++) if (!gvn[r][c] && brd[r][c] !== sol[r][c]) errs.push([r, c]);
+
+  if (errs.length === 0) {
+    cmp = true; clearInterval(tmid);
+    eWT.textContent = '用时 ' + eTm.textContent;
+    eWin.classList.add('s');
+  } else {
+    ren();
+    var cells = eBrd.children;
+    for (var k = 0; k < errs.length; k++) {
+      var ci = errs[k][0] * 9 + errs[k][1];
+      if (cells[ci]) cells[ci].classList.add('er');
+    }
+    eFail.classList.add('s');
+  }
+}
+
+function rst() {
+  eFail.classList.remove('s');
+  for (var r = 0; r < 9; r++) for (var c = 0; c < 9; c++) if (!gvn[r][c]) brd[r][c] = 0;
+  his = []; sel = null; tmr = 0;
+  eTm.textContent = '00:00';
+  ren();
+}
+
+function prv() { load((idx + 2) % 3); }
+function nxt() { load((idx + 1) % 3); }
+
+function share() {
+  var cv = document.createElement('canvas'); cv.width = 450; cv.height = 520;
+  var cx = cv.getContext('2d');
+  cx.fillStyle = '#eef3fa'; cx.fillRect(0, 0, 450, 520);
+  cx.fillStyle = '#1e3a5f'; cx.font = 'bold 22px sans-serif'; cx.textAlign = 'center';
+  cx.fillText('🌸 苗苗的数独 🧩', 225, 38);
+  var lb = '简单', nu = idx + 1;
+  cx.fillStyle = '#64748b'; cx.font = '14px sans-serif';
+  cx.fillText(lb + ' 第' + nu + '题 · 用时 ' + eTm.textContent, 225, 64);
+  var sz = 42, g = 1, ox = (450 - 9 * sz - 8 * g) / 2, oy = 86;
+  for (var r = 0; r < 9; r++) for (var c = 0; c < 9; c++) {
+    var x = ox + c * (sz + g), y = oy + r * (sz + g);
+    cx.fillStyle = gvn[r][c] ? '#dde5ef' : '#ffffff'; cx.fillRect(x, y, sz, sz);
+    cx.strokeStyle = 'rgba(30,58,95,0.15)'; cx.lineWidth = 0.5; cx.strokeRect(x, y, sz, sz);
+    if (c % 3 === 0) { cx.strokeStyle = '#8ba0ba'; cx.lineWidth = 2; cx.beginPath(); cx.moveTo(x, y); cx.lineTo(x, y + sz); cx.stroke(); }
+    if (r % 3 === 0) { cx.strokeStyle = '#8ba0ba'; cx.lineWidth = 2; cx.beginPath(); cx.moveTo(x, y); cx.lineTo(x + sz, y); cx.stroke(); }
+    if (c === 8) { cx.strokeStyle = '#8ba0ba'; cx.lineWidth = 2; cx.beginPath(); cx.moveTo(x + sz, y); cx.lineTo(x + sz, y + sz); cx.stroke(); }
+    if (r === 8) { cx.strokeStyle = '#8ba0ba'; cx.lineWidth = 2; cx.beginPath(); cx.moveTo(x, y + sz); cx.lineTo(x + sz, y + sz); cx.stroke(); }
+    var v = brd[r][c];
+    if (v > 0) { cx.fillStyle = gvn[r][c] ? '#0f172a' : '#2563eb'; cx.font = 'bold 20px sans-serif'; cx.textAlign = 'center'; cx.textBaseline = 'middle'; cx.fillText(v, x + sz / 2, y + sz / 2); }
+  }
+  if (cmp) { cx.fillStyle = 'rgba(30,58,95,0.08)'; cx.fillRect(ox, oy + 3 * (sz + g), 9 * sz + 8 * g, 3 * (sz + g)); cx.fillStyle = '#1e3a5f'; cx.font = 'bold 28px sans-serif'; cx.fillText('🏆 完成!', 225, oy + 4.5 * (sz + g) + 5); }
+  // 日期时间水印
+  var now = new Date();
+  var ds = now.getFullYear() + '-' + ('0' + (now.getMonth() + 1)).slice(-2) + '-' + ('0' + now.getDate()).slice(-2);
+  var ts = ('0' + now.getHours()).slice(-2) + ':' + ('0' + now.getMinutes()).slice(-2) + ':' + ('0' + now.getSeconds()).slice(-2);
+  cx.textBaseline = 'alphabetic'; cx.font = '12px sans-serif';
+  cx.fillStyle = 'rgba(30,58,95,0.55)'; cx.textAlign = 'left';
+  cx.fillText('🌸 苗苗的数独', 14, 506);
+  cx.textAlign = 'right';
+  cx.fillText('📅 ' + ds + '  ' + ts, 436, 506);
+  var a = document.createElement('a');
+  var fileDate = ds.replace(/-/g, '');
+  var fileTime = ts.replace(/:/g, '');
+  a.download = '苗苗的数独_' + lb + '第' + nu + '题_' + fileDate + '_' + fileTime + '_用时' + eTm.textContent.replace(':', '-') + '.png';
+  a.href = cv.toDataURL('image/png'); a.click();
+}
+
+// ===== 事件 =====
+document.getElementById('u').onclick = function() { if (cmp || his.length === 0) return; var a = his.pop(); brd[a.r][a.c] = a.v; ren(); };
+document.getElementById('r').onclick = function() { if (cmp) return; if (confirm('确定清空重来？')) rst(); };
+document.getElementById('s').onclick = share;
+document.getElementById('c').onclick = chk;
+document.getElementById('p').onclick = prv;
+document.getElementById('n').onclick = nxt;
+document.getElementById('sw').onclick = share;
+document.getElementById('nw').onclick = nxt;
+document.getElementById('retry').onclick = rst;
+
+var btns = ePad.children;
+for (var i = 0; i < btns.length; i++) {
+  btns[i].onclick = function() { put(this._num); };
+}
+
+document.onkeydown = function(e) {
+  if (cmp) return;
+  if (e.key >= '1' && e.key <= '9') put(parseInt(e.key));
+  if ((e.key === 'Backspace' || e.key === 'Delete') && sel && !gvn[sel.r][sel.c]) {
+    if (brd[sel.r][sel.c] !== 0) his.push({ r: sel.r, c: sel.c, v: brd[sel.r][sel.c] });
+    brd[sel.r][sel.c] = 0; ren();
+  }
+  if ((e.ctrlKey || e.metaKey) && e.key === 'z') { e.preventDefault(); document.getElementById('u').click(); }
+  if (e.key === 'Enter') chk();
+  if (sel && ['ArrowUp','ArrowDown','ArrowLeft','ArrowRight'].includes(e.key)) {
+    e.preventDefault();
+    if (e.key === 'ArrowUp' && sel.r > 0) sel.r--;
+    if (e.key === 'ArrowDown' && sel.r < 8) sel.r++;
+    if (e.key === 'ArrowLeft' && sel.c > 0) sel.c--;
+    if (e.key === 'ArrowRight' && sel.c < 8) sel.c++;
+    ren();
+  }
+};
+
+load(0);
+</script>
+</body>
+</html>
