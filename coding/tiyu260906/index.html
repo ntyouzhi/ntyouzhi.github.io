@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>体育课标 × AI 演示工作台｜掷实心球动作诊断 & 运动负荷自检</title>
+<link rel="stylesheet" href="assets/260905-01_workbench.css">
+</head>
+<body>
+<header class="topbar">
+  <div class="brand">
+    <span class="logo">PE<span class="x">×</span>AI</span>
+    <div class="brand-text">
+      <h1>体育课标 × AI 演示工作台</h1>
+      <p>水平三 · 掷实心球 ｜ 依据《义务教育体育与健康课程标准（2022年版）》</p>
+    </div>
+  </div>
+  <nav class="tabs" id="tabs">
+    <button class="tab active" data-panel="pn-intro">① 开场怎么说</button>
+    <button class="tab" data-panel="pn-motion">② 动作分解</button>
+    <button class="tab" data-panel="pn-diag">③ AI 动作诊断</button>
+    <button class="tab" data-panel="pn-load">④ 运动负荷自检</button>
+    <button class="tab" data-panel="pn-trans">⑤ 迁移与边界</button>
+  </nav>
+</header>
+
+<main>
+<!-- ======================= ① 开场 ======================= -->
+<section class="panel active" id="pn-intro">
+  <div class="hero">
+    <h2>这不是"AI 替体育老师上课"，是把课标里<b>能量化的那部分</b>交给机器</h2>
+    <p class="lead">课标把一节课的要求写得很具体：发力顺序要"蹬地—满弓—挥臂—拨指"，群体运动密度不低于 75%，个体运动密度不低于 50%，班级平均心率原则上 140～160 次/分，每节课要有 10 分钟左右体能练习。以前这些靠经验、靠感觉、靠评课当场争论；现在可以让网页<b>当场算给老师看</b>。</p>
+  </div>
+
+  <div class="why">
+    <h3>为什么体育学科特别适合做 AI 演示</h3>
+    <div class="grid g3">
+      <div class="card"><b>有可机读的条文</b><span>内容要求 / 学业要求 / 教学提示三栏结构，动作技术有明确的先后顺序，运动负荷有硬数值——AI 不是"猜"，是"对照"。</span></div>
+      <div class="card"><b>产出是老师原本要手写的</b><span>动作要点分解表、分层练习设计、课堂时间分配与负荷预估、过程性评价记录单，一份约 40～60 分钟。</span></div>
+      <div class="card"><b>效果 30 秒可见</b><span>体育是动作的学科。关节角度、发力时序、心率曲线能被实时画出来，老师的代入感比任何 PPT 都强。</span></div>
+    </div>
+  </div>
+
+  <div class="route">
+    <h3>建议演示路线（约 12 分钟）</h3>
+    <ol class="steps">
+      <li><b>先抛痛点（1 分钟）</b>：问老师——"您上一节掷实心球课，全班出手角度大概多少？平均心率多少？您说得清吗？"多数答案是"感觉还行"。</li>
+      <li><b>Tab②动作分解（3 分钟）</b>：AI 把课标那句"蹬地—满弓—挥臂—拨指"变成了可拖动的分帧图，还顺手把"最适宜出手角度"这个跨学科问题画成曲线——课标要求的跨学科主题学习"破解运动的密码"就地落地。</li>
+      <li><b>Tab③AI 诊断（4 分钟）</b>：先点"载入示例：只挥臂不蹬地"，一秒出诊断；再点摄像头，请一位老师侧身做一次，实时关节角与发力时序当场跑出来。<em>这是全场最炸的 60 秒。</em></li>
+      <li><b>Tab④负荷自检（3 分钟）</b>：默认塞的是一节真实的"不出汗的体育课"，判定不合格；点"AI 重排这一节课"，密度和心率立刻翻红达标——评课用语从此有据可依。</li>
+      <li><b>Tab⑤收尾（1 分钟）</b>：讲清楚 AI 不做什么——保护、示范、品德评价、情感激励永远属于老师。</li>
+    </ol>
+  </div>
+
+  <div class="note">
+    <b>离线可用说明：</b>本工作台的动画、姿态模拟器、示例数据、关节角计算、负荷计算全部在本地运行，U 盘拷贝双击即可演示。只有"摄像头实时识别"需要联网加载 MediaPipe 姿态模型（加载失败会自动回到模拟器，不影响演示）。
+  </div>
+</section>
+<!-- ======================= ② 动作分解 ======================= -->
+<section class="panel" id="pn-motion">
+  <div class="hero">
+    <h2>课标只写了 12 个字，AI 把它变成能看的动作链</h2>
+    <p class="lead">课标原文：<b>"改进和提高蹬地—满弓—挥臂—拨指等投掷的完整动作技术"</b>。下面这五帧，是 AI 依据该条文与"站位—持球—转体—引球—出手"的发力顺序要求生成的，每一帧标出该帧应当出现的关节角度区间——老师拿它当挂图、当微课脚本、当板书底稿都行。</p>
+  </div>
+
+  <div class="bar">
+    <button class="btn pri" id="mt-play">▶ 播放动作链</button>
+    <button class="btn" id="mt-prev">◀ 上一帧</button>
+    <button class="btn" id="mt-next">下一帧 ▶</button>
+    <label class="dim" style="font-size:12px">速度</label>
+    <select class="btn" id="mt-speed" style="padding:6px 10px"><option value="1.6">慢（0.6×）</option><option value="1" selected>正常</option><option value="0.55">快（1.8×）</option></select>
+    <span class="pill" id="mt-phase">阶段：准备</span>
+    <span class="pill" id="mt-link">髋肩分离：—</span>
+  </div>
+
+  <div class="grid" style="grid-template-columns:1.25fr 1fr;align-items:start">
+    <div class="card" style="padding:8px">
+      <svg viewBox="0 0 460 320" id="mt-svg" style="width:100%;height:auto;display:block"></svg>
+    </div>
+    <div>
+      <div class="card" id="mt-info"></div>
+      <div class="card" style="margin-top:12px">
+        <b>实时关节角度（AI 判帧依据）</b>
+        <table id="mt-angles"><tbody></tbody></table>
+      </div>
+    </div>
+  </div>
+
+  <h3>把"怎样获得最适宜的出手角度？"变成一条可拖的曲线（跨学科主题：破解运动的"密码"）</h3>
+  <div class="grid" style="grid-template-columns:1fr 1.3fr;align-items:start">
+    <div class="card">
+      <div class="bar" style="margin:0 0 10px">
+        <label class="dim" style="font-size:12px">出手速度 v（m/s）</label>
+        <input type="range" id="mt-v" min="6" max="12" step="0.5" value="8.5" style="flex:1">
+        <span class="pill" id="mt-vv">8.5</span>
+      </div>
+      <div class="bar" style="margin:0 0 10px">
+        <label class="dim" style="font-size:12px">出手高度 h（m）</label>
+        <input type="range" id="mt-h" min="1.4" max="2.4" step="0.05" value="2" style="flex:1">
+        <span class="pill" id="mt-hv">2.00</span>
+      </div>
+      <p style="font-size:13px;color:var(--dim);margin:6px 0 0">抛体射程 <span style="font-family:var(--mono)">R = v·cosθ·[v·sinθ + √(v²sin²θ + 2gh)] ÷ g</span>。AI 现场扫描 θ 求极值，顺手把它变成<b>给学生的探究任务单</b>：数学的根式、物理的分力，一节课同时用上——这正是课标"跨学科主题学习"要求的落地。</p>
+      <div class="kb" style="margin:12px 0 0"><span class="tag">最优角</span><span id="mt-best">—</span></div>
+    </div>
+    <div class="card" style="padding:10px"><svg viewBox="0 0 560 300" id="mt-curve" style="width:100%;height:auto;display:block"></svg></div>
+  </div>
+
+  <div class="kb" id="mt-kb"></div>
+  <p class="dim" style="font-size:12.5px">诚实提示：出手角度、躯干后仰角这类结论，是从<b>姿态数据算出来的</b>，不是从文本里编出来的；AI 能给出"合理区间"，具体到某个孩子该往哪改，仍需老师现场看人定夺。</p>
+</section>
+<!-- ======================= ③ AI 动作诊断 ======================= -->
+<section class="panel" id="pn-diag">
+  <div class="hero">
+    <h2>摄像头看动作，算法算角度，AI 对着课标给诊断</h2>
+    <p class="lead">这一页是本次演示的技术核心。<b>三层结构</b>，请老师重点看第二层：① 姿态识别（MediaPipe Pose，33 个关键点）只负责"在哪里"；② 几何计算（本地 JS）负责"多少度、什么顺序"——这一层是<b>确定性数学，不会胡说</b>；③ 语言模型负责把冷冰冰的角度翻译成学生会听的一句话。把"不能出错的部分"留给算法，把"说话"交给 AI，这是 AI 进课堂最稳的分工方式。</p>
+  </div>
+
+  <div class="bar">
+    <button class="btn pri" id="dg-cam">📷 开启摄像头实时识别</button>
+    <button class="btn" id="dg-stop">■ 停止采集</button>
+    <span class="dim" style="font-size:12px">学生投掷方向</span>
+    <select class="btn" id="dg-dir" style="padding:6px 10px"><option value="1">朝画面右</option><option value="-1">朝画面左</option></select>
+    <span class="pill" id="dg-state">姿态源：示例数据</span>
+    <span class="pill" id="dg-fps">—</span>
+  </div>
+  <div id="dg-warn" style="display:none;background:#1f1410;border:1px solid #5c4a1e;border-left:3px solid #e3a008;border-radius:10px;padding:11px 14px;margin:2px 0 10px;font-size:12.5px;color:#e8c987"></div>
+  <div class="bar">
+    <span class="dim" style="font-size:12.5px">离线演示（无需摄像头）：</span>
+    <button class="btn" data-demo="good">载入标准示范</button>
+    <button class="btn" data-demo="arm">只挥臂不蹬地</button>
+    <button class="btn" data-demo="flat">出手太平</button>
+    <button class="btn" data-demo="sit">后坐屈髋·无满弓</button>
+    <button class="btn" data-demo="late">出手过晚</button>
+  </div>
+
+  <div class="grid" style="grid-template-columns:1.05fr 1fr;align-items:start">
+    <div class="card" style="padding:8px;position:relative">
+      <video id="dg-video" playsinline muted style="display:none;width:100%;border-radius:9px"></video>
+      <svg viewBox="0 0 460 320" id="dg-svg" style="width:100%;height:auto;display:block"></svg>
+      <div id="dg-badge" class="pill" style="position:absolute;left:14px;top:14px">示例姿态</div>
+      <div class="bar" style="margin:8px 4px 2px">
+        <span class="dim" style="font-size:12px">动作回放（拖到任意瞬间看角度）</span>
+        <input type="range" id="dg-tl" min="0" max="1000" value="700" style="flex:1">
+        <span class="pill" id="dg-ts">—</span>
+      </div>
+    </div>
+
+    <div>
+      <div class="card">
+        <div style="display:flex;justify-content:space-between;align-items:baseline">
+          <b>AI 诊断报告</b><span class="pill" id="dg-score">— 分</span>
+        </div>
+        <div id="dg-verdict" style="margin-top:8px"></div>
+        <table id="dg-metrics"><tbody></tbody></table>
+      </div>
+      <div class="card" style="margin-top:12px">
+        <b>发力时序（蹬地→转体→挥臂，先下后上才叫"鞭打"）</b>
+        <svg viewBox="0 0 440 104" id="dg-seq" style="width:100%;height:auto;display:block"></svg>
+        <div id="dg-seqtxt" class="dim" style="font-size:12.5px"></div>
+      </div>
+    </div>
+  </div>
+
+  <h3>把诊断变成学生听得懂的话（这一步交给语言模型）</h3>
+  <div class="grid g2" style="align-items:start">
+    <div class="card">
+      <b>系统提示词（可直接复制给本校老师用）</b>
+      <textarea id="dg-prompt" readonly style="width:100%;min-height:170px;background:#0b0f14;color:#c9d6e2;border:1px solid var(--line);border-radius:8px;font-family:var(--mono);font-size:11.5px;padding:10px;line-height:1.6;resize:vertical"></textarea>
+      <p class="dim" style="font-size:12px">关键设计：提示词里<b>禁止模型报数字、禁止另下结论</b>，只允许把算法给出的角度与结论"翻译"成鼓励式指导语。这样即使模型产生幻觉，也不会给出错误的技术判断。</p>
+    </div>
+    <div class="card">
+      <div class="bar" style="margin:0 0 8px">
+        <button class="btn pri" id="dg-ask">让 AI 生成指导语</button>
+        <button class="btn" id="dg-cfg">⚙ 设置 API Key</button>
+        <span class="pill" id="dg-askstate">本地模板</span>
+      </div>
+      <div id="cfgbox" style="display:none;background:#0b0f14;border:1px solid var(--line);border-radius:8px;padding:10px;margin-bottom:10px">
+        <div class="bar" style="margin:0">
+          <input id="dg-key" type="password" placeholder="DeepSeek API Key（sk-…，仅存本机浏览器）" style="flex:1;background:#12181f;border:1px solid var(--line);border-radius:8px;color:var(--fg);padding:7px 10px;font-size:12px">
+          <input id="dg-model" type="text" placeholder="deepseek-chat" style="width:150px;background:#12181f;border:1px solid var(--line);border-radius:8px;color:var(--fg);padding:7px 10px;font-size:12px">
+          <button class="btn" id="dg-save">保存</button>
+        </div>
+      </div>
+      <div id="dg-reply" style="font-size:13.5px;color:var(--dim);min-height:120px"></div>
+      <div class="note" style="margin-top:10px;font-size:12px">
+        未填 Key 时，点"生成指导语"会用<b>本地模板</b>——同样可用、同样不会出错，只是话术略固定；填了 Key 就走 DeepSeek，话术更自然、能按学段调语气。<b>演示建议：先本地模板保底不翻车，再现场填 Key 展示"活"的一面。</b>
+      </div>
+    </div>
+  </div>
+  <div class="kb" id="dg-kb"></div>
+</section>
+<!-- ======================= ④ 运动负荷自检 ======================= -->
+<section class="panel" id="pn-load">
+  <div class="hero">
+    <h2>课标唯一的量化红线，被做成了一个自动诊断器</h2>
+    <p class="lead">课标写得毫不含糊：<b>群体运动密度 ≥ 75%，个体运动密度 ≥ 50%，班级平均心率 140～160 次/分，每节课 10 分钟左右体能练习</b>。下面这张表就是一节 40 分钟体育课的时间分配——AI 按定义算密度、按项目强度特征推心率曲线，然后判它合不合格、并说清"问题出在哪一步"。这是评课、备课检查、下校指导时最能立竿见影的一件工具。</p>
+  </div>
+
+  <div class="bar">
+    <button class="btn" data-lp="bad">载入：一节"不出汗"的课</button>
+    <button class="btn" data-lp="exam">载入：测试课</button>
+    <button class="btn" data-lp="good">载入：达标课</button>
+    <button class="btn pri" id="ld-fix">🔧 AI 重排这一节课</button>
+    <button class="btn" id="ld-copy">复制诊断结论</button>
+    <span class="pill" id="ld-total">合计 40 分钟</span>
+  </div>
+
+  <div class="grid g2" style="align-items:start">
+    <div class="card" style="padding:12px">
+      <b>课堂时间分配（可编辑：环节 / 分钟 / 学生实际练习分钟）</b>
+      <table id="ld-table"><thead><tr><th style="width:30%">环节</th><th style="width:11%">分钟</th><th style="width:12%">练习分钟</th><th style="width:20%">强度</th><th style="width:10%">心率</th><th></th></tr></thead><tbody></tbody></table>
+      <div class="bar" style="margin:8px 0 0">
+        <button class="btn" id="ld-add">＋ 加一个环节</button>
+        <span class="dim" style="font-size:12px">"练习分钟"＝该环节里学生真正在动的分钟数（队形调动、听讲、排队等待都不算）</span>
+      </div>
+    </div>
+    <div>
+      <div class="card">
+        <b>四项红线判定</b>
+        <div id="ld-gauges" class="grid g2" style="gap:10px;margin-top:8px"></div>
+      </div>
+      <div class="card" style="margin-top:12px;padding:10px">
+        <b>预计心率曲线（叠加课标 140～160 区间）</b>
+        <svg viewBox="0 0 520 240" id="ld-hr" style="width:100%;height:auto;display:block"></svg>
+      </div>
+    </div>
+  </div>
+
+  <h3>AI 的评课意见（自动生成，可直接贴进听课记录）</h3>
+  <div class="grid g2" style="align-items:start">
+    <div class="card"><b>问题诊断</b><div id="ld-issue" style="font-size:13.5px;margin-top:6px"></div></div>
+    <div class="card"><b>修改建议</b><div id="ld-advice" style="font-size:13.5px;margin-top:6px"></div></div>
+  </div>
+  <div class="kb" id="ld-kb"></div>
+  <p class="dim" style="font-size:12.5px">口径说明：群体运动密度＝全班总体运动时间÷课堂总时间；个体运动密度＝单个学生运动时间÷课堂总时间（课标"六、课程实施（一）教学建议 3.(4)"）。本工具以"练习分钟"估算群体密度、以典型环节的学生在场练习比估算个体密度，属<b>备课预估</b>；真实数据应由心率带/运动手环采集，那正是课标"评价建议"里明确鼓励的方向。</p>
+</section>
+
+<!-- ======================= ⑤ 迁移与边界 ======================= -->
+<section class="panel" id="pn-trans">
+  <div class="hero">
+    <h2>同一套骨架，可以套到课标里任何一条内容要求上</h2>
+    <p class="lead">刚才几页其实是同一个套路：<b>课标条文 → 抽出可量化指标 → 算法计算 → AI 说话 → 老师判断</b>。体育老师学会这个套路，比学会某个软件重要得多。</p>
+  </div>
+
+  <h3>可迁移清单（换成对应项目的课标条文即可复用）</h3>
+  <table>
+    <thead><tr><th style="width:15%">课标板块</th><th style="width:27%">AI 干什么</th><th style="width:30%">现场怎么用</th><th style="width:28%">难度 / 风险</th></tr></thead>
+    <tbody>
+      <tr><td>基本运动技能（水平一）</td><td>把"提踵走、马步跑、钻越、躲避"生成情境游戏脚本，"青蛙跳荷叶"变体一次 20 个</td><td>低段备课：AI 出游戏，老师挑安全的</td><td>易；风险＝游戏化过头丢了练习密度</td></tr>
+      <tr><td>体能（水平二～四）</td><td>按"体能发展敏感期"生成分层循环练习单（柔韧/协调/灵敏/平衡组合站）</td><td>大课间、体育家庭作业（每周 3 次、每次 0.5～1 小时）</td><td>易；须限定器械与负荷，强调量力而行</td></tr>
+      <tr><td>球类运动</td><td>战术板动画 + 比赛回合分析（传接球次数、进攻路线）</td><td>赛前布置、赛后讲评，学生自主探究</td><td>中；视频分析建议课后离线跑</td></tr>
+      <tr><td>田径·跳远</td><td>复用"动作分解"骨架：助跑—起跳—腾空—落地，加踏板误差分析</td><td>把课标"35～40 厘米起跳区、逐步缩小"做成可调参数</td><td>中；需侧面固定机位</td></tr>
+      <tr><td>体操类运动</td><td>成套动作节拍表 + 音乐卡点；姿态识别做倒立/桥的超限预警</td><td>保护帮助仍必须人盯人</td><td>高；<b>只做提示，绝不做安全判定</b></td></tr>
+      <tr><td>中华传统体育</td><td>武术套路分解口令 + 文化内涵讲解稿（课标要求了解历史文化）</td><td>专项师资缺位时的"半个教练"</td><td>易；标准示范仍需真人或规范视频</td></tr>
+      <tr><td>健康教育</td><td>近视防控/脊柱侧弯/膳食/急救知识问答 + 个性化锻炼处方</td><td>落实"健康教育贯穿整个义务教育阶段"</td><td>易；须锁死知识范围防跑偏</td></tr>
+      <tr><td>跨学科主题学习</td><td>五大主题自动出 8 课时方案与任务单</td><td>Tab② 的抛物线小工具就是"破解运动的密码"雏形</td><td>中；成果形式要可评价</td></tr>
+      <tr><td>学业质量·评价</td><td>按学业质量合格标准生成清单式评价表、成长档案袋模板</td><td>过程性评价落地，减负最明显的一块</td><td>易；结论须教师复核</td></tr>
+      <tr><td>学业水平考试</td><td>按"情境 + 结构化知识技能"要求批量命实践测试题与评分细则</td><td>模拟测试组织、场地器材安全检查与裁判分工单</td><td>中；须严格对齐当地考试说明</td></tr>
+    </tbody>
+  </table>
+
+  <h3>提示词弹药库：课标里这些条文自带数值，直接粘给 AI 最好用</h3>
+  <p class="dim" style="font-size:13px;margin:0 0 10px">体育老师用 AI 卡壳，八成卡在"不知道喂什么给它的"。下面每一条都是课标原文里的硬指标，抄下来放进提示词开头，AI 就跑不偏。点右侧按钮可逐条复制。</p>
+  <table id="ammo">
+    <thead><tr><th style="width:22%">条文位置</th><th style="width:47%">可直接引用的原文（含数值）</th><th style="width:31%">配什么任务问</th></tr></thead>
+    <tbody></tbody>
+  </table>
+
+  <div class="grid g2" style="margin-top:18px">
+    <div class="card" style="border-left:3px solid var(--green)">
+      <b>AI 擅长的（这次演示里都见到了）</b>
+      <span>① 把条文变成图表、清单、脚本；② 从数据里算角度、算密度、算时序；③ 一次给出多档分层方案供老师挑；④ 把专业术语翻译成儿童语言；⑤ 随时出初稿——改比写快。</span>
+    </div>
+    <div class="card" style="border-left:3px solid var(--red)">
+      <b>AI 不该碰的（讲给老师听，他们会更信任你）</b>
+      <span>① 安全与保护帮助——永远属于人；② 建立正确动作表象的示范——首选真人；③ 体育品德评价——勇敢顽强、公平竞争不能由算法打分；④ 身体隐私——识别只在本机运行、不上云、不留存；⑤ 体质数据用途——不得用于排名贴标签。</span>
+    </div>
+  </div>
+
+  <div class="grid g3" style="margin-top:14px">
+    <div class="card"><b>给学校的三步走</b><span>先做"文本类"（教案、评价表），零风险；再做"图表类"（动作分解、负荷预估），看得见；"识别类"（摄像头）放最后，且只在本地跑。</span></div>
+    <div class="card"><b>给老师的起步动作</b><span>打开任意 AI 对话工具，第一句话先贴课标原文："以下是水平三掷实心球的内容要求与学业要求，请据此设计 3 课时，输出结构化、可在游戏和比赛中运用的学练活动。"——先让 AI 学讲课标，再让它替你干活。</span></div>
+    <div class="card"><b>本工作台怎么改</b><span>纯前端 HTML，无服务器、无数据库。替换动作帧数据、诊断规则表、心率强度表即可换项目，代码注释已标好替换位置。</span></div>
+  </div>
+</section>
+
+
+
+</main>
+
+<footer class="foot">
+  <span>课标条文摘自《义务教育体育与健康课程标准（2022年版）》第四部分"课程内容"、第六部分"课程实施"</span>
+  <span class="dim">演示物料 · 南通市教育科学研究院 · 2026-09-05</span>
+</footer>
+
+<script src="assets/260905-01_kb.js"></script>
+<script src="assets/260905-01_pose.js"></script>
+<script src="assets/260905-01_motion.js"></script>
+<script src="assets/260905-01_diag.js"></script>
+<script src="assets/260905-02_loadcore.js"></script>
+<script src="assets/260905-01_load.js"></script>
+<script src="assets/260905-03_trans.js"></script>
+
+<script>
+document.getElementById('tabs').addEventListener('click', function (e) {
+  var btn = e.target.closest('.tab'); if (!btn) return;
+  document.querySelectorAll('.tab').forEach(function (t) { t.classList.remove('active'); });
+  document.querySelectorAll('.panel').forEach(function (p) { p.classList.remove('active'); });
+  btn.classList.add('active');
+  var p = document.getElementById(btn.dataset.panel);
+  p.classList.add('active');
+  if (window.PEMotion && btn.dataset.panel === 'pn-motion') PEMotion.onShow();
+  if (window.PELoad && btn.dataset.panel === 'pn-load') PELoad.onShow();
+});
+// 支持从 index.html 深链直达某页：工作台.html#pn-load
+function goPanel(id) {
+  if (!id) return false;
+  var p = document.getElementById(id); if (!p) return false;
+  document.querySelectorAll('.tab').forEach(function (t) { t.classList.toggle('active', t.dataset.panel === id); });
+  document.querySelectorAll('.panel').forEach(function (x) { x.classList.remove('active'); });
+  p.classList.add('active');
+  if (window.PEMotion && id === 'pn-motion') PEMotion.onShow();
+  if (window.PELoad && id === 'pn-load') PELoad.onShow();
+  return true;
+}
+window.addEventListener('load', function () {
+  if (window.PEMotion) PEMotion.init();
+  if (window.PEDiag) PEDiag.init();
+  if (window.PELoad) PELoad.init();
+  if (window.PETrans) PETrans.init();
+  goPanel((location.hash || '').replace('#', ''));
+});
+window.addEventListener('hashchange', function () { goPanel((location.hash || '').replace('#', '')); });
+
+</script>
+</body>
+</html>
