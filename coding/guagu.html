@@ -1,0 +1,1755 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>挂谷问题 · 有志青年小学堂</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=ZCOOL+KuaiLe&family=Noto+Sans+SC:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+:root{
+  --paper:#fcfdf8;
+  --grid:#e7eef6;
+  --grid-strong:#d5e2ef;
+  --ink:#1c3a5e;
+  --ink-soft:#54718f;
+  --red:#e8442e;
+  --red-dark:#c2351f;
+  --orange:#f59e0b;
+  --teal:#12a594;
+  --yellow:#ffd23f;
+  --green:#2e9e5b;
+  --card:#ffffff;
+  --shadow:0 8px 24px rgba(28,58,94,.10);
+}
+*{margin:0;padding:0;box-sizing:border-box;}
+html{scroll-behavior:smooth;}
+body{
+  font-family:'Noto Sans SC',sans-serif;
+  color:var(--ink);
+  background-color:var(--paper);
+  background-image:
+    linear-gradient(var(--grid-strong) 1.5px,transparent 1.5px),
+    linear-gradient(90deg,var(--grid-strong) 1.5px,transparent 1.5px),
+    linear-gradient(var(--grid) 1px,transparent 1px),
+    linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:110px 110px,110px 110px,22px 22px,22px 22px;
+  line-height:1.7;
+  overflow-x:hidden;
+}
+.display{font-family:'ZCOOL KuaiLe','Noto Sans SC',sans-serif;font-weight:400;}
+.kicker{
+  display:inline-flex;align-items:center;gap:8px;
+  font-size:.85rem;font-weight:700;letter-spacing:.18em;color:var(--red);
+  border:2px solid var(--red);border-radius:999px;padding:5px 16px;
+  background:#fff;transform:rotate(-1.5deg);
+  box-shadow:3px 3px 0 rgba(232,68,46,.18);
+}
+/* ========== 开场 ========== */
+.opening{
+  max-width:1040px;margin:0 auto;
+  padding:44px 28px 30px;
+  display:flex;gap:40px;align-items:center;flex-wrap:wrap;
+}
+.opening-left{flex:1 1 460px;min-width:300px;}
+.opening h1{
+  font-family:'ZCOOL KuaiLe',sans-serif;font-weight:400;
+  font-size:clamp(2rem,4.5vw,3rem);line-height:1.25;margin:16px 0 14px;
+}
+.opening h1 em{font-style:normal;color:var(--red);background:linear-gradient(transparent 62%,#ffe066 62%);padding:0 4px;}
+.story{font-size:1.02rem;color:var(--ink-soft);max-width:520px;}
+.story b{color:var(--ink);}
+.opening-right{flex:0 0 auto;margin-left:auto;}
+.hero-card{
+  background:var(--card);border:2px solid var(--ink);border-radius:16px;
+  box-shadow:6px 6px 0 rgba(28,58,94,.14);padding:12px;transform:rotate(1.2deg);
+  position:relative;
+}
+.hero-card .tape{
+  position:absolute;top:-12px;left:50%;transform:translateX(-50%) rotate(-2deg);
+  width:96px;height:24px;background:rgba(255,210,63,.75);
+  border-left:1px dashed rgba(0,0,0,.12);border-right:1px dashed rgba(0,0,0,.12);
+}
+.hero-cap{font-size:.8rem;color:var(--ink-soft);text-align:center;margin-top:4px;}
+/* 菲尔兹奖新闻卡片 */
+.news-card{
+  max-width:1040px;margin:-6px auto 18px;padding:0 28px;
+}
+.news-inner{
+  background:linear-gradient(135deg,#fff8e1,#fff3e0);
+  border:2px solid #f0d47a;border-radius:14px;
+  padding:18px 24px;position:relative;
+  box-shadow:3px 3px 0 rgba(240,212,122,.3);
+}
+.news-badge{
+  display:inline-block;
+  font-size:.78rem;font-weight:900;letter-spacing:.1em;
+  background:var(--red);color:#fff;border-radius:999px;padding:3px 14px;
+  margin-bottom:8px;
+}
+.news-inner p{font-size:.95rem;color:var(--ink);line-height:1.8;}
+.news-inner .highlight{color:var(--red-dark);font-weight:700;}/* ========== 纪录条 ========== */
+.record-bar{
+  position:sticky;top:0;z-index:50;
+  background:var(--ink);color:#fff;
+  transform:translateY(-110%);transition:transform .45s cubic-bezier(.2,.9,.3,1.1);
+  box-shadow:0 6px 18px rgba(28,58,94,.28);
+}
+.record-bar.show{transform:translateY(0);}
+.record-inner{
+  max-width:1040px;margin:0 auto;padding:10px 28px;
+  display:flex;align-items:center;gap:16px;flex-wrap:wrap;
+}
+.record-label{font-size:.85rem;font-weight:700;letter-spacing:.1em;opacity:.85;}
+.record-num{
+  font-family:'ZCOOL KuaiLe',sans-serif;font-size:1.8rem;color:var(--yellow);
+  min-width:100px;line-height:1;transition:transform .2s;
+}
+.record-num.pop{transform:scale(1.25);}
+.record-slots{display:flex;gap:8px;margin-left:auto;}
+.slot{
+  border:2px dashed rgba(255,255,255,.4);border-radius:10px;
+  padding:4px 12px;font-size:.82rem;color:rgba(255,255,255,.55);
+  transition:all .35s;white-space:nowrap;
+}
+.slot.filled{
+  border-style:solid;border-color:var(--yellow);color:var(--yellow);
+  font-weight:900;background:rgba(255,210,63,.12);
+}
+/* ========== 实验卡片 ========== */
+#experiments{max-width:1040px;margin:0 auto;padding:18px 28px 8px;}
+.exp{
+  background:var(--card);border:2px solid var(--ink);border-radius:18px;
+  box-shadow:var(--shadow);margin:28px 0;overflow:hidden;position:relative;
+}
+.exp .tape{
+  position:absolute;top:-11px;left:44px;transform:rotate(-3deg);
+  width:88px;height:22px;background:rgba(255,210,63,.75);z-index:2;
+  border-left:1px dashed rgba(0,0,0,.12);border-right:1px dashed rgba(0,0,0,.12);
+}
+.exp-head{
+  display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;
+  padding:20px 28px 12px;border-bottom:2px dashed var(--grid-strong);
+}
+.exp-num{
+  font-family:'ZCOOL KuaiLe',sans-serif;font-size:1.4rem;color:#fff;
+  background:var(--red);border-radius:12px;padding:2px 14px;transform:rotate(-2deg);
+  box-shadow:3px 3px 0 rgba(232,68,46,.25);
+}
+.exp[data-i="1"] .exp-num{background:var(--orange);box-shadow:3px 3px 0 rgba(245,158,11,.25);}
+.exp[data-i="2"] .exp-num{background:var(--teal);box-shadow:3px 3px 0 rgba(18,165,148,.25);}
+.exp-head h2{font-family:'ZCOOL KuaiLe',sans-serif;font-size:1.5rem;font-weight:400;}
+.exp-hint{width:100%;color:var(--ink-soft);font-size:.95rem;}
+.exp-body{display:grid;grid-template-columns:1fr 280px;}
+.canvas-wrap{
+  padding:16px;display:flex;align-items:center;justify-content:center;
+  background:linear-gradient(var(--grid) 1px,transparent 1px),linear-gradient(90deg,var(--grid) 1px,transparent 1px);
+  background-size:22px 22px;background-color:#fff;
+}
+.canvas-wrap canvas{display:block;border-radius:6px;}
+.exp-side{padding:20px 22px;border-left:2px dashed var(--grid-strong);display:flex;flex-direction:column;gap:14px;}
+.guess-label{font-size:.82rem;font-weight:700;color:var(--ink-soft);letter-spacing:.05em;}
+.guess-chips{display:flex;gap:6px;flex-wrap:wrap;}
+.chip{
+  font-family:'Noto Sans SC',sans-serif;font-weight:700;font-size:.85rem;
+  border:2px solid var(--ink);border-radius:999px;background:#fff;color:var(--ink);
+  padding:4px 14px;cursor:pointer;transition:all .15s;
+}
+.chip:hover{transform:translateY(-2px);box-shadow:0 3px 0 rgba(28,58,94,.18);}
+.chip.picked{background:var(--yellow);border-color:#d9a800;}
+.chip.right{background:#d9f4e3;border-color:var(--green);color:var(--green);}
+.chip.wrong{background:#fde8e4;border-color:var(--red);color:var(--red);opacity:.75;}
+.chip:disabled{cursor:default;transform:none;box-shadow:none;}
+.area-readout{background:#f4f8fc;border:2px solid var(--grid-strong);border-radius:14px;padding:10px 14px;text-align:center;}
+.area-readout .lbl{font-size:.8rem;color:var(--ink-soft);font-weight:700;}
+.area-num{font-family:'ZCOOL KuaiLe',sans-serif;font-size:2.2rem;line-height:1.1;color:var(--ink);}
+.area-unit{font-size:.85rem;color:var(--ink-soft);margin-left:4px;}
+.ctrl-row{display:flex;gap:8px;}
+.ctrl-btn{
+  flex:1;font-family:'Noto Sans SC',sans-serif;font-size:.95rem;font-weight:700;
+  border-radius:12px;padding:10px 6px;cursor:pointer;transition:all .12s;border:2px solid transparent;
+}
+.ctrl-btn.play-btn{background:var(--orange);color:#fff;border-color:#c47f08;box-shadow:0 4px 0 #c47f08;}
+.ctrl-btn.play-btn:hover{transform:translateY(-1px);box-shadow:0 6px 0 #c47f08;}
+.ctrl-btn.reset-btn{background:#eceff1;color:var(--ink);border-color:#cfd8dc;}.ctrl-btn.reset-btn:hover{background:#cfd8dc;}
+.slider-area{display:flex;align-items:center;gap:8px;font-size:.85rem;color:var(--ink-soft);}
+.slider-area input[type="range"]{
+  flex:1;-webkit-appearance:none;height:6px;border-radius:3px;
+  background:var(--grid-strong);outline:none;
+}
+.method-note{font-size:.83rem;color:var(--ink-soft);line-height:1.7;margin:6px 0 0;padding:8px 10px;background:#f7faf1;border-left:3px solid var(--green);border-radius:4px;}
+.method-note b{color:var(--ink);}
+  flex:1;-webkit-appearance:none;height:6px;border-radius:3px;
+  background:var(--grid-strong);outline:none;
+}
+.slider-area input[type="range"]::-webkit-slider-thumb{
+  -webkit-appearance:none;width:18px;height:18px;border-radius:50%;
+  background:var(--teal);cursor:pointer;box-shadow:0 2px 6px rgba(0,0,0,.2);
+}
+.method-tabs{display:flex;gap:6px;}
+.method-tab{
+  flex:1;padding:8px 4px;border:2px solid var(--grid-strong);border-radius:10px;
+  background:#fff;cursor:pointer;transition:all .2s;
+  font-family:'Noto Sans SC',sans-serif;font-weight:700;font-size:.8rem;color:var(--ink-soft);
+  text-align:center;
+}
+.method-tab:hover{border-color:var(--ink);color:var(--ink);}
+.method-tab.active{color:#fff;border-color:transparent;}
+.method-tab[data-method="1"].active{background:var(--orange);}
+.method-tab[data-method="2"].active{background:var(--teal);}
+.method-tab[data-method="3"].active{background:var(--green);}
+/* ========== 梯子图对比 ========== */
+.ladder-section{max-width:1040px;margin:0 auto;padding:0 28px;}
+.ladder-card{
+  background:var(--card);border:2px solid var(--ink);border-radius:18px;
+  box-shadow:var(--shadow);padding:24px 28px 20px;margin:20px 0;
+}
+.ladder-card h2{font-family:'ZCOOL KuaiLe',sans-serif;font-size:1.5rem;font-weight:400;margin-bottom:16px;}
+.ladder{display:flex;align-items:center;gap:10px;flex-wrap:wrap;justify-content:center;}
+.rung{
+  font-family:'ZCOOL KuaiLe',sans-serif;font-size:1.3rem;
+  border:2px solid var(--ink);border-radius:12px;padding:6px 18px;background:#fff;
+  box-shadow:3px 3px 0 rgba(28,58,94,.14);min-width:72px;text-align:center;
+}
+.rung.r0{background:#fde8e4;}
+.rung.r1{background:#fff3d6;}
+.rung.r2{background:#d9f4e3;}
+.rung-active{border-color:var(--red);box-shadow:0 0 0 3px rgba(232,68,46,.2);}
+.arrow{font-size:1.4rem;color:var(--green);font-weight:900;}
+/* ========== 终章 ========== */
+.finale{max-width:1040px;margin:20px auto;padding:0 28px;}
+.finale-card{
+  background:var(--card);border:2px solid var(--ink);border-radius:18px;
+  box-shadow:var(--shadow);padding:30px 30px 26px;position:relative;overflow:hidden;
+}
+.finale-card .tape{
+  position:absolute;top:-11px;right:60px;transform:rotate(2.5deg);
+  width:88px;height:22px;background:rgba(255,210,63,.75);
+  border-left:1px dashed rgba(0,0,0,.12);border-right:1px dashed rgba(0,0,0,.12);
+}
+.finale h2{font-family:'ZCOOL KuaiLe',sans-serif;font-size:1.7rem;font-weight:400;margin-bottom:16px;}
+.finale h2 .down{color:var(--green);display:inline-block;animation:drop 1.4s ease-in-out infinite;}
+@keyframes drop{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+.finale-q{
+  font-family:'ZCOOL KuaiLe',sans-serif;font-size:clamp(1.3rem,3vw,1.9rem);
+  background:var(--ink);color:#fff;border-radius:16px;padding:18px 24px;
+  text-align:center;margin:14px 0;
+}
+.finale-q .q-mark{color:var(--yellow);font-size:1.2em;}
+.finale-sub{text-align:center;color:var(--ink-soft);font-size:.92rem;margin-top:10px;}
+.finale-news{
+  background:linear-gradient(135deg,#fff8e1,#fff3e0);
+  border:2px solid #f0d47a;border-radius:14px;padding:16px 20px;margin:14px 0;
+  font-size:.95rem;line-height:1.8;
+}
+.finale-news strong{color:var(--red-dark);}
+footer{text-align:center;color:var(--ink-soft);font-size:.8rem;padding:30px 20px 40px;}
+.float-deco{position:fixed;pointer-events:none;z-index:0;opacity:.5;}
+/* ===== 试一试按钮 ===== */
+.try-section{
+  max-width:1040px;margin:0 auto 20px;padding:0 28px;
+  display:flex;flex-direction:column;align-items:center;gap:14px;
+}
+.try-btn{
+  font-family:'ZCOOL KuaiLe','Noto Sans SC',sans-serif;
+  font-size:clamp(1.4rem,3vw,2rem);font-weight:400;
+  background:var(--red);color:#fff;
+  border:3px solid var(--red-dark);border-radius:20px;
+  padding:18px 52px;cursor:pointer;
+  box-shadow:0 7px 0 var(--red-dark);
+  transition:all .12s;letter-spacing:.08em;
+}
+.try-btn:hover{transform:translateY(-3px);box-shadow:0 10px 0 var(--red-dark);}
+.try-btn:active{transform:translateY(4px);box-shadow:0 3px 0 var(--red-dark);}
+.try-sub{font-size:.9rem;color:var(--ink-soft);}
+#interactiveZone.show{display:block;}
+/* ===== 翻页（幻灯片模式） ===== */
+.slide { }
+.slide.hidden { display: none; }
+#slide2 #experiments { padding-top: 4px; }
+#slide2 .exp { margin-top: 4px; }
+#slide2 .exp-head { padding-top: 14px; padding-bottom: 8px; }
+.slide.visible {
+  animation: slideIn 0.55s ease forwards;
+}
+@keyframes slideIn {
+  from { opacity: 0; transform: translateX(40px); }
+  to   { opacity: 1; transform: translateX(0); }
+}
+.page-indicator {
+}
+.page-indicator {
+  display: flex; justify-content: center; gap: 12px;
+  padding: 28px 0 6px;
+}
+/* 佩龙树步骤小圆点 */
+.dot{width:24px;height:24px;border-radius:50%;font-size:.7rem;font-weight:600;display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s;background:#eceff1;color:var(--ink-soft);border:2px solid #cfd8dc;}
+.dot.active{background:var(--red);color:#fff;border-color:var(--red);transform:scale(1.1);}
+.dot.done{background:var(--teal);color:#fff;border-color:var(--teal);}
+.page-dot {
+  width: 13px; height: 13px;
+  border-radius: 50%;
+  background: var(--grid-strong);
+  border: 2px solid var(--ink-soft);
+  transition: all 0.35s;
+}
+.page-dot.active {
+  background: var(--teal);
+  border-color: var(--teal);
+  transform: scale(1.25);
+  box-shadow: 0 0 8px rgba(18,165,148,.4);
+}
+
+/* ===== 手机自适应 ===== */
+@media (max-width: 820px) {
+  body { overflow-y: auto; -webkit-overflow-scrolling: touch; }
+  #slide2 { padding-bottom: 60px; }
+  #slide2 .exp { overflow: visible; margin-bottom: 12px; }
+  .footer-mobile { font-size: .65rem !important; padding: 10px 12px 6px !important; }
+  .opening { flex-direction: column; padding: 20px 14px 14px; gap: 16px; }
+  .opening-left { flex: none; width: 100%; min-width: 0; }
+  .opening h1 { font-size: clamp(1.3rem, 5vw, 1.8rem); margin: 10px 0 10px; }
+  .story { max-width: 100%; font-size: .85rem; }
+  .opening-right { margin-left: 0; align-self: center; }
+  .hero-card { transform: rotate(0); }
+  .hero-card canvas { width: 160px; height: auto; }
+  .news-card { padding: 0 14px; }
+  .news-inner { padding: 10px 12px; }
+  .news-inner p { font-size: .78rem; }
+  .ladder-section { padding: 0 10px; }
+  .ladder-card { padding: 12px; }
+  .ladder-card h2 { font-size: 1.05rem; margin-bottom: 8px; }
+  .exp-body { display: flex; flex-direction: column !important; }
+  .canvas-wrap { padding: 6px; width: 100%; }
+  .canvas-wrap canvas { width: 100% !important; height: auto; max-width: 100%; }
+  .exp-side { padding: 10px 12px; border-left: none; border-top: 2px dashed var(--grid-strong); gap: 8px; width: 100%; }
+  .exp-side .slider-area { flex-wrap: wrap; gap: 4px; }
+  .exp-side .ctrl-row { flex-wrap: wrap; gap: 6px; }
+  .exp-side .ctrl-row button { min-width: 60px; flex: 1; font-size: .78rem; padding: 6px 10px; }
+  .try-btn { font-size: clamp(.78rem, 3vw, .9rem) !important; padding: 8px 14px !important; }
+  .method-tabs { flex-wrap: wrap; gap: 4px; }
+  .method-tab { font-size: .72rem; padding: 5px 8px; }
+  .area-readout { text-align: center; }
+  .area-num { font-size: 1.4rem !important; }
+  .slider-area { font-size: .75rem; }
+  .slider-area input[type="range"] { min-width: 50px; max-width: 120px; }
+  .ctrl-btn { font-size: .78rem; padding: 6px 12px !important; }
+  .exp-hint { font-size: .78rem; }
+  .guess-label { font-size: .78rem; }
+  .step-indicator { gap: 3px; }
+  .dot { width: 18px; height: 18px; font-size: .55rem; }
+  .page-indicator { padding: 12px 0 2px; gap: 6px; }
+  #slide6 .ladder-card > div:first-of-type { gap: 10px !important; }
+  #slide6 .ladder-card > div:first-of-type > div:first-of-type { padding-left: 18px !important; }
+  #slide6 .ladder-card > div:first-of-type > div:first-of-type > div:first-of-type { left: 6px !important; width: 2px !important; }
+  #slide6 .ladder-card > div:first-of-type > div:first-of-type > div:last-of-type { gap: 8px !important; }
+  #slide6 .ladder-card > div:first-of-type > div:first-of-type > div:last-of-type > div { padding: 6px 8px !important; font-size: .72rem !important; }
+  #slide6 .ladder-card > div:first-of-type > div:first-of-type > div:last-of-type > div p { font-size: .72rem !important; }
+  #slide6 .ladder-card > div:first-of-type > div:first-of-type > div:last-of-type > div span { font-size: .65rem !important; }
+  .ladder-card > p { font-size: .8rem !important; }
+}
+}
+</style>
+</head>
+</head>
+<body><!-- 漂浮装饰 -->
+<svg class="float-deco" style="top:12%;left:-30px;" width="120" height="120" viewBox="0 0 120 120">
+  <circle cx="60" cy="60" r="52" fill="none" stroke="#c9dcf0" stroke-width="2" stroke-dasharray="6 8"/>
+</svg>
+<svg class="float-deco" style="bottom:16%;right:-24px;" width="140" height="120" viewBox="0 0 140 120">
+  <polygon points="70,8 134,112 6,112" fill="none" stroke="#c9dcf0" stroke-width="2" stroke-dasharray="6 8"/>
+</svg>
+
+<!-- ===== 第1页 ===== -->
+<div id="slide1" class="slide visible">
+
+<!-- ===== 开场 ===== -->
+<header class="opening">
+  <div class="opening-left">
+    <span class="kicker">🏯 挂谷问题</span>
+    <h1>一根棒子转半圈，<br>扫过的面积能<em>多小</em>？</h1>
+    <p class="story">
+      1917 年，日本数学家<b>挂谷宗一</b>讲了个故事：一名武士躲在狭小的厕所里，
+      敌人从四面八方射箭，他手持一根短棒转一整圈挡住所有箭。
+      <b>棒子扫过的面积越小，厕所就能越小。</b>
+      今天我们先来试三种转法——看看面积能一次比一次小多少。
+    </p>
+  </div>
+  <div class="opening-right">
+    <div class="hero-card">
+      <span class="tape"></span>
+      <canvas id="heroCanvas" width="220" height="140"></canvas>
+    </div>
+  </div>
+</header>
+
+<!-- ===== 菲尔兹奖新闻 ===== -->
+<div class="news-card">
+  <div class="news-inner">
+    <span class="news-badge">🎉 真实新闻 · 2026.7.23</span>
+    <p>
+      <strong class="highlight">菲尔兹奖</strong> 新一届得主在美国费城国际数学家大会上揭晓。
+      北大校友 <strong class="highlight">王虹</strong> 与 <strong class="highlight">邓煜</strong> 双双获奖。
+      <strong>王虹</strong> 凭借彻底证明困扰学界一个多世纪的<strong>三维挂谷猜想</strong>，
+      成为史上首位中国籍菲尔兹奖得主。法国总统马克龙专门致电祝贺，
+      陶哲轩等数学权威称其为"近二十年几何测度论最惊人的突破"。
+    </p>
+  </div>
+</div>
+
+<div class="try-section">
+  <button class="try-btn" id="tryBtn">✋ 试一试</button>
+</div>
+</div>
+<!-- ===== 第1页结束 ===== -->
+
+<!-- ===== 第2页（初始隐藏） ===== -->
+<div id="slide2" class="slide hidden">
+
+<!-- ===== 实验卡片 ===== -->
+<main id="experiments">
+  <section class="exp" data-i="0" id="expMain">
+    <span class="tape"></span>
+    <div class="exp-head">
+      <span class="exp-num" id="expNum">转法 ①</span>
+      <h2 id="expTitle">捏住一头转</h2>
+      <p class="exp-hint" id="expHint">像挥一把折扇——棒子绕着一个端点，转半圈。</p>
+    </div>
+    <div class="exp-body">
+      <div class="canvas-wrap"><canvas id="canvas" width="480" height="400"></canvas></div>
+      <aside class="exp-side">
+        <div>
+          <p class="guess-label">🤔 选一种转法：</p>
+          <div class="method-tabs" id="methodTabs">
+            <button class="method-tab active" data-method="1">① 捏一头</button>
+            <button class="method-tab" data-method="2">② 捏中间</button>
+            <button class="method-tab" data-method="3">③ 勒洛三角形</button>
+            <button class="method-tab" data-method="4">④ 三角形拐着转</button>
+          </div>
+        </div>
+        <div class="area-readout">
+          <p class="lbl">棒子已扫过的面积</p>
+          <p><span class="area-num" id="area-value">0.00</span><span class="area-unit">（棒长=1）</span></p>
+        </div>
+        <div class="ctrl-row">
+          <button class="ctrl-btn play-btn" id="play-btn">▶ 转半圈</button>
+          <button class="ctrl-btn reset-btn" id="reset-btn">↺ 重置</button>
+        </div>
+        <div class="slider-area">
+          <span>0°</span>
+          <input type="range" id="progress-slider" min="0" max="1000" value="0">
+          <span id="angle-display">180°</span>
+        </div>
+        <p class="method-note" id="methodNote" style="display:none;">1927年匈牙利数学家<b>鲍尔</b>证明若运动空间为凸图形，高为1的等边三角形是容纳所有方向单位线段的最优解，其面积最小约为<b>0.577</b>。</p>
+      </aside>
+    </div>
+  </section>
+</main>
+<!-- ===== 还能更小吗？ ===== -->
+<div style="text-align:center;padding:20px 0 8px;display:flex;gap:12px;justify-content:center;flex-wrap:wrap;">
+  <button class="try-btn" id="prevBtn2" style="font-size:clamp(1rem,2vw,1.3rem);padding:12px 24px;background:var(--ink-soft);border-color:#3a5a7a;box-shadow:0 5px 0 #3a5a7a;">← 上一页</button>
+  <button class="try-btn" id="exploreBtn" style="font-size:clamp(1.2rem,2.5vw,1.6rem);padding:14px 38px;">🤔 还能更小吗？</button>
+</div>
+<p style="text-align:center;font-size:.85rem;color:var(--ink-soft);margin:4px 0 10px;">挂谷宗一找到了更巧妙的方案，面积能再缩小近<strong style="color:var(--red);">1/3</strong>！</p>
+</div>
+<!-- ===== 第2页结束 ===== -->
+
+<!-- ===== 第3页（初始隐藏） ===== -->
+<div id="slide3" class="slide hidden">
+  <div class="ladder-section">
+    <div class="ladder-card">
+      <h2>🚀 还能更小！内摆线方案</h2>
+      <div class="exp-body">
+        <div class="canvas-wrap">
+          <canvas id="exploreCanvas" width="480" height="400"></canvas>
+        </div>
+        <aside class="exp-side">
+          <div class="area-readout">
+            <p class="lbl">内摆线方案扫过的面积</p>
+            <p><span class="area-num" id="exploreArea">0.00</span><span class="area-unit">（棒长=1）</span></p>
+          </div>
+          <div class="ctrl-row">
+            <button class="ctrl-btn play-btn" id="explorePlay">▶ 转半圈</button>
+            <button class="ctrl-btn reset-btn" id="exploreReset">↺ 重置</button>
+          </div>
+          <div class="slider-area">
+            <span>0°</span>
+            <input type="range" id="exploreSlider" min="0" max="1000" value="0">
+            <span id="exploreAngle">180°</span>
+          </div>
+          <p style="font-size:.85rem;color:var(--ink-soft);line-height:1.6;margin-top:4px;">
+            三尖点内摆线的任意一条切线长度都为 1，
+            线段沿切线转过180°，面积仅 <b>π/8 ≈ 0.393</b>。
+            挂谷宗一曾宣布"这就是最小"——<b style="color:var(--red);">但故事还没完。</b>
+          </p>
+          <div style="text-align:center;margin-top:8px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+            <button class="try-btn" id="prevBtn3" style="font-size:clamp(1rem,2vw,1.3rem);padding:10px 24px;background:var(--ink-soft);border-color:#3a5a7a;box-shadow:0 5px 0 #3a5a7a;">← 上一页</button>
+            <button class="try-btn" id="besicBtn" style="font-size:clamp(1rem,2vw,1.4rem);padding:12px 30px;background:var(--red);border-color:var(--red-dark);box-shadow:0 5px 0 var(--red-dark);">🤯 真的还能更小？</button>
+          </div>
+        </aside>
+    </div>
+  </div>
+  </div>
+</div>
+<!-- ===== 第3页结束 ===== -->
+
+<!-- ===== 第4页（初始隐藏） ===== -->
+<div id="slide4" class="slide hidden">
+  <div class="ladder-section">
+    <div class="ladder-card">
+      <h2 style="margin-bottom:10px;">🤯 还能更小！面积可以无限接近 <span style="color:var(--red);">0</span></h2>
+      <div class="exp-body">
+        <div class="canvas-wrap"><canvas id="besicCanvas" width="480" height="260"></canvas></div>
+        <aside class="exp-side">
+          <div class="area-readout">
+            <p class="lbl">鲍尔平移扫过的面积</p>
+            <p><span class="area-num" id="besicArea">0.00</span><span class="area-unit">（棒长=1）</span></p>
+          </div>
+          <div class="ctrl-row">
+            <button class="ctrl-btn play-btn" id="besicPlay">▶ 看平移过程</button>
+            <button class="ctrl-btn reset-btn" id="besicReset">↺ 重置</button>
+          </div>
+          <div class="slider-area">
+            <span id="besicAngleLabel">Δθ = 15°</span>
+            <input type="range" id="besicSlider" min="1" max="150" value="150">
+            <span>↓ 越小面积越小</span>
+          </div>
+          <div style="margin-top:4px;padding:5px 8px;background:#fff3e0;border-left:3px solid var(--orange);border-radius:4px;">
+            <p style="font-size:.75rem;color:var(--ink);line-height:1.4;">
+              <b>鲍尔平移</b>：① 转极小角度 Δθ → ② 沿自身方向平移（<b style="color:var(--red);">零面积！</b>）→ ③ 转回 Δθ。<br>
+              两次旋转仅产生两个小扇形，总面积 = <b>Δθ</b>。<br>
+              <span style="font-size:.8rem;">Δθ → 0，面积 → <b style="color:var(--red);font-size:.9rem;">0</b></span>
+            </p>
+          </div>
+          <p style="font-size:.75rem;color:var(--ink-soft);line-height:1.3;margin-top:3px;">
+            1928年俄罗斯数学家<b>贝西科维奇</b>利用这一操作，证明平面挂谷集合的面积可以<b>任意接近于零</b>。
+            由此催生了<b>贝西科维奇集合</b>这一特殊数学结构。
+          </p>
+          <div style="text-align:center;margin-top:6px;display:flex;gap:8px;justify-content:center;flex-wrap:wrap;">
+            <button class="try-btn" id="prevBtn4" style="font-size:clamp(1rem,2vw,1.3rem);padding:10px 24px;background:var(--ink-soft);border-color:#3a5a7a;box-shadow:0 5px 0 #3a5a7a;">← 上一页</button>
+            <button class="try-btn" id="perronBtn" style="font-size:clamp(1rem,2vw,1.4rem);padding:12px 30px;background:var(--red);border-color:var(--red-dark);box-shadow:0 5px 0 var(--red-dark);">🌳 看看佩龙树</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ===== 第5页（佩龙树，初始隐藏） ===== -->
+<div id="slide5" class="slide hidden">
+  <div class="ladder-section">
+    <div class="ladder-card">
+      <h2>🌳 佩龙树 — 分步动画讲解</h2>
+      <div class="exp-body">
+        <div class="canvas-wrap"><canvas id="perronCanvas" width="480" height="400"></canvas></div>
+        <aside class="exp-side">
+          <div class="step-indicator" id="perronDots" style="display:flex;gap:4px;flex-wrap:wrap;margin-bottom:6px;"></div>
+          <div style="background:var(--card);border:1px solid var(--grid-strong);border-radius:8px;padding:10px;margin-bottom:6px;">
+            <p style="font-size:.85rem;font-weight:700;color:var(--ink);margin-bottom:4px;" id="perronTitle">步骤 1</p>
+            <p style="font-size:.78rem;color:var(--ink-soft);line-height:1.6;" id="perronDesc">等边三角形高度为 1，一根长度也为 1 的小棒一端固定在上顶点。</p>
+            <p style="font-size:.75rem;color:var(--teal);line-height:1.5;margin-top:6px;padding:6px 8px;background:#f0faf8;border-left:3px solid var(--teal);border-radius:3px;" id="perronTip">观察小棒扫过的面积如何变化。</p>
+          </div>
+          <div class="ctrl-row" style="margin-top:4px;">
+            <button class="ctrl-btn" id="perronPrev" style="flex:1;background:#eceff1;color:var(--ink);border-color:#cfd8dc;">← 上一步</button>
+            <button class="ctrl-btn play-btn" id="perronNext" style="flex:1;">下一步 →</button>
+            <button class="ctrl-btn reset-btn" id="perronReset" style="flex:0 0 auto;padding:8px 12px;">↺</button>
+          </div>
+          <div style="text-align:center;margin-top:10px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+            <button class="try-btn" id="prevBtn5" style="font-size:clamp(1rem,2vw,1.3rem);padding:10px 24px;background:var(--ink-soft);border-color:#3a5a7a;box-shadow:0 5px 0 #3a5a7a;">← 上一页</button>
+            <button class="try-btn" id="summaryBtn" style="font-size:clamp(1rem,2vw,1.4rem);padding:12px 30px;background:var(--red);border-color:var(--red-dark);box-shadow:0 5px 0 var(--red-dark);">📜 挂谷百年简史</button>
+          </div>
+        </aside>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ===== 第6页（百年简史，初始隐藏） ===== -->
+<div id="slide6" class="slide hidden">
+  <div class="ladder-section">
+    <div class="ladder-card">
+      <h2>📜 挂谷问题 · 百年简史</h2>
+      <div style="padding:10px 0 4px;display:flex;flex-direction:column;gap:16px;">
+        <p style="font-size:.88rem;color:var(--ink-soft);line-height:1.7;padding:0 4px;">
+          平面上能通过连续旋转覆盖所有方向的单位长线段的集合，称为<b>挂谷集</b>。
+          对挂谷集的研究有一百多年的历史，主要围绕最小面积与维数特性展开。
+          我们今天的内容主要是在平面（二维）上的学习。
+        </p>
+        <div style="position:relative;padding-left:28px;">
+          <div style="position:absolute;left:10px;top:0;bottom:0;width:3px;background:linear-gradient(to bottom,var(--red),var(--orange),var(--teal),var(--green),var(--ink),var(--ink-soft));border-radius:2px;"></div>
+          <div style="display:flex;flex-direction:column;gap:14px;">
+            <div style="background:var(--card);border:1.5px solid var(--red);border-radius:8px;padding:10px 12px;">
+              <span style="font-size:.7rem;font-weight:700;color:var(--red);">1917 · 挂谷宗一</span>
+              <p style="font-size:.78rem;color:var(--ink);line-height:1.5;margin-top:2px;">提出武士旋转短棒问题，给出面积为 <b>π/8 ≈ 0.393</b> 的内摆线解</p>
+            </div>
+            <div style="background:var(--card);border:1.5px solid var(--orange);border-radius:8px;padding:10px 12px;">
+              <span style="font-size:.7rem;font-weight:700;color:var(--orange);">1921 · 鲍尔</span>
+              <p style="font-size:.78rem;color:var(--ink);line-height:1.5;margin-top:2px;">证明凸图形中<b>正三角形</b>是容纳所有方向单位线段的最优解</p>
+            </div>
+            <div style="background:var(--card);border:1.5px solid var(--teal);border-radius:8px;padding:10px 12px;">
+              <span style="font-size:.7rem;font-weight:700;color:var(--teal);">1928 · 贝西科维奇</span>
+              <p style="font-size:.78rem;color:var(--ink);line-height:1.5;margin-top:2px;">证明去掉凸集限制后，扫过的面积可以<b>任意接近零</b>，建立贝西科维奇集合</p>
+            </div>
+            <div style="background:var(--card);border:1.5px solid var(--green);border-radius:8px;padding:10px 12px;">
+              <span style="font-size:.7rem;font-weight:700;color:var(--green);">1971 · Davies</span>
+              <p style="font-size:.78rem;color:var(--ink);line-height:1.5;margin-top:2px;">解决二维维数问题：扫过面积趋近于<b>0</b>，以<b>佩龙树</b>的形式呈现</p>
+            </div>
+            <div style="background:var(--card);border:1.5px solid var(--ink);border-radius:8px;padding:10px 12px;">
+              <span style="font-size:.7rem;font-weight:700;color:var(--ink);">2025 · 王虹 & Joshua Zahl</span>
+              <p style="font-size:.78rem;color:var(--ink);line-height:1.5;margin-top:2px;">证明<b>三维挂谷猜想</b>，获 <span style="color:var(--red);font-weight:700;">2026 年菲尔兹奖</span> 🏆</p>
+            </div>
+            <div style="background:var(--card);border:1.5px dashed var(--ink-soft);border-radius:8px;padding:10px 12px;opacity:.7;">
+              <span style="font-size:.7rem;font-weight:700;color:var(--ink-soft);">更高维数 · 未解之谜</span>
+              <p style="font-size:.78rem;color:var(--ink-soft);line-height:1.5;margin-top:2px;">更高维数下该猜想仍为<b>公开问题</b>，等待未来的数学家来攻克 🤔</p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:12px;display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <button class="try-btn" id="prevBtn6" style="font-size:clamp(1rem,2vw,1.3rem);padding:10px 24px;background:var(--ink-soft);border-color:#3a5a7a;box-shadow:0 5px 0 #3a5a7a;">← 上一页</button>
+      </div>
+    </div>
+  </div>
+</div>
+<!-- ===== 第6页结束 ===== -->
+
+<div style="text-align:center;font-size:.72rem;color:var(--ink-soft);padding:14px 16px 10px;line-height:1.8;">
+  制作：陈有志 Vibe Coding<br>
+  邮箱：<a href="mailto:ntcyz@126.com" style="color:var(--ink-soft);text-decoration:none;">ntcyz@126.com</a>
+</div>
+
+<script>
+const canvas = document.getElementById('canvas');
+const ctx = canvas.getContext('2d');
+const W = canvas.width, H = canvas.height;
+const cx = W / 2, cy = H / 2;
+const scale = 140;
+
+const METHODS = {
+  1: { name: '捏住一头转', color: '#f59e0b', fillAlpha: 'rgba(245,158,11,0.22)',
+       finalArea: Math.PI / 2, areaText: '1.57', hint: '像挥一把折扇——棒子绕着一个端点，转半圈。' },
+  2: { name: '捏住中间转', color: '#12a594', fillAlpha: 'rgba(18,165,148,0.22)',
+       fillAlpha2: 'rgba(10,120,100,0.22)',
+       finalArea: Math.PI / 4, areaText: '0.79', hint: '像直升机的螺旋桨——棒子绕着正中心，转半圈。' },
+  3: { name: '勒洛三角形', color: '#e8442e', fillAlpha: 'rgba(232,68,46,0.22)',
+       finalArea: (Math.PI - Math.sqrt(3)) / 2, areaText: '0.70',
+       hint: '像勒洛三角形——棒子绕三个顶点各转60°，围成一个胖乎乎的等宽曲边三角形。' },
+  4: { name: '三角形里拐着转', color: '#2e9e5b', fillAlpha: 'rgba(46,158,91,0.30)',
+       finalArea: 1 / Math.sqrt(3), areaText: '0.58',
+       hint: '棒子贴着三角形边，转一下→滑一下→转一下→滑一下→转一下→滑一下！' },
+  5: { name: '内摆线方案', color: '#9c27b0', fillAlpha: 'rgba(156,39,176,0.20)',
+       finalArea: Math.PI / 8, areaText: '0.393',
+       hint: '三尖点内摆线的任意一条切线长度都为1，线段沿切线转过180°。' }
+};
+
+let currentMethod = 1;
+let progress = 0;
+let isPlaying = false;
+let playTimer = null;
+const labSizes = [1.57, 0.79, 0.58];
+let labDone = [false, false, false];
+
+// ---- 辅助 ----
+function drawDot(x, y, color) {
+  ctx.beginPath(); ctx.arc(x, y, 6, 0, 2 * Math.PI);
+  ctx.fillStyle = color; ctx.fill();
+  ctx.strokeStyle = 'white'; ctx.lineWidth = 2; ctx.stroke();
+}
+function drawSector(px, py, r, a1, a2, color) {
+  ctx.beginPath(); ctx.moveTo(px, py);
+  for (let i = 0; i <= 40; i++) {
+    const t = i / 40, a = a1 + (a2 - a1) * t;
+    ctx.lineTo(px + r * Math.cos(a), py + r * Math.sin(a));
+  }
+  ctx.closePath(); ctx.fillStyle = color; ctx.fill();
+}
+function clearCanvas() { ctx.clearRect(0, 0, W, H); }
+
+// ---- 方案1 ----
+function drawMethod1(p) {
+  const angle = p * Math.PI;
+  const r = scale;
+  const px = cx - r * 0.35, py = cy + r * 0.15;
+  if (p > 0) {
+    drawSector(px, py, r, 0, angle, METHODS[1].fillAlpha);
+    ctx.beginPath(); ctx.arc(px, py, r, 0, angle);
+    ctx.strokeStyle = 'rgba(245,158,11,0.5)'; ctx.lineWidth = 1.5; ctx.stroke();
+  }
+  ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.arc(px, py, r, 0, Math.PI);
+  ctx.strokeStyle = 'rgba(245,158,11,0.2)'; ctx.lineWidth = 1; ctx.stroke();
+  ctx.setLineDash([]);
+  const ex = px + r * Math.cos(angle), ey = py + r * Math.sin(angle);
+  ctx.beginPath(); ctx.moveTo(px, py); ctx.lineTo(ex, ey);
+  ctx.strokeStyle = '#c47f08'; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.stroke();
+  drawDot(px, py, '#c47f08'); drawDot(ex, ey, '#f59e0b');
+  return p * Math.PI / 2;
+}
+
+// ---- 方案2 ----
+function drawMethod2(p) {
+  const angle = p * Math.PI;
+  const halfR = scale / 2;
+  const px = cx, py = cy;
+  if (p > 0) {
+    drawSector(px, py, halfR, 0, angle, METHODS[2].fillAlpha);
+    drawSector(px, py, halfR, Math.PI, Math.PI + angle, METHODS[2].fillAlpha2);
+  }
+  ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.arc(px, py, halfR, 0, 2 * Math.PI);
+  ctx.strokeStyle = 'rgba(18,165,148,0.2)'; ctx.lineWidth = 1; ctx.stroke();
+  ctx.setLineDash([]);
+  const e1x = px + halfR * Math.cos(angle), e1y = py + halfR * Math.sin(angle);
+  const e2x = px - halfR * Math.cos(angle), e2y = py - halfR * Math.sin(angle);
+  ctx.beginPath(); ctx.moveTo(e1x, e1y); ctx.lineTo(e2x, e2y);
+  ctx.strokeStyle = '#0c8577'; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.stroke();
+  drawDot(px, py, '#0c8577'); drawDot(e1x, e1y, '#12a594'); drawDot(e2x, e2y, '#12a594');
+  return p * Math.PI / 4;
+}
+
+// ---- 方案3：勒洛三角形 ----
+function drawMethodReuleaux(p) {
+  const stickLen = 2 * scale / Math.sqrt(3);
+  const Ax = cx, Ay = cy - scale * 2 / 3;
+  const Bx = cx - stickLen / 2, By = cy + scale / 3;
+  const Cx = cx + stickLen / 2, Cy = cy + scale / 3;
+
+  ctx.setLineDash([4,4]);
+  ctx.beginPath(); ctx.moveTo(Ax, Ay); ctx.lineTo(Bx, By); ctx.lineTo(Cx, Cy); ctx.closePath();
+  ctx.strokeStyle = 'rgba(232,68,46,0.3)'; ctx.lineWidth = 1.5; ctx.stroke();
+  ctx.setLineDash([]);
+  ctx.fillStyle = 'rgba(232,68,46,0.4)'; ctx.font = 'bold 11px "Noto Sans SC",sans-serif';
+  ctx.fillText('A', Ax - 14, Ay + 4); ctx.fillText('B', Bx - 14, By - 4); ctx.fillText('C', Cx + 6, Cy - 4);
+
+  // 三阶段：绕A→绕C→绕B
+  const pivots = [{x:Ax,y:Ay},{x:Cx,y:Cy},{x:Bx,y:By}];
+  const tipStarts = [{x:Bx,y:By},{x:Ax,y:Ay},{x:Cx,y:Cy}];
+  const tipEnds = [{x:Cx,y:Cy},{x:Bx,y:By},{x:Ax,y:Ay}];
+
+  const phaseP = p * 3, phase = Math.min(Math.floor(phaseP), 2), local = phaseP - phase;
+  const pv = pivots[phase], ts = tipStarts[phase], te = tipEnds[phase];
+
+  // 从轴心到自由端起止方向
+  const angS = Math.atan2(ts.y - pv.y, ts.x - pv.x);
+  const angE = Math.atan2(te.y - pv.y, te.x - pv.x);
+
+  // 判断绕行方向：从angS到angE哪个方向跨60°（三角形内角）
+  let diff = angE - angS;
+  while (diff < -Math.PI) diff += 2 * Math.PI;
+  while (diff > Math.PI) diff -= 2 * Math.PI;
+  // diff现在在[-π,π]范围。三角形内角60°，所以|diff|应在π/3附近
+  // 如果diff > 0：顺时针（canvas）= 物理逆时针
+  // 如果diff < 0：逆时针（canvas）= 物理顺时针
+  // 勒洛三角形三个旋转都是物理顺时针
+  // 物理顺时针：diff < 0（从start到end角度减小）
+  const useCCW = diff < 0; // canvas中逆时针
+  const currAng = angS + diff * local;
+
+  // 已完成相位的扇形
+  for (let i = 0; i < phase; i++) {
+    const pi = pivots[i], si = tipStarts[i], ei = tipEnds[i];
+    const aS = Math.atan2(si.y - pi.y, si.x - pi.x);
+    const aE = Math.atan2(ei.y - pi.y, ei.x - pi.x);
+    let d = aE - aS;
+    while (d < -Math.PI) d += 2 * Math.PI;
+    while (d > Math.PI) d -= 2 * Math.PI;
+    ctx.beginPath(); ctx.moveTo(pi.x, pi.y);
+    for (let a = aS; (d < 0 ? a >= aS + d : a <= aS + d); a += (d < 0 ? -0.02 : 0.02)) {
+      ctx.lineTo(pi.x + stickLen * Math.cos(a), pi.y + stickLen * Math.sin(a));
+    }
+    ctx.closePath(); ctx.fillStyle = 'rgba(232,68,46,0.15)'; ctx.fill();
+  }
+
+  // 当前扇形
+  if (local > 0.01) {
+    ctx.beginPath(); ctx.moveTo(pv.x, pv.y);
+    for (let a = angS; (diff < 0 ? a >= currAng : a <= currAng); a += (diff < 0 ? -0.02 : 0.02)) {
+      ctx.lineTo(pv.x + stickLen * Math.cos(a), pv.y + stickLen * Math.sin(a));
+    }
+    ctx.closePath(); ctx.fillStyle = 'rgba(232,68,46,0.2)'; ctx.fill();
+  }
+
+  // 小棒
+  const tipX = pv.x + stickLen * Math.cos(currAng);
+  const tipY = pv.y + stickLen * Math.sin(currAng);
+  ctx.beginPath(); ctx.moveTo(pv.x, pv.y); ctx.lineTo(tipX, tipY);
+  ctx.strokeStyle = '#c2351f'; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.stroke();
+  ctx.beginPath(); ctx.arc(pv.x, pv.y, 5, 0, 2*Math.PI);
+  ctx.fillStyle = '#c2351f'; ctx.fill(); ctx.strokeStyle = 'white'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.beginPath(); ctx.arc(tipX, tipY, 5, 0, 2*Math.PI);
+  ctx.fillStyle = '#e8442e'; ctx.fill(); ctx.strokeStyle = 'white'; ctx.lineWidth = 2; ctx.stroke();
+
+  return (Math.PI - Math.sqrt(3)) / 2 * Math.min((phase + local) / 3, 1);
+}function drawMethod3(p) {
+  const h = scale;
+  const s = 2 * scale / Math.sqrt(3);
+  const stickLen = scale;
+  const Ax = cx, Ay = cy - h * 2 / 3;
+  const Bx = cx - s / 2, By = cy + h / 3;
+  const Cx = cx + s / 2, Cy = cy + h / 3;
+  const aBC = 0, aBA = -Math.PI / 3, aAB = 2 * Math.PI / 3;
+  const aAC = Math.PI / 3, aCA = -2 * Math.PI / 3, aCB = Math.PI;
+
+  ctx.setLineDash([5,5]);
+  ctx.beginPath(); ctx.moveTo(Ax, Ay); ctx.lineTo(Bx, By); ctx.lineTo(Cx, Cy); ctx.closePath();
+  ctx.strokeStyle = 'rgba(46,158,91,0.4)'; ctx.lineWidth = 2; ctx.stroke();
+  ctx.setLineDash([]);
+
+  const phaseP = p * 6, phase = Math.min(Math.floor(phaseP), 5), local = phaseP - phase;
+  const phD = ph => { if (phase > ph) return 1; if (phase < ph) return 0; return local; };
+  const p0 = phD(0), p2 = phD(2), p4 = phD(4);
+
+  ctx.save();
+  ctx.beginPath(); ctx.moveTo(Ax, Ay); ctx.lineTo(Bx, By); ctx.lineTo(Cx, Cy); ctx.closePath(); ctx.clip();
+  if (p0 > 0) { const a = aBC + (aBA - aBC) * p0; drawSector(Bx, By, stickLen, aBC, a, METHODS[3].fillAlpha); }
+  if (p2 > 0) { const a = aAB + (aAC - aAB) * p2; drawSector(Ax, Ay, stickLen, aAB, a, METHODS[3].fillAlpha); }
+  if (p4 > 0) { const a = aCA - p4 * Math.PI / 3; drawSector(Cx, Cy, stickLen, aCA, a, METHODS[3].fillAlpha); }
+  ctx.restore();
+
+  let sx, sy, ex, ey;
+  if (phase === 0) {
+    const a = aBC + (aBA - aBC) * local; sx = Bx; sy = By;
+    ex = Bx + stickLen * Math.cos(a); ey = By + stickLen * Math.sin(a);
+  } else if (phase === 1) {
+    const e0x = Bx + stickLen * Math.cos(aBA), e0y = By + stickLen * Math.sin(aBA);
+    ex = e0x + (Ax - e0x) * local; ey = e0y + (Ay - e0y) * local;
+    sx = ex - stickLen * Math.cos(aBA); sy = ey - stickLen * Math.sin(aBA);
+  } else if (phase === 2) {
+    const a = aAB + (aAC - aAB) * local; sx = Ax; sy = Ay;
+    ex = Ax + stickLen * Math.cos(a); ey = Ay + stickLen * Math.sin(a);
+  } else if (phase === 3) {
+    const e0x = Ax + stickLen * Math.cos(aAC), e0y = Ay + stickLen * Math.sin(aAC);
+    ex = e0x + (Cx - e0x) * local; ey = e0y + (Cy - e0y) * local;
+    sx = ex - stickLen * Math.cos(aAC); sy = ey - stickLen * Math.sin(aAC);
+  } else if (phase === 4) {
+    const a = aCA - local * Math.PI / 3; sx = Cx; sy = Cy;
+    ex = Cx + stickLen * Math.cos(a); ey = Cy + stickLen * Math.sin(a);
+  } else {
+    const e0x = Cx + stickLen * Math.cos(aCB), e0y = Cy + stickLen * Math.sin(aCB);
+    ex = e0x + (Bx - e0x) * local; ey = e0y + (By - e0y) * local;
+    sx = ex - stickLen * Math.cos(aCB); sy = ey - stickLen * Math.sin(aCB);
+  }
+  ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(ex, ey);
+  ctx.strokeStyle = '#1b5e20'; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.stroke();
+  drawDot(sx, sy, '#1b5e20'); drawDot(ex, ey, '#2e9e5b');
+  return (p0 + p2 + p4) / 3 / Math.sqrt(3);
+}
+
+// ---- 渲染 ----
+function render() {
+  clearCanvas();
+  let area = 0;
+  if (currentMethod === 1) area = drawMethod1(progress);
+  else if (currentMethod === 2) area = drawMethod2(progress);
+  else if (currentMethod === 3) area = drawMethodReuleaux(progress);
+  else area = drawMethod3(progress);
+  document.getElementById('area-value').textContent = area.toFixed(2);
+  document.getElementById('progress-slider').value = Math.round(progress * 1000);
+  document.getElementById('angle-display').textContent = Math.round(progress * 180) + '°';
+  document.getElementById('progress-slider').value = Math.round(progress * 1000);
+  document.getElementById('angle-display').textContent = Math.round(progress * 180) + '°';
+}
+
+// ---- 动画 ----
+function play() {
+  if (isPlaying) { stopPlay(); return; }
+  if (progress >= 0.999) progress = 0;
+  isPlaying = true;
+  document.getElementById('play-btn').textContent = '⏸ 暂停';
+  const duration = 3000;
+  const startTime = performance.now() - progress * duration;
+  function frame(now) {
+    if (!isPlaying) return;
+    progress = Math.min((now - startTime) / duration, 1);
+    render();
+    if (progress >= 0.999) { stopPlay(); return; }
+    playTimer = requestAnimationFrame(frame);
+  }
+  playTimer = requestAnimationFrame(frame);
+}
+function stopPlay() {
+  isPlaying = false;
+  document.getElementById('play-btn').textContent = '▶ 转半圈';
+  if (playTimer) cancelAnimationFrame(playTimer);
+}
+
+// ---- 切换方法 ----
+function switchTo(method) {
+  currentMethod = method;
+  progress = 0;
+  stopPlay();
+  document.querySelectorAll('.method-tab').forEach(b => b.classList.remove('active'));
+  document.querySelector(`.method-tab[data-method="${method}"]`).classList.add('active');
+  const m = METHODS[method], nums = ['①','②','③','④'];
+  document.getElementById('expNum').textContent = `转法 ${nums[method-1]}`;
+  document.getElementById('expTitle').textContent = m.name;
+  document.getElementById('expHint').textContent = m.hint;
+  document.getElementById('expMain').dataset.i = method - 1;
+  var note = document.getElementById('methodNote');
+  if (note) {
+    note.style.display = method === 4 ? 'block' : 'none';
+  }
+  render();
+}
+
+// ---- 事件绑定 ----
+document.querySelectorAll('.method-tab').forEach(btn => {
+  btn.addEventListener('click', () => switchTo(parseInt(btn.dataset.method)));
+});
+document.getElementById('play-btn').addEventListener('click', play);
+document.getElementById('reset-btn').addEventListener('click', () => { stopPlay(); progress = 0; render(); });
+document.getElementById('progress-slider').addEventListener('input', function() {
+  stopPlay(); progress = this.value / 1000; render();
+});
+
+// 开场小棒（自动旋转）
+(function(){
+  const hc = document.getElementById('heroCanvas');
+  const hCtx = hc.getContext('2d');
+  const hw = 220, hh = 140, hcx = hw/2, hcy = hh/2 + 6, R = 46;
+  let ang = -Math.PI/2;
+  function hdraw(){
+    hCtx.clearRect(0,0,hw,hh);
+    hCtx.save();
+    hCtx.strokeStyle = 'rgba(28,58,94,.25)'; hCtx.setLineDash([4,5]); hCtx.lineWidth = 1.5;
+    hCtx.beginPath(); hCtx.arc(hcx, hcy, R, 0, 2*Math.PI); hCtx.stroke();
+    hCtx.restore();
+    const x1 = hcx - R*Math.cos(ang), y1 = hcy - R*Math.sin(ang);
+    const x2 = hcx + R*Math.cos(ang), y2 = hcy + R*Math.sin(ang);
+    hCtx.beginPath(); hCtx.moveTo(x1,y1); hCtx.lineTo(x2,y2);
+    hCtx.strokeStyle = '#e8442e'; hCtx.lineWidth = 5; hCtx.lineCap = 'round'; hCtx.stroke();
+    hCtx.fillStyle = '#fff'; hCtx.strokeStyle = '#1c3a5e'; hCtx.lineWidth = 2.5;
+    hCtx.beginPath(); hCtx.arc(hcx,hcy,5,0,2*Math.PI); hCtx.fill(); hCtx.stroke();
+  }
+  function animate(time){
+    ang = -Math.PI/2 + (time / 1000) * Math.PI; // 2秒转半圈
+    hdraw();
+    requestAnimationFrame(animate);
+  }
+  requestAnimationFrame(animate);
+})();
+// ---- 试一试按钮 ----
+document.getElementById('tryBtn').addEventListener('click', function() {
+  document.getElementById('slide1').style.display = 'none';
+  document.getElementById('slide2').style.display = 'block';
+  requestAnimationFrame(() => {
+    document.getElementById('slide2').classList.add('visible');
+  });
+});
+
+// ---- 还能更小吗？按钮 ----
+document.getElementById('exploreBtn').addEventListener('click', function() {
+  document.getElementById('slide2').style.display = 'none';
+  document.getElementById('slide3').style.display = 'block';
+  requestAnimationFrame(() => {
+    document.getElementById('slide3').classList.add('visible');
+  });
+  this.textContent = '🎯 内摆线方案已展开！';
+  this.style.pointerEvents = 'none';
+  this.style.opacity = '0.6';
+});
+
+// ---- 上一页按钮 ----
+document.getElementById('prevBtn2').addEventListener('click', function() {
+  document.getElementById('slide2').style.display = 'none';
+  document.getElementById('slide1').style.display = 'block';
+});
+document.getElementById('prevBtn3').addEventListener('click', function() {
+  document.getElementById('slide3').style.display = 'none';
+  document.getElementById('slide2').style.display = 'block';
+  document.getElementById('slide2').classList.add('visible');
+  // 恢复"还能更小吗？"按钮可点击
+  var btn = document.getElementById('exploreBtn');
+  btn.textContent = '🤔 还能更小吗？';
+  btn.style.pointerEvents = '';
+  btn.style.opacity = '';
+  });
+
+
+// ---- 真的还能更小？按钮 ----
+document.getElementById('besicBtn').addEventListener('click', function() {
+  document.getElementById('slide3').style.display = 'none';
+  document.getElementById('slide4').style.display = 'block';
+  requestAnimationFrame(() => {
+    document.getElementById('slide4').classList.add('visible');
+  });
+  this.textContent = '🎯 贝西科维奇已展开！';
+  this.style.pointerEvents = 'none';
+  this.style.opacity = '0.6';
+});
+// ---- 上一页按钮（第4页） ----
+document.getElementById('prevBtn4').addEventListener('click', function() {
+  document.getElementById('slide4').style.display = 'none';
+  document.getElementById('slide3').style.display = 'block';
+  document.getElementById('slide3').classList.add('visible');
+  var btn = document.getElementById('besicBtn');
+  btn.textContent = '🤯 真的还能更小？';
+  btn.style.pointerEvents = '';
+  btn.style.opacity = '';
+});
+
+
+// ---- 看看佩龙树按钮 ----
+document.getElementById('perronBtn').addEventListener('click', function() {
+  document.getElementById('slide4').style.display = 'none';
+  document.getElementById('slide5').style.display = 'block';
+  requestAnimationFrame(() => {
+    document.getElementById('slide5').classList.add('visible');
+  });
+  // 触发佩龙树重绘
+  if (window.redrawPerron) window.redrawPerron();
+  this.textContent = '🌳 佩龙树已展开！';
+  this.style.pointerEvents = 'none';
+  this.style.opacity = '0.6';
+});
+document.getElementById('prevBtn5').addEventListener('click', function() {
+  document.getElementById('slide5').style.display = 'none';
+  document.getElementById('slide4').style.display = 'block';
+  document.getElementById('slide4').classList.add('visible');
+  var btn = document.getElementById('perronBtn');
+  btn.textContent = '🌳 看看佩龙树';
+  btn.style.pointerEvents = '';
+  btn.style.opacity = '';
+});
+// ---- 内摆线方案 ----
+// ---- 内摆线方案 ----
+(function() {
+// ---- 挂谷百年简史按钮 ----
+document.getElementById('summaryBtn').addEventListener('click', function() {
+  document.getElementById('slide5').style.display = 'none';
+  document.getElementById('slide6').style.display = 'block';
+  requestAnimationFrame(() => {
+    document.getElementById('slide6').classList.add('visible');
+  });
+  this.textContent = '📜 百年简史已呈现！';
+  this.style.pointerEvents = 'none';
+  this.style.opacity = '0.6';
+});
+// ---- 上一页按钮（第6页） ----
+document.getElementById('prevBtn6').addEventListener('click', function() {
+  document.getElementById('slide6').style.display = 'none';
+  document.getElementById('slide5').style.display = 'block';
+  document.getElementById('slide5').classList.add('visible');
+  var btn = document.getElementById('summaryBtn');
+  btn.textContent = '📜 挂谷百年简史';
+  btn.style.pointerEvents = '';
+  btn.style.opacity = '';
+});
+  const canvas = document.getElementById('exploreCanvas');
+  if (!canvas) return;
+  const ctx = canvas.getContext('2d');
+  const s = 160;
+  // 小圆半径 r = 1/4，Deltoid上 P(θ) 与 P(θ+π) 的距离 = 4r = 1
+  // 线段两端（▲ 和 ●）始终在 Deltoid 曲线上
+
+  let progress = 0, isPlaying = false, playTimer = null;
+
+  function deltoid(t) {
+    // x = 2r·cos(t) + r·cos(2t), y = 2r·sin(t) - r·sin(2t), r = 1/4
+    return {
+      x: 0.5 * Math.cos(t) + 0.25 * Math.cos(2*t),
+      y: 0.5 * Math.sin(t) - 0.25 * Math.sin(2*t)
+    };
+  }
+
+  function draw(p) {
+    ctx.clearRect(0, 0, W, H);
+    const theta = p * Math.PI;
+
+    // 内摆线曲线
+    ctx.setLineDash([3, 4]);
+    ctx.beginPath();
+    for (let t = 0; t <= 2 * Math.PI; t += 0.02) {
+      const pt = deltoid(t);
+      const px = cx + pt.x * s, py = cy + pt.y * s;
+      if (t === 0) ctx.moveTo(px, py); else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.strokeStyle = 'rgba(120,60,180,0.3)'; ctx.lineWidth = 1.5; ctx.stroke();
+    ctx.setLineDash([]);
+
+    // 三个尖点
+    for (let k = 0; k < 3; k++) {
+      const t = k * 2 * Math.PI / 3;
+      const pt = deltoid(t);
+      ctx.beginPath(); ctx.arc(cx + pt.x * s, cy + pt.y * s, 4, 0, 2 * Math.PI);
+      ctx.fillStyle = 'rgba(120,60,180,0.5)'; ctx.fill();
+    }
+
+    // 扫过的区域：累积绘制历史线段 P(t) → P(t+π)
+    if (p > 0) {
+      const steps = Math.floor(theta / 0.008);
+      for (let i = 0; i <= steps; i++) {
+        const t = (i / steps) * theta;
+        const p1 = deltoid(t);
+        const p2 = deltoid(t + Math.PI);
+        const sx = cx + p1.x * s, sy = cy + p1.y * s;
+        const ex = cx + p2.x * s, ey = cy + p2.y * s;
+        ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(ex, ey);
+        ctx.strokeStyle = `rgba(120,60,180,${0.06 + 0.04 * (i / steps)})`;
+        ctx.lineWidth = 2; ctx.stroke();
+      }
+    }
+
+    // 当前线段：P(theta) → P(theta+π)，两端都在曲线上
+    const p1 = deltoid(theta);
+    const p2 = deltoid(theta + Math.PI);
+    const sx = cx + p1.x * s, sy = cy + p1.y * s;
+    const ex = cx + p2.x * s, ey = cy + p2.y * s;
+    ctx.beginPath(); ctx.moveTo(sx, sy); ctx.lineTo(ex, ey);
+    ctx.strokeStyle = '#6a1b9a'; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.stroke();
+
+    // 端点标记：▲ 在 P(θ)，● 在 P(θ+π)
+    ctx.beginPath(); ctx.arc(sx, sy, 7, 0, 2 * Math.PI);
+    ctx.fillStyle = '#6a1b9a'; ctx.fill(); ctx.strokeStyle = 'white'; ctx.lineWidth = 2.5; ctx.stroke();
+    ctx.beginPath(); ctx.arc(ex, ey, 7, 0, 2 * Math.PI);
+    ctx.fillStyle = '#9c27b0'; ctx.fill(); ctx.strokeStyle = 'white'; ctx.lineWidth = 2.5; ctx.stroke();
+
+    document.getElementById('exploreArea').textContent = (p * Math.PI / 8).toFixed(3);
+    document.getElementById('exploreSlider').value = Math.round(p * 1000);
+    document.getElementById('exploreAngle').textContent = Math.round(p * 180) + '°';
+  }
+
+  function play() {
+    if (isPlaying) { stopPlay(); return; }
+    if (progress >= 0.999) progress = 0;
+    isPlaying = true;
+    document.getElementById('explorePlay').textContent = '⏸ 暂停';
+    const duration = 3000, startTime = performance.now() - progress * duration;
+    function frame(now) {
+      if (!isPlaying) return;
+      progress = Math.min((now - startTime) / duration, 1);
+      draw(progress);
+      if (progress >= 0.999) { stopPlay(); return; }
+      playTimer = requestAnimationFrame(frame);
+    }
+    playTimer = requestAnimationFrame(frame);
+  }
+  function stopPlay() {
+    isPlaying = false;
+    document.getElementById('explorePlay').textContent = '▶ 转半圈';
+    if (playTimer) cancelAnimationFrame(playTimer);
+  }
+
+  document.getElementById('explorePlay').addEventListener('click', play);
+  document.getElementById('exploreReset').addEventListener('click', () => { stopPlay(); progress = 0; draw(0); });
+  document.getElementById('exploreSlider').addEventListener('input', function() {
+    stopPlay(); progress = this.value / 1000; draw(progress);
+  });
+
+  draw(0);
+})();
+
+(function() {
+  var c = document.getElementById('besicCanvas');
+  if (!c) return;
+  var ctx = c.getContext('2d');
+  var W = c.width, H = c.height;
+  var segLen = 100;
+  var topY = 55, bottomY = 95;
+  var leftBound = 10;
+  var progress = 0, isPlaying = false, playTimer = null;
+  var dTheta = 15; // 度
+
+  function palDraw(p) {
+    var theta = dTheta * Math.PI / 180;
+    ctx.clearRect(0, 0, W, H);
+
+    // 两条平行虚线
+    ctx.save();
+    ctx.setLineDash([6, 8]);
+    ctx.strokeStyle = 'rgba(28,58,94,0.25)'; ctx.lineWidth = 1.5;
+    ctx.beginPath(); ctx.moveTo(leftBound, topY); ctx.lineTo(W - 16, topY); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(leftBound, bottomY); ctx.lineTo(W - 16, bottomY); ctx.stroke();
+    ctx.restore();
+
+    // 旋转后右端位置
+    var rfX = leftBound + segLen * Math.cos(theta);
+    var rfY = topY + segLen * Math.sin(theta);
+    // 下滑距离（到下面虚线）
+    var diagDist = (bottomY - rfY) / Math.sin(theta);
+    var rxf = rfX + diagDist * Math.cos(theta);
+    var ryf = rfY + diagDist * Math.sin(theta);
+
+    var lx, ly, rx, ry;
+    var t, angle, lAngle;
+
+    if (p < 0.15) {
+      // 阶段0: 原位旋转θ
+      t = p / 0.15;
+      angle = t * theta;
+      lx = leftBound; ly = topY;
+      rx = lx + segLen * Math.cos(angle);
+      ry = topY + segLen * Math.sin(angle);
+      // 扇区1
+      if (t > 0.01) {
+        ctx.beginPath();
+        ctx.moveTo(lx, ly);
+        ctx.lineTo(lx + segLen, ly);
+        for (var a1 = 0; a1 <= angle; a1 += 0.02) {
+          ctx.lineTo(lx + segLen * Math.cos(a1), ly + segLen * Math.sin(a1));
+        }
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(232,68,46,0.2)'; ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(lx + segLen, ly);
+        for (var a1b = 0; a1b <= angle; a1b += 0.02) {
+          ctx.lineTo(lx + segLen * Math.cos(a1b), ly + segLen * Math.sin(a1b));
+        }
+        ctx.strokeStyle = 'rgba(232,68,46,0.5)'; ctx.lineWidth = 1; ctx.stroke();
+        ctx.fillStyle = '#c2351f'; ctx.font = '11px "Noto Sans SC",sans-serif';
+        ctx.fillText('Δθ', lx + 22, ly - 10);
+      }
+    } else if (p < 0.40) {
+      // 阶段1: 沿θ方向下滑
+      t = (p - 0.15) / 0.25;
+      rx = rfX + diagDist * t * Math.cos(theta);
+      ry = rfY + diagDist * t * Math.sin(theta);
+      lx = rx - segLen * Math.cos(theta);
+      ly = ry - segLen * Math.sin(theta);
+      // 扇区1完整
+      ctx.beginPath();
+      ctx.moveTo(leftBound, topY);
+      ctx.lineTo(leftBound + segLen, topY);
+      for (var a1c = 0; a1c <= theta; a1c += 0.02) {
+        ctx.lineTo(leftBound + segLen * Math.cos(a1c), topY + segLen * Math.sin(a1c));
+      }
+      ctx.closePath(); ctx.fillStyle = 'rgba(232,68,46,0.2)'; ctx.fill();
+      ctx.beginPath();
+      ctx.moveTo(leftBound + segLen, topY);
+      for (var a1d = 0; a1d <= theta; a1d += 0.02) {
+        ctx.lineTo(leftBound + segLen * Math.cos(a1d), topY + segLen * Math.sin(a1d));
+      }
+      ctx.strokeStyle = 'rgba(232,68,46,0.5)'; ctx.lineWidth = 1; ctx.stroke();
+      // 下滑路径
+      ctx.save();
+      ctx.setLineDash([5, 6]);
+      ctx.strokeStyle = 'rgba(12,133,119,0.3)'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(rfX, rfY);
+      ctx.lineTo(rx, ry); ctx.stroke();
+      ctx.restore();
+      ctx.fillStyle = 'rgba(12,133,119,0.45)';
+      ctx.font = '11px "Noto Sans SC",sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('沿自身方向平移（零面积）', (rfX + rx) / 2, ry - 18);
+    } else if (p < 0.55) {
+      // 阶段2: 绕右端转回水平
+      t = (p - 0.40) / 0.15;
+      lAngle = (Math.PI + theta) - t * theta;
+      rx = rxf; ry = ryf;
+      lx = rx + segLen * Math.cos(lAngle);
+      ly = ry + segLen * Math.sin(lAngle);
+      // 扇区2
+      if (t > 0.01) {
+        ctx.beginPath();
+        ctx.moveTo(rx, ry);
+        ctx.lineTo(rx + segLen * Math.cos(Math.PI + theta), ry + segLen * Math.sin(Math.PI + theta));
+        for (var a2 = Math.PI + theta; a2 >= lAngle; a2 -= 0.02) {
+          ctx.lineTo(rx + segLen * Math.cos(a2), ry + segLen * Math.sin(a2));
+        }
+        ctx.closePath();
+        ctx.fillStyle = 'rgba(232,68,46,0.2)'; ctx.fill();
+        ctx.beginPath();
+        ctx.moveTo(rx + segLen * Math.cos(Math.PI + theta), ry + segLen * Math.sin(Math.PI + theta));
+        for (var a2b = Math.PI + theta; a2b >= lAngle; a2b -= 0.02) {
+          ctx.lineTo(rx + segLen * Math.cos(a2b), ry + segLen * Math.sin(a2b));
+        }
+        ctx.strokeStyle = 'rgba(232,68,46,0.5)'; ctx.lineWidth = 1; ctx.stroke();
+      }
+      // 扇区1完整
+      ctx.beginPath();
+      ctx.moveTo(leftBound, topY);
+      ctx.lineTo(leftBound + segLen, topY);
+      for (var a1e = 0; a1e <= theta; a1e += 0.02) {
+        ctx.lineTo(leftBound + segLen * Math.cos(a1e), topY + segLen * Math.sin(a1e));
+      }
+      ctx.closePath(); ctx.fillStyle = 'rgba(232,68,46,0.2)'; ctx.fill();
+      // 下滑虚线
+      ctx.save();
+      ctx.setLineDash([5, 6]);
+      ctx.strokeStyle = 'rgba(12,133,119,0.3)'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(rfX, rfY);
+      ctx.lineTo(rx, ry); ctx.stroke();
+      ctx.restore();
+    } else if (p < 0.80) {
+      // 阶段3: 底部左滑归位
+      t = (p - 0.55) / 0.25;
+      var backEndX = rxf - segLen;
+      var slideBack = backEndX - leftBound;
+      lx = backEndX - slideBack * t;
+      ly = bottomY;
+      rx = lx + segLen; ry = bottomY;
+      // 扇区1
+      ctx.beginPath();
+      ctx.moveTo(leftBound, topY);
+      ctx.lineTo(leftBound + segLen, topY);
+      for (var a1f = 0; a1f <= theta; a1f += 0.02) {
+        ctx.lineTo(leftBound + segLen * Math.cos(a1f), topY + segLen * Math.sin(a1f));
+      }
+      ctx.closePath(); ctx.fillStyle = 'rgba(232,68,46,0.2)'; ctx.fill();
+      // 扇区2
+      ctx.beginPath();
+      ctx.moveTo(rxf, ryf);
+      ctx.lineTo(rxf + segLen * Math.cos(Math.PI + theta), ryf + segLen * Math.sin(Math.PI + theta));
+      for (var a2c = Math.PI + theta; a2c >= Math.PI; a2c -= 0.02) {
+        ctx.lineTo(rxf + segLen * Math.cos(a2c), ryf + segLen * Math.sin(a2c));
+      }
+      ctx.closePath(); ctx.fillStyle = 'rgba(232,68,46,0.2)'; ctx.fill();
+      // 虚线路径
+      ctx.save(); ctx.setLineDash([5, 6]);
+      ctx.strokeStyle = 'rgba(12,133,119,0.3)'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(rfX, rfY);
+      ctx.lineTo(rxf, ryf); ctx.stroke(); ctx.restore();
+      if (t > 0.02) {
+        ctx.save(); ctx.setLineDash([5, 6]);
+        ctx.strokeStyle = 'rgba(12,133,119,0.2)'; ctx.lineWidth = 1.5;
+        ctx.beginPath(); ctx.moveTo(backEndX, bottomY);
+        ctx.lineTo(lx, bottomY); ctx.stroke(); ctx.restore();
+      }
+    } else {
+      // 阶段4: 竖线箭头
+      t = (p - 0.80) / 0.20;
+      lx = leftBound; ly = bottomY;
+      rx = lx + segLen; ry = bottomY;
+      // 扇区1
+      ctx.beginPath();
+      ctx.moveTo(leftBound, topY);
+      ctx.lineTo(leftBound + segLen, topY);
+      for (var a1g = 0; a1g <= theta; a1g += 0.02) {
+        ctx.lineTo(leftBound + segLen * Math.cos(a1g), topY + segLen * Math.sin(a1g));
+      }
+      ctx.closePath(); ctx.fillStyle = 'rgba(232,68,46,0.2)'; ctx.fill();
+      // 扇区2
+      ctx.beginPath();
+      ctx.moveTo(rxf, ryf);
+      ctx.lineTo(rxf + segLen * Math.cos(Math.PI + theta), ryf + segLen * Math.sin(Math.PI + theta));
+      for (var a2d = Math.PI + theta; a2d >= Math.PI; a2d -= 0.02) {
+        ctx.lineTo(rxf + segLen * Math.cos(a2d), ryf + segLen * Math.sin(a2d));
+      }
+      ctx.closePath(); ctx.fillStyle = 'rgba(232,68,46,0.2)'; ctx.fill();
+      // 虚线路径
+      ctx.save(); ctx.setLineDash([5, 6]);
+      ctx.strokeStyle = 'rgba(12,133,119,0.3)'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(rfX, rfY);
+      ctx.lineTo(rxf, ryf); ctx.stroke(); ctx.restore();
+      ctx.save(); ctx.setLineDash([5, 6]);
+      ctx.strokeStyle = 'rgba(12,133,119,0.2)'; ctx.lineWidth = 1.5;
+      ctx.beginPath(); ctx.moveTo(rxf - segLen, bottomY);
+      ctx.lineTo(leftBound, bottomY); ctx.stroke(); ctx.restore();
+      // 竖线箭头
+      var arrowX = leftBound + segLen / 2;
+      var alpha = Math.min(t / 0.3, 1);
+      ctx.save(); ctx.globalAlpha = alpha;
+      ctx.setLineDash([6, 6]);
+      ctx.strokeStyle = 'rgba(232,68,46,0.5)'; ctx.lineWidth = 2.5;
+      ctx.beginPath(); ctx.moveTo(arrowX, topY - 12);
+      ctx.lineTo(arrowX, bottomY + 12); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = 'rgba(232,68,46,0.6)';
+      ctx.beginPath();
+      ctx.moveTo(arrowX, bottomY + 22);
+      ctx.lineTo(arrowX - 9, bottomY + 9);
+      ctx.lineTo(arrowX + 9, bottomY + 9);
+      ctx.closePath(); ctx.fill();
+      ctx.restore();
+      ctx.fillStyle = 'rgba(232,68,46,0.5)';
+      ctx.font = '11px "Noto Sans SC",sans-serif'; ctx.textAlign = 'center';
+      ctx.fillText('🎯 原线段从上方平移到了下方', arrowX, bottomY + 40);
+    }
+
+    // 画线段
+    ctx.beginPath(); ctx.moveTo(lx, ly); ctx.lineTo(rx, ry);
+    ctx.strokeStyle = '#c2351f'; ctx.lineWidth = 4; ctx.lineCap = 'round'; ctx.stroke();
+    ctx.beginPath(); ctx.arc(lx, ly, 5, 0, 2*Math.PI);
+    ctx.fillStyle = '#c2351f'; ctx.fill();
+    ctx.strokeStyle = 'white'; ctx.lineWidth = 2; ctx.stroke();
+    ctx.beginPath(); ctx.arc(rx, ry, 5, 0, 2*Math.PI);
+    ctx.fillStyle = '#e8442e'; ctx.fill();
+    ctx.strokeStyle = 'white'; ctx.lineWidth = 2; ctx.stroke();
+
+    // 面积
+    var area = 0;
+    if (p > 0.15) area += theta / 2;
+    if (p > 0.40) {
+      var s2 = p < 0.55 ? (p - 0.40) / 0.15 : 1;
+      area += theta * s2 / 2;
+    }
+    document.getElementById('besicArea').textContent = area.toFixed(4);
+  }
+
+  function palPlay() {
+    if (isPlaying) { palStop(); return; }
+    if (progress >= 0.999) progress = 0;
+    isPlaying = true;
+    document.getElementById('besicPlay').textContent = '⏸ 暂停';
+    var duration = 3000;
+    var startTime = performance.now() - progress * duration;
+    function frame(now) {
+      if (!isPlaying) return;
+      progress = Math.min((now - startTime) / duration, 1);
+      palDraw(progress);
+      if (progress >= 0.999) { palStop(); return; }
+      playTimer = requestAnimationFrame(frame);
+    }
+    playTimer = requestAnimationFrame(frame);
+  }
+
+  function palStop() {
+    isPlaying = false;
+    document.getElementById('besicPlay').textContent = '▶ 看平移过程';
+    if (playTimer) cancelAnimationFrame(playTimer);
+  }
+
+  document.getElementById('besicPlay').addEventListener('click', palPlay);
+  document.getElementById('besicReset').addEventListener('click', function() {
+    palStop(); progress = 0; palDraw(0);
+  });
+  document.getElementById('besicSlider').addEventListener('input', function() {
+    palStop();
+    dTheta = this.value / 10;
+    document.getElementById('besicAngleLabel').textContent = 'Δθ = ' + dTheta.toFixed(1) + '°';
+    progress = 0;
+    palDraw(0);
+  });
+
+  palDraw(0);
+})();
+
+// ---- 佩龙树 ----
+(function() {
+  var c = document.getElementById('perronCanvas');
+  if (!c) return;
+  var ctx = c.getContext('2d');
+  if (!ctx) return;
+  var W = c.width, H = c.height;
+  var W = c.width, H = c.height;
+  var CX = W / 2;
+  var TRI_H = 260, SIDE = TRI_H * 2 / Math.sqrt(3), ROD_LEN = TRI_H;
+  var APEX_Y = 42, BASE_Y = APEX_Y + TRI_H, HALF_BASE = SIDE / 2;
+  var B = {x: CX, y: APEX_Y}, L = {x: CX - HALF_BASE, y: BASE_Y}, R = {x: CX + HALF_BASE, y: BASE_Y};
+
+  function unitVec(f, t) {
+    var dx = t.x - f.x, dy = t.y - f.y, len = Math.hypot(dx, dy);
+    return {x: dx / len, y: dy / len};
+  }
+  var leftDir = unitVec(B, L);
+
+  var colTri = 'rgba(120,60,180,0.25)', colL = 'rgba(30,80,140,0.30)', colR = 'rgba(140,40,80,0.25)';
+  var colOutline = 'rgba(28,58,94,0.35)', colRod = '#c2351f', colRodGlow = 'rgba(194,53,31,0.25)';
+
+  // Steps data
+  var steps = [
+    {title: '步骤 1：等边三角形与旋转小棒', desc: '等边三角形高度为 1，一根长度也为 1 的小棒一端固定在上顶点 b。小棒从左边逆时针旋转到右边，扫过 60° 内角。此时扫过的面积是 π/6（约 0.5236）。', tip: '观察：直接旋转扫过的是一个 60° 扇形，面积较大。如何让扫过的面积变小呢？'},
+    {title: '步骤 2：小棒分两段扫 + 中间平移', desc: '如果我们将大三角形平均分为2个面积相等的三角形，运用鲍尔平移知识，可以知道扫过的面积和不切分是一样的。', tip: '小棒先在左边扫 30°，再平移到右边，再扫 30°。总扫过面积仍为 π/6。'},
+    {title: '步骤 3：三角形重叠 + 小棒动作', desc: '既然平移不算面积，那么将切分后的两个三角形以最大面积重合，再次旋转扫过，此时的面积就比刚才要小很多了。', tip: '重叠越多，真正新扫过的面积就越小。'},
+    {title: '步骤 4：切成四份并平移重叠', desc: '把两个直角三角形再切成四个更瘦的小三角形，然后用同样的平移方式把它们重叠起来。切得越细、重叠越多，扫过的新面积就越小。', tip: '继续细分并重叠，为最终的佩龙树做准备。'},
+    {title: '步骤 5：不断细分 → 佩龙树', desc: '无限切分下去，把所有小三角形重叠起来，最终形成一种刺状结构——向上张开的"佩龙树（Perron Tree）"。它用尽可能小的面积完成了线段的旋转！', tip: '佩龙树是非常漂亮的数学构造！'}
+  ];
+
+  var currentStep = 0, animProgress = 0, animating = false, lastTime = 0, rodAngle = 0, rodDir = 1;
+  var animSpeed = 0.18, ROD_SPEED = 28;
+
+  function lerp(a, b, t) { return a + (b - a) * t; }
+  function ease(t) { t = Math.max(0, Math.min(1, t)); return t < 0.5 ? 2 * t * t : -1 + (4 - 2 * t) * t; }
+  function lerpPt(p, q, t) { return {x: lerp(p.x, q.x, t), y: lerp(p.y, q.y, t)}; }
+
+  function drawPolygon(pts, fill, stroke, lw) {
+    if (pts.length < 2) return;
+    ctx.beginPath(); ctx.moveTo(pts[0].x, pts[0].y);
+    for (var i = 1; i < pts.length; i++) ctx.lineTo(pts[i].x, pts[i].y);
+    ctx.closePath();
+    if (fill) { ctx.fillStyle = fill; ctx.fill(); }
+    if (stroke) { ctx.strokeStyle = stroke; ctx.lineWidth = lw || 1.6; ctx.stroke(); }
+  }
+
+  function rodEndAt(a) {
+    var ba = Math.atan2(leftDir.y, leftDir.x);
+    var rad = ba - (a * Math.PI / 180);
+    return {x: B.x + Math.cos(rad) * ROD_LEN, y: B.y + Math.sin(rad) * ROD_LEN};
+  }
+
+  function drawRod(end, origin) {
+    var o = origin || B;
+    ctx.strokeStyle = colRodGlow; ctx.lineWidth = 8; ctx.lineCap = 'round';
+    ctx.beginPath(); ctx.moveTo(o.x, o.y); ctx.lineTo(end.x, end.y); ctx.stroke();
+    ctx.strokeStyle = colRod; ctx.lineWidth = 3.5;
+    ctx.beginPath(); ctx.moveTo(o.x, o.y); ctx.lineTo(end.x, end.y); ctx.stroke();
+    ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(end.x, end.y, 4, 0, 2 * Math.PI); ctx.fill();
+    ctx.fillStyle = colRod; ctx.beginPath(); ctx.arc(o.x, o.y, 5, 0, 2 * Math.PI); ctx.fill();
+  }
+
+  var GAP = 18;
+  var leftApex = {x: B.x - GAP * 0.25, y: B.y}, leftL = {x: L.x - GAP, y: L.y}, leftM = {x: CX - GAP * 0.35, y: BASE_Y};
+  var rightApex = {x: B.x + GAP * 0.25, y: B.y}, rightM = {x: CX + GAP * 0.35, y: BASE_Y}, rightR = {x: R.x + GAP, y: R.y};
+  var shift = 35;
+
+  var leftFinal = [{x: B.x + shift, y: B.y}, {x: L.x + shift, y: L.y}, {x: CX + shift, y: BASE_Y}];
+  var rightFinal = [{x: B.x - shift, y: B.y}, {x: CX - shift, y: BASE_Y}, {x: R.x - shift, y: R.y}];
+
+  function makeFourFinals() {
+    var f = [], bw = SIDE / 4;
+    for (var i = 0; i < 4; i++) {
+      var oc = L.x + (i + 0.5) * bw, tc = CX + (i - 1.5) * 14, dx = tc - oc;
+      f.push([{x: B.x + dx * 0.12, y: B.y}, {x: L.x + i * bw + dx, y: BASE_Y}, {x: L.x + (i + 1) * bw + dx, y: BASE_Y}]);
+    }
+    return f;
+  }
+  var fourFinals = makeFourFinals();
+
+  function splitByBase(apex, p1, p2, n) {
+    var r = [];
+    for (var i = 0; i < n; i++) {
+      var t0 = i / n, t1 = (i + 1) / n;
+      r.push([apex, {x: lerp(p1.x, p2.x, t0), y: lerp(p1.y, p2.y, t0)}, {x: lerp(p1.x, p2.x, t1), y: lerp(p1.y, p2.y, t1)}]);
+    }
+    return r;
+  }
+
+  function drawStep(step, t, dt) {
+    ctx.clearRect(0, 0, W, H);
+    var et = ease(t);
+    // grid background
+    ctx.strokeStyle = 'rgba(28,58,94,0.06)'; ctx.lineWidth = 0.5;
+    for (var x = 0; x < W; x += 30) { ctx.beginPath(); ctx.moveTo(x, 0); ctx.lineTo(x, H); ctx.stroke(); }
+    for (var y = 0; y < H; y += 30) { ctx.beginPath(); ctx.moveTo(0, y); ctx.lineTo(W, y); ctx.stroke(); }
+
+    if (step === 0) {
+      drawPolygon([B, L, R], colTri, colOutline, 2);
+      ctx.strokeStyle = 'rgba(28,58,94,0.25)'; ctx.lineWidth = 1; ctx.setLineDash([4,4]);
+      ctx.beginPath(); ctx.moveTo(CX + HALF_BASE + 10, APEX_Y); ctx.lineTo(CX + HALF_BASE + 10, BASE_Y); ctx.stroke();
+      ctx.setLineDash([]);
+      ctx.fillStyle = 'rgba(28,58,94,0.4)'; ctx.font = '11px "Noto Sans SC",sans-serif';
+      ctx.fillText('高度 = 1', CX + HALF_BASE + 14, (APEX_Y + BASE_Y) / 2 + 3);
+      rodAngle += rodDir * ROD_SPEED * dt;
+      if (rodAngle >= 60) { rodAngle = 60; rodDir = -1; }
+      if (rodAngle <= 0) { rodAngle = 0; rodDir = 1; }
+      ctx.beginPath(); ctx.moveTo(B.x, B.y);
+      for (var i = 0; i <= 24; i++) { var p = rodEndAt(lerp(0, rodAngle, i / 24)); ctx.lineTo(p.x, p.y); }
+      ctx.closePath(); ctx.fillStyle = 'rgba(194,53,31,0.18)'; ctx.fill();
+      drawRod(rodEndAt(rodAngle));
+      ctx.fillStyle = '#1c3a5e'; ctx.font = 'bold 12px "Noto Sans SC",sans-serif';
+      ctx.fillText('b', B.x + 8, B.y - 6);
+      ctx.fillStyle = '#c2351f'; ctx.font = '11px "Noto Sans SC",sans-serif';
+      ctx.fillText(rodAngle.toFixed(0) + '°', B.x - 16, B.y + 24);
+    } else if (step === 1) {
+      var pA = 0.32, pB = 0.55;
+      var leftPts = [{x: leftApex.x, y: leftApex.y}, {x: leftL.x, y: leftL.y}, {x: leftM.x, y: leftM.y}];
+      var rightPts = [{x: rightApex.x, y: rightApex.y}, {x: rightM.x, y: rightM.y}, {x: rightR.x, y: rightR.y}];
+      drawPolygon(rightPts, colR, colOutline, 1.7);
+      drawPolygon(leftPts, colL, colOutline, 1.7);
+      var ang, origin, end, label;
+      if (et < pA) {
+        var ta = et / pA; ang = ta * 30; origin = leftApex;
+        var ba = Math.atan2(leftL.y - leftApex.y, leftL.x - leftApex.x);
+        var rad = ba - ang * Math.PI / 180;
+        end = {x: origin.x + Math.cos(rad) * ROD_LEN, y: origin.y + Math.sin(rad) * ROD_LEN};
+        label = '① 左边扫 30°  ' + ang.toFixed(0) + '°';
+        ctx.beginPath(); ctx.moveTo(origin.x, origin.y);
+        for (i = 0; i <= 16; i++) { var aa = lerp(0, ang, i / 16); var rr = ba - aa * Math.PI / 180; ctx.lineTo(origin.x + Math.cos(rr) * ROD_LEN, origin.y + Math.sin(rr) * ROD_LEN); }
+        ctx.closePath(); ctx.fillStyle = 'rgba(194,53,31,0.18)'; ctx.fill();
+      } else if (et < pB) {
+        var tb = (et - pA) / (pB - pA); ang = 30;
+        origin = {x: lerp(leftApex.x, rightApex.x, tb), y: lerp(leftApex.y, rightApex.y, tb)};
+        end = {x: origin.x, y: origin.y + ROD_LEN};
+        label = '② 小棒平移到右边';
+      } else {
+        var tc = (et - pB) / (1 - pB); ang = 30 + tc * 30; origin = rightApex;
+        var vertDir = {x: 0, y: 1}; var rightSideDir = unitVec(rightApex, rightR);
+        var a0 = Math.atan2(vertDir.y, vertDir.x); var a1 = Math.atan2(rightSideDir.y, rightSideDir.x);
+        var delta = a1 - a0; if (delta > Math.PI) delta -= 2 * Math.PI; if (delta < -Math.PI) delta += 2 * Math.PI;
+        var rad = a0 + delta * tc;
+        end = {x: origin.x + Math.cos(rad) * ROD_LEN, y: origin.y + Math.sin(rad) * ROD_LEN};
+        label = '③ 右边扫到边长  ' + ang.toFixed(0) + '°';
+        ctx.beginPath(); ctx.moveTo(origin.x, origin.y);
+        for (i = 0; i <= 16; i++) { var tt = i / 16; var r = a0 + delta * tt; ctx.lineTo(origin.x + Math.cos(r) * ROD_LEN, origin.y + Math.sin(r) * ROD_LEN); }
+        ctx.closePath(); ctx.fillStyle = 'rgba(194,53,31,0.18)'; ctx.fill();
+      }
+      drawRod(end, origin);
+      ctx.fillStyle = '#c2351f'; ctx.font = '12px "Noto Sans SC",sans-serif'; ctx.fillText(label, 12, 24);
+      ctx.fillStyle = '#1c3a5e'; ctx.font = 'bold 11px "Noto Sans SC",sans-serif';
+      ctx.fillText('b', leftApex.x + 6, leftApex.y - 4); ctx.fillText('b', rightApex.x + 6, rightApex.y - 4);
+    } else if (step === 2) {
+      var triPhase = 0.55;
+      var ls = [{x: leftApex.x, y: leftApex.y}, {x: leftL.x, y: leftL.y}, {x: leftM.x, y: leftM.y}];
+      var rs = [{x: rightApex.x, y: rightApex.y}, {x: rightM.x, y: rightM.y}, {x: rightR.x, y: rightR.y}];
+      var ln, rn;
+      if (et < triPhase) { var tt = et / triPhase; ln = ls.map(function(p,i){return lerpPt(p, leftFinal[i], tt);}); rn = rs.map(function(p,i){return lerpPt(p, rightFinal[i], tt);}); }
+      else { ln = leftFinal; rn = rightFinal; }
+      drawPolygon(rn, colR, colOutline, 1.5); drawPolygon(ln, colL, colOutline, 1.5);
+      if (et >= triPhase) {
+        var rodT = (et - triPhase) / (1 - triPhase), pA2 = 0.28, pB2 = 0.55;
+        var baseOrigin = leftFinal[0], otherOrigin = rightFinal[0];
+        var origin2, end2, label2, ang2;
+        var leftSideDir0 = unitVec(baseOrigin, leftFinal[1]);
+        var a0L = Math.atan2(leftSideDir0.y, leftSideDir0.x), a1L = Math.atan2(1, 0);
+        var deltaL = a1L - a0L; if (deltaL > Math.PI) deltaL -= 2 * Math.PI; if (deltaL < -Math.PI) deltaL += 2 * Math.PI;
+        var rightSideDir0 = unitVec(otherOrigin, rightFinal[2]);
+        var a0R = Math.atan2(1, 0), a1R = Math.atan2(rightSideDir0.y, rightSideDir0.x);
+        var deltaR = a1R - a0R; if (deltaR > Math.PI) deltaR -= 2 * Math.PI; if (deltaR < -Math.PI) deltaR += 2 * Math.PI;
+        if (rodT < pA2) {
+          var ta = rodT / pA2; ang2 = ta * 30; origin2 = baseOrigin;
+          var rad = a0L + deltaL * ta;
+          end2 = {x: origin2.x + Math.cos(rad) * ROD_LEN, y: origin2.y + Math.sin(rad) * ROD_LEN};
+          label2 = '① 旋转到竖直边  ' + ang2.toFixed(0) + '°';
+          ctx.beginPath(); ctx.moveTo(origin2.x, origin2.y);
+          for (i = 0; i <= 24; i++) { var tt = i / 24; var r = a0L + deltaL * tt * ta; ctx.lineTo(origin2.x + Math.cos(r) * ROD_LEN, origin2.y + Math.sin(r) * ROD_LEN); }
+          ctx.closePath(); ctx.fillStyle = 'rgba(194,53,31,0.18)'; ctx.fill();
+        } else if (rodT < pB2) {
+          ctx.beginPath(); ctx.moveTo(baseOrigin.x, baseOrigin.y);
+          for (i = 0; i <= 24; i++) { var tt = i / 24; var r = a0L + deltaL * tt; ctx.lineTo(baseOrigin.x + Math.cos(r) * ROD_LEN, baseOrigin.y + Math.sin(r) * ROD_LEN); }
+          ctx.closePath(); ctx.fillStyle = 'rgba(194,53,31,0.18)'; ctx.fill();
+          var tb = (rodT - pA2) / (pB2 - pA2); ang2 = 30;
+          origin2 = {x: lerp(baseOrigin.x, otherOrigin.x, tb), y: lerp(baseOrigin.y, otherOrigin.y, tb)};
+          end2 = {x: origin2.x, y: origin2.y + ROD_LEN};
+          label2 = '② 平移到另一个顶点';
+        } else {
+          ctx.beginPath(); ctx.moveTo(baseOrigin.x, baseOrigin.y);
+          for (i = 0; i <= 24; i++) { var tt = i / 24; var r = a0L + deltaL * tt; ctx.lineTo(baseOrigin.x + Math.cos(r) * ROD_LEN, baseOrigin.y + Math.sin(r) * ROD_LEN); }
+          ctx.closePath(); ctx.fillStyle = 'rgba(194,53,31,0.18)'; ctx.fill();
+          var tc = (rodT - pB2) / (1 - pB2); ang2 = 30 + tc * 30; origin2 = otherOrigin;
+          var rad2 = a0R + deltaR * tc;
+          end2 = {x: origin2.x + Math.cos(rad2) * ROD_LEN, y: origin2.y + Math.sin(rad2) * ROD_LEN};
+          label2 = '③ 逆时针转到右边  ' + ang2.toFixed(0) + '°';
+          ctx.beginPath(); ctx.moveTo(origin2.x, origin2.y);
+          for (i = 0; i <= 24; i++) { var tt = i / 24; var r = a0R + deltaR * tt * tc; ctx.lineTo(origin2.x + Math.cos(r) * ROD_LEN, origin2.y + Math.sin(r) * ROD_LEN); }
+          ctx.closePath(); ctx.fillStyle = 'rgba(194,53,31,0.18)'; ctx.fill();
+        }
+        drawRod(end2, origin2);
+        ctx.fillStyle = '#c2351f'; ctx.font = '12px "Noto Sans SC",sans-serif'; ctx.fillText(label2, 12, 24);
+      } else {
+        ctx.fillStyle = 'rgba(28,58,94,0.4)'; ctx.font = '12px "Noto Sans SC",sans-serif'; ctx.fillText('三角形平移重叠中…', 12, 24);
+      }
+    } else if (step === 3) {
+      var cutPhase = 0.40, n = 4;
+      if (et < cutPhase) {
+        var ta = et / cutPhase;
+        var tris = splitByBase(B, L, R, n);
+        var spread = ta * 10;
+        tris.forEach(function(tri, i) {
+          var off = (i - 1.5) * spread;
+          drawPolygon(tri.map(function(p) { return {x: p.x + off, y: p.y}; }), i < 2 ? colL : colR, colOutline, 1.3);
+        });
+        ctx.fillStyle = '#c2351f'; ctx.beginPath(); ctx.arc(B.x, B.y, 4, 0, 2 * Math.PI); ctx.fill();
+        ctx.fillStyle = 'rgba(28,58,94,0.4)'; ctx.font = '12px "Noto Sans SC",sans-serif'; ctx.fillText('切成四份…', 12, 24);
+      } else {
+        var tb = (et - cutPhase) / (1 - cutPhase);
+        var starts = splitByBase(B, L, R, n).map(function(tri, i) { var off = (i - 1.5) * 10; return tri.map(function(p) { return {x: p.x + off, y: p.y}; }); });
+        starts.forEach(function(s, i) {
+          var now = s.map(function(p, j) { return lerpPt(p, fourFinals[i][j], tb); });
+          drawPolygon(now, 'hsla(' + (255 + i * 18) + ', 48%, 55%, 0.5)', colOutline, 1.2);
+        });
+        if (tb > 0.6) {
+          ctx.strokeStyle = 'rgba(194,53,31,0.6)'; ctx.lineWidth = 2;
+          ctx.beginPath(); ctx.moveTo(CX - 40, BASE_Y + 3); ctx.lineTo(CX + 40, BASE_Y + 3); ctx.stroke();
+          ctx.fillStyle = '#c2351f'; ctx.font = '11px "Noto Sans SC",sans-serif'; ctx.fillText('底边部分重合', CX - 34, BASE_Y + 18);
+        }
+        ctx.fillStyle = 'rgba(28,58,94,0.4)'; ctx.font = '12px "Noto Sans SC",sans-serif'; ctx.fillText('四份平移重叠…', 12, 24);
+      }
+    } else if (step === 4) {
+      var oy = BASE_Y - 16, maxLen = TRI_H + 16;
+      for (var i = 0; i < 28; i++) {
+        var tt = i / 27, angle = lerp(-52, 52, tt);
+        var appear = Math.min(1, Math.max(0, et * 1.5 - tt * 0.4));
+        if (appear <= 0) continue;
+        var len = appear * maxLen, rad = angle * Math.PI / 180;
+        var tipX = CX + Math.sin(rad) * len, tipY = oy - Math.cos(rad) * len;
+        var halfW = 3.2 + Math.abs(angle) * 0.06;
+        var perpX = Math.cos(rad) * halfW, perpY = Math.sin(rad) * halfW;
+        var hue = 280 - tt * 120, alpha = 0.5 + appear * 0.4;
+        ctx.beginPath();
+        ctx.moveTo(CX, oy);
+        ctx.lineTo(tipX - perpX, tipY - perpY);
+        ctx.lineTo(tipX + perpX, tipY + perpY);
+        ctx.closePath();
+        ctx.fillStyle = 'hsla(' + hue + ', 72%, 52%, ' + alpha + ')';
+        ctx.fill();
+        ctx.strokeStyle = 'hsla(' + hue + ', 80%, 70%, ' + (alpha * 0.85) + ')';
+        ctx.lineWidth = 0.7;
+        ctx.stroke();
+      }
+      var g = ctx.createRadialGradient(CX, oy, 0, CX, oy, 35);
+      g.addColorStop(0, 'rgba(160,80,200,0.45)');
+      g.addColorStop(0.5, 'rgba(120,60,180,0.15)');
+      g.addColorStop(1, 'rgba(120,60,180,0)');
+      ctx.fillStyle = g;
+      ctx.beginPath(); ctx.arc(CX, oy, 35, 0, 2 * Math.PI); ctx.fill();
+    }
+  }
+
+  function updateUI() {
+    document.getElementById('perronTitle').textContent = steps[currentStep].title;
+    document.getElementById('perronDesc').textContent = steps[currentStep].desc;
+    document.getElementById('perronTip').textContent = steps[currentStep].tip;
+    var dots = document.getElementById('perronDots');
+    dots.innerHTML = '';
+    steps.forEach(function(_, i) {
+      var d = document.createElement('div');
+      d.className = 'dot' + (i === currentStep ? ' active' : i < currentStep ? ' done' : '');
+      d.textContent = i + 1;
+      d.onclick = function() { goTo(i); };
+      d.style.cssText = 'width:24px;height:24px;border-radius:50%;font-size:.7rem;display:flex;align-items:center;justify-content:center;cursor:pointer;font-weight:600;transition:all .2s;';
+      if (i === currentStep) { d.style.background = 'var(--red)'; d.style.color = '#fff'; d.style.transform = 'scale(1.1)'; }
+      else if (i < currentStep) { d.style.background = 'var(--teal)'; d.style.color = '#fff'; d.style.border = '2px solid var(--teal)'; }
+      else { d.style.background = '#eceff1'; d.style.color = 'var(--ink-soft)'; d.style.border = '2px solid #cfd8dc'; }
+      dots.appendChild(d);
+    });
+  }
+
+  function goTo(i) {
+    if (i < 0 || i >= steps.length) return;
+    currentStep = i; animProgress = 0; animating = true;
+    if (i === 0) { rodAngle = 0; rodDir = 1; }
+    updateUI();
+  }
+
+  function next() {
+    if (currentStep < steps.length - 1) goTo(currentStep + 1);
+  }
+
+  function prev() {
+    if (currentStep > 0) goTo(currentStep - 1);
+  }
+
+  function loop(ts) {
+    try {
+      if (!lastTime) lastTime = ts;
+      var dt = Math.min((ts - lastTime) / 1000, 0.05);
+      lastTime = ts;
+      if (animating && currentStep !== 0) {
+        animProgress += dt * animSpeed;
+        if (animProgress >= 1) { animProgress = 1; animating = false; }
+      }
+      drawStep(currentStep, currentStep === 0 ? 1 : animProgress, dt);
+    } catch(e) { /* ignore draw errors */ }
+    requestAnimationFrame(loop);
+  }
+
+  document.getElementById('perronNext').onclick = function() {
+    if (animating && currentStep !== 0) { animProgress = 1; animating = false; }
+    else next();
+  };
+  document.getElementById('perronPrev').onclick = prev;
+  document.getElementById('perronReset').onclick = function() { goTo(0); };
+  updateUI();
+  window.redrawPerron = function() { drawStep(currentStep, currentStep === 0 ? 1 : animProgress, 0.016); };
+  requestAnimationFrame(loop);
+})();
+
+// ---- 初始化 ----
+switchTo(1);
+</script>
+</body>
+</html>
+<!-- AI 学伴「有志」注入配置：挂谷问题演示 -->
+<script>
+window.__AI_COMPANION_CONFIG = {
+  name: '有志',
+  voice: 'zh-CN-XiaoxiaoNeural',
+  presets: [
+    '为什么棒子绕着中点转，扫过的面积会比捏住一头转更小？',
+    '内摆线方案为什么能把面积降到 π/8，佩龙树又做了什么？',
+    '挂谷集合的面积可以无限接近 0，为什么不等于 0？'
+  ],
+  welcome: '你好，我是有志。我们可以一起研究挂谷问题：一根长度为1的小棒怎样转过所有方向，同时让扫过的面积尽可能小？你可以点击预设问题，也可以问我关于内摆线、贝西科维奇集合和佩龙树的问题。'
+};
+</script>
+<script src="./ai-companion.js?v=33"></script>
