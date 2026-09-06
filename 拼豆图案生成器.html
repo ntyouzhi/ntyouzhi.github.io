@@ -1,0 +1,1052 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>拼豆图案生成器 · Perler Beads Pattern</title>
+<style>
+:root{
+  --bg: oklch(0.975 0.008 85);
+  --panel: oklch(1 0 0);
+  --fg: oklch(0.22 0.02 70);
+  --muted: oklch(0.55 0.02 70);
+  --border: oklch(0.90 0.01 85);
+  --primary: oklch(0.62 0.19 25);
+  --primary-fg: oklch(1 0 0);
+  --accent: oklch(0.75 0.15 90);
+  --ring: oklch(0.62 0.19 25 / 0.35);
+  --radius: 14px;
+  --radius-sm: 9px;
+  --shadow: 0 1px 2px oklch(0.2 0.02 70 / 0.05), 0 4px 16px oklch(0.2 0.02 70 / 0.06);
+  --font: "Outfit","DM Sans",system-ui,-apple-system,"PingFang SC","Microsoft YaHei",sans-serif;
+  --mono: "JetBrains Mono","SFMono-Regular",Consolas,monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{height:100%}
+body{
+  font-family:var(--font);
+  background:var(--bg);
+  color:var(--fg);
+  -webkit-font-smoothing:antialiased;
+  font-size:14px;
+  line-height:1.5;
+}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+input[type=range]{cursor:pointer}
+
+/* ---------- Layout ---------- */
+.app{display:grid;grid-template-columns:320px 1fr;height:100vh}
+.sidebar{
+  background:var(--panel);
+  border-right:1px solid var(--border);
+  padding:20px;
+  overflow-y:auto;
+  display:flex;flex-direction:column;gap:20px;
+}
+.main{
+  overflow:auto;
+  display:flex;flex-direction:column;
+}
+.main-top{
+  padding:18px 24px;
+  border-bottom:1px solid var(--border);
+  display:flex;align-items:center;gap:14px;flex-wrap:wrap;
+  background:var(--panel);
+}
+.stage{
+  flex:1;
+  display:flex;align-items:center;justify-content:center;
+  padding:28px;
+  min-height:0;
+  overflow:auto;
+}
+
+/* ---------- Brand ---------- */
+.brand{display:flex;align-items:center;gap:10px}
+.logo{
+  width:34px;height:34px;border-radius:9px;
+  background:linear-gradient(135deg,var(--primary),var(--accent));
+  display:grid;place-items:center;color:#fff;font-weight:700;font-size:15px;
+  box-shadow:0 2px 6px oklch(0.62 0.19 25 / 0.3);
+}
+.brand h1{font-size:16px;font-weight:700;letter-spacing:-0.01em}
+.brand p{font-size:11.5px;color:var(--muted)}
+
+/* ---------- Dropzone ---------- */
+.dropzone{
+  border:2px dashed var(--border);
+  border-radius:var(--radius);
+  padding:26px 16px;
+  text-align:center;
+  cursor:pointer;
+  transition:border-color .18s, background .18s, transform .12s;
+  background:var(--bg);
+}
+.dropzone:hover{border-color:var(--primary);background:oklch(0.98 0.01 85)}
+.dropzone.dragover{border-color:var(--primary);background:oklch(0.62 0.19 25 / 0.06);transform:scale(1.01)}
+.dropzone .dz-icon{font-size:30px;line-height:1}
+.dropzone .dz-title{font-weight:600;margin-top:6px}
+.dropzone .dz-hint{font-size:11.5px;color:var(--muted);margin-top:3px}
+.dropzone input[type=file]{display:none}
+
+/* ---------- Section / controls ---------- */
+.section-title{
+  font-size:11px;font-weight:700;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--muted);margin-bottom:10px;
+}
+.control-group{margin-bottom:16px}
+.control-group:last-child{margin-bottom:0}
+.control-label{
+  display:flex;justify-content:space-between;align-items:center;
+  font-size:13px;font-weight:500;margin-bottom:6px;
+}
+.control-label .val{
+  font-family:var(--mono);font-size:12px;color:var(--primary);font-weight:600;
+  background:oklch(0.62 0.19 25 / 0.08);
+  padding:2px 8px;border-radius:6px;
+}
+.range-wrap{display:flex;align-items:center;gap:10px}
+input[type=range]{
+  flex:1;-webkit-appearance:none;appearance:none;height:5px;border-radius:99px;
+  background:var(--border);outline:none;
+}
+input[type=range]::-webkit-slider-thumb{
+  -webkit-appearance:none;appearance:none;width:18px;height:18px;border-radius:50%;
+  background:var(--primary);border:3px solid #fff;box-shadow:0 1px 4px oklch(0.2 0.02 70 / .3);
+  transition:transform .12s;
+}
+input[type=range]::-webkit-slider-thumb:hover{transform:scale(1.12)}
+input[type=range]:focus-visible{box-shadow:0 0 0 3px var(--ring)}
+
+/* ---------- Toggle / switch ---------- */
+.toggle-row{display:flex;justify-content:space-between;align-items:center;padding:7px 0}
+.toggle-row span{font-size:13px}
+.switch{position:relative;width:38px;height:22px;flex-shrink:0}
+.switch input{opacity:0;width:0;height:0}
+.switch .track{
+  position:absolute;inset:0;border-radius:99px;background:var(--border);
+  transition:background .18s;
+}
+.switch .track::after{
+  content:"";position:absolute;top:3px;left:3px;width:16px;height:16px;border-radius:50%;
+  background:#fff;transition:transform .18s;box-shadow:0 1px 3px oklch(0.2 0.02 70 / .3);
+}
+.switch input:checked + .track{background:var(--primary)}
+.switch input:checked + .track::after{transform:translateX(16px)}
+
+/* ---------- Presets ---------- */
+.presets{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.preset{
+  padding:7px 4px;border-radius:var(--radius-sm);background:var(--bg);
+  border:1px solid var(--border);font-size:11.5px;font-family:var(--mono);
+  transition:all .15s;
+}
+.preset:hover{border-color:var(--primary)}
+.preset.active{background:var(--primary);color:var(--primary-fg);border-color:var(--primary)}
+
+/* ---------- 生成算法 ---------- */
+.algo-box{display:flex;flex-direction:column;gap:6px}
+.algo-btn{
+  display:flex;align-items:center;justify-content:space-between;gap:8px;
+  width:100%;padding:9px 12px;border-radius:var(--radius-sm);background:var(--bg);
+  border:1px solid var(--border);font-size:12.5px;font-weight:600;text-align:left;
+  transition:all .15s;
+}
+.algo-btn:hover{border-color:var(--primary)}
+.algo-btn.active{background:var(--primary);color:var(--primary-fg);border-color:var(--primary)}
+.algo-btn .sub{font-size:11px;font-weight:400;opacity:.62;flex-shrink:0}
+
+/* ---------- Buttons ---------- */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:7px;
+  padding:10px 14px;border-radius:var(--radius-sm);font-weight:600;font-size:13px;
+  transition:transform .12s, box-shadow .15s, background .15s;
+}
+.btn:active{transform:scale(.97)}
+.btn-primary{background:var(--primary);color:var(--primary-fg);box-shadow:0 2px 8px oklch(0.62 0.19 25 / .28)}
+.btn-primary:hover{box-shadow:0 4px 14px oklch(0.62 0.19 25 / .36)}
+.btn-ghost{background:var(--bg);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--primary)}
+.btn-block{width:100%}
+.btn:disabled{opacity:.45;cursor:not-allowed}
+
+/* ---------- Stats ---------- */
+.stats{display:grid;grid-template-columns:1fr 1fr;gap:8px}
+.stat{
+  background:var(--bg);border:1px solid var(--border);border-radius:var(--radius-sm);
+  padding:10px 12px;
+}
+.stat .k{font-size:11px;color:var(--muted)}
+.stat .v{font-size:19px;font-weight:700;font-family:var(--mono);letter-spacing:-.02em}
+
+/* ---------- Compare / Preview ---------- */
+.compare{
+  display:grid;
+  grid-template-columns:repeat(2, minmax(340px, 1fr));
+  gap:16px;
+  width:100%;
+  max-width:1680px;
+}
+.pane{
+  background:var(--panel);border:1px solid var(--border);border-radius:var(--radius);
+  box-shadow:var(--shadow);padding:16px;
+  display:flex;flex-direction:column;min-width:0;
+}
+.pane-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:12px}
+.pane-head b{font-size:13px}
+.pane-head .meta{font-size:11.5px;color:var(--muted);font-family:var(--mono)}
+.pane-body{
+  display:flex;align-items:center;justify-content:center;
+  overflow:auto;
+  height:calc(100vh - 300px);
+  min-height:320px;
+  border-radius:var(--radius-sm);padding:14px;
+}
+.pane-body.beads{
+  background:
+    repeating-conic-gradient(oklch(0.92 0.01 85) 0% 25%, oklch(0.99 0 0) 0% 50%) 50%/20px 20px;
+}
+.pane-body.orig{background:var(--bg)}
+#origImg{max-width:100%;max-height:100%;object-fit:contain;border-radius:6px;box-shadow:0 1px 3px oklch(0.2 0.02 70 / .08)}
+canvas#grid{image-rendering:pixelated;max-width:none;cursor:crosshair;touch-action:pan-x pan-y}
+
+/* ---------- Legend / palette ---------- */
+.legend{grid-column:1 / -1}
+.legend-list{display:flex;flex-wrap:wrap;gap:6px}
+.legend-item{
+  display:flex;align-items:center;gap:5px;font-size:11.5px;
+  background:var(--bg);border:1px solid var(--border);border-radius:7px;padding:3px 8px;
+}
+.legend-item .dot{width:13px;height:13px;border-radius:50%;border:1px solid oklch(0.2 0.02 70 / .15)}
+.legend-item .cnt{font-family:var(--mono);color:var(--muted)}
+
+/* ---------- Empty state ---------- */
+.empty{
+  text-align:center;color:var(--muted);max-width:360px;
+}
+.empty .big{font-size:44px;margin-bottom:10px}
+.empty h3{font-size:16px;color:var(--fg);margin-bottom:6px}
+
+/* ---------- Toast ---------- */
+#toast{
+  position:fixed;bottom:22px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:var(--fg);color:var(--bg);padding:11px 18px;border-radius:10px;font-size:13px;
+  opacity:0;pointer-events:none;transition:all .25s;box-shadow:0 8px 24px oklch(0.2 0.02 70 / .25);
+  z-index:50;
+}
+#toast.show{opacity:1;transform:translateX(-50%) translateY(0)}
+
+/* ---------- Responsive ---------- */
+@media (max-width:820px){
+  .app{grid-template-columns:1fr;height:auto}
+  .sidebar{position:static;border-right:none;border-bottom:1px solid var(--border)}
+  .main{min-height:70vh}
+  .stage{padding:16px}
+}
+/* 注：compare 始终左右两列（每列最小 280px），过窄时整体横向滚动 */
+</style>
+</head>
+<body>
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <div class="logo">豆</div>
+      <div>
+        <h1>拼豆图案生成器</h1>
+        <p>Perler Beads Pattern Generator</p>
+      </div>
+    </div>
+
+    <div class="section-title">图片</div>
+    <div class="dropzone" id="dropzone">
+      <div class="dz-icon">🖼️</div>
+      <div class="dz-title">点击或拖拽上传图片</div>
+      <div class="dz-hint">支持 JPG / PNG / WebP</div>
+      <input type="file" id="fileInput" accept="image/*">
+    </div>
+
+    <div id="controls" style="display:none">
+      <div class="section-title" style="margin-top:8px">尺寸</div>
+      <div class="control-group">
+        <div class="control-label">宽度（列）<span class="val" id="colsVal">29</span></div>
+        <input type="range" id="colsRange" min="5" max="100" value="29">
+      </div>
+      <div class="control-group">
+        <div class="control-label">高度（行）<span class="val" id="rowsVal">29</span></div>
+        <input type="range" id="rowsRange" min="5" max="100" value="29">
+      </div>
+      <div class="toggle-row">
+        <span>锁定宽高比例</span>
+        <label class="switch"><input type="checkbox" id="lockRatio" checked><span class="track"></span></label>
+      </div>
+      <div class="control-group">
+        <div class="control-label">常用拼豆板</div>
+        <div class="presets" id="presets"></div>
+      </div>
+
+      <div class="section-title" style="margin-top:18px">生成算法</div>
+      <div class="algo-box" id="algoBox"></div>
+      <div class="control-group" id="outlineGroup" style="margin-top:16px">
+        <div class="control-label">描边强度 <span class="val" id="outlineVal">120</span></div>
+        <input type="range" id="outlineRange" min="80" max="200" value="120">
+      </div>
+      <div class="control-group" style="margin-top:16px">
+        <div class="control-label">颜色数量 <span class="val" id="colorLimitVal">自动</span></div>
+        <input type="range" id="colorLimitRange" min="2" max="44" value="44">
+      </div>
+
+      <div class="section-title" style="margin-top:18px">显示</div>
+      <div class="toggle-row">
+        <span>烫豆效果（熨烫后）</span>
+        <label class="switch"><input type="checkbox" id="ironed"><span class="track"></span></label>
+      </div>
+      <div class="toggle-row">
+        <span>显示珠子孔洞</span>
+        <label class="switch"><input type="checkbox" id="showHole" checked><span class="track"></span></label>
+      </div>
+      <div class="toggle-row">
+        <span>显示底板网格</span>
+        <label class="switch"><input type="checkbox" id="showGrid" checked><span class="track"></span></label>
+      </div>
+
+      <div class="section-title" style="margin-top:18px">统计</div>
+      <div class="stats">
+        <div class="stat"><div class="k">总珠数</div><div class="v" id="totalBeads">0</div></div>
+        <div class="stat"><div class="k">颜色种类</div><div class="v" id="colorCount">0</div></div>
+      </div>
+    </div>
+  </aside>
+
+  <div class="main">
+    <div class="main-top">
+      <div class="brand">
+        <div class="logo">豆</div>
+        <div>
+          <h1>拼豆图案</h1>
+          <p>把任意图片变成可拼的图案</p>
+        </div>
+      </div>
+      <div style="margin-left:auto;display:flex;gap:8px">
+        <button class="btn btn-ghost" id="btnCopy" disabled>复制配色清单</button>
+        <button class="btn btn-primary" id="btnExport" disabled>导出 PNG</button>
+      </div>
+    </div>
+    <div class="stage">
+      <div id="empty" class="empty">
+        <div class="big">🧩</div>
+        <h3>上传一张图片开始</h3>
+        <p>图片会被自动像素化并映射到拼豆标准色板，左侧可调节尺寸与显示选项</p>
+      </div>
+      <div class="compare" id="previewCard" style="display:none">
+        <div class="pane">
+          <div class="pane-head">
+            <b>原图</b>
+            <span class="meta" id="origMeta"></span>
+          </div>
+          <div class="pane-body orig" id="origHolder">
+            <img id="origImg" alt="原图预览">
+          </div>
+        </div>
+        <div class="pane">
+          <div class="pane-head">
+            <b>拼豆</b>
+            <span class="meta" id="metaInfo"></span>
+          </div>
+          <div class="pane-body beads" id="canvasHolder">
+            <canvas id="grid"></canvas>
+          </div>
+        </div>
+        <div class="legend">
+          <div class="section-title">配色方案</div>
+          <div class="legend-list" id="legend"></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+<div id="toast"></div>
+<script>
+'use strict';
+/* ============ 拼豆标准色板（Perler Beads 近似色） ============ */
+const PALETTE = [
+  { name:'白色', hex:'#fcfcfc' },
+  { name:'奶油', hex:'#f2e6c9' },
+  { name:'淡黄', hex:'#fcef7a' },
+  { name:'黄色', hex:'#f5d93d' },
+  { name:'切达黄', hex:'#f2b42d' },
+  { name:'橙色', hex:'#f07e2b' },
+  { name:'蜜桃', hex:'#f7c8a0' },
+  { name:'腮红', hex:'#f5a7a0' },
+  { name:'三文鱼', hex:'#f58c8c' },
+  { name:'珊瑚', hex:'#f26d4f' },
+  { name:'红色', hex:'#d93a3a' },
+  { name:'樱桃红', hex:'#b01e1e' },
+  { name:'树莓', hex:'#c22e6e' },
+  { name:'品红', hex:'#d02090' },
+  { name:'泡泡糖', hex:'#f49ac1' },
+  { name:'粉色', hex:'#f7a8c4' },
+  { name:'紫罗兰', hex:'#8e5aa8' },
+  { name:'紫色', hex:'#6b3e7e' },
+  { name:'梅紫', hex:'#4e2a5e' },
+  { name:'薰衣草', hex:'#b39ddb' },
+  { name:'长春花', hex:'#7c8cc0' },
+  { name:'浅蓝', hex:'#a9c4e8' },
+  { name:'亮蓝', hex:'#6bb6e0' },
+  { name:'蓝色', hex:'#2e6eb5' },
+  { name:'深蓝', hex:'#1a3e6e' },
+  { name:'牙膏蓝', hex:'#a8d8e8' },
+  { name:'蓝绿', hex:'#00a8a8' },
+  { name:'青色', hex:'#007b7b' },
+  { name:'薄荷', hex:'#a9d08e' },
+  { name:'亮绿', hex:'#7cc576' },
+  { name:'绿色', hex:'#3a8c4a' },
+  { name:'深绿', hex:'#1b5e20' },
+  { name:'奇异果绿', hex:'#9acd32' },
+  { name:'黄绿', hex:'#c8d839' },
+  { name:'棕褐', hex:'#c8a165' },
+  { name:'浅棕', hex:'#b07c50' },
+  { name:'棕色', hex:'#7b4b2a' },
+  { name:'深棕', hex:'#4e342e' },
+  { name:'铁锈', hex:'#a0522d' },
+  { name:'浅灰', hex:'#cfcfcf' },
+  { name:'灰色', hex:'#9e9e9e' },
+  { name:'深灰', hex:'#5a5a5a' },
+  { name:'炭灰', hex:'#3a3a3a' },
+  { name:'黑色', hex:'#1a1a1a' },
+];
+
+function hexToRgb(hex){
+  const h = hex.replace('#','');
+  return {
+    r: parseInt(h.substring(0,2), 16),
+    g: parseInt(h.substring(2,4), 16),
+    b: parseInt(h.substring(4,6), 16)
+  };
+}
+PALETTE.forEach(c => c.rgb = hexToRgb(c.hex));
+
+const clamp = (v, lo, hi) => Math.max(lo, Math.min(hi, v));
+
+/* ============ 状态 ============ */
+const state = {
+  img: null, imgW: 0, imgH: 0,
+  cols: 29, rows: 29,
+  lockRatio: true,
+  showHole: true, showGrid: true,
+  ironed: false,          // 烫豆（熨烫后）效果
+  colorLimit: 44,        // 44 = 自动（全部色板）
+  outlineThreshold: 120, // 描边阈值：越小描边越多
+  algo: 'classic',       // 生成算法 id
+  grid: []   // grid[y][x] = 色板索引；-1 表示透明（映射为白）
+};
+
+/* ============ DOM 引用 ============ */
+const $ = id => document.getElementById(id);
+const dropzone = $('dropzone'), fileInput = $('fileInput');
+const controls = $('controls'), empty = $('empty'), previewCard = $('previewCard');
+const colsRange = $('colsRange'), rowsRange = $('rowsRange');
+const colsVal = $('colsVal'), rowsVal = $('rowsVal');
+const lockRatio = $('lockRatio'), showHole = $('showHole'), showGrid = $('showGrid'), ironed = $('ironed');
+const presetsBox = $('presets'), legendBox = $('legend');
+const metaInfo = $('metaInfo'), origMeta = $('origMeta');
+const origImg = $('origImg');
+const colorLimitRange = $('colorLimitRange'), colorLimitVal = $('colorLimitVal');
+const algoBox = $('algoBox');
+const outlineGroup = $('outlineGroup'), outlineRange = $('outlineRange'), outlineVal = $('outlineVal');
+const btnExport = $('btnExport'), btnCopy = $('btnCopy');
+const canvas = $('grid'), ctx = canvas.getContext('2d');
+
+/* ============ 常用拼豆板预设 ============ */
+const PRESETS = [
+  { label:'16×16', w:16, h:16 },
+  { label:'29×29', w:29, h:29 },
+  { label:'16×29', w:16, h:29 },
+  { label:'29×50', w:29, h:50 },
+  { label:'32×32', w:32, h:32 },
+  { label:'50×50', w:50, h:50 },
+  { label:'50×100', w:50, h:100 },
+  { label:'40×40', w:40, h:40 },
+];
+PRESETS.forEach(p => {
+  const b = document.createElement('button');
+  b.className = 'preset';
+  b.textContent = p.label;
+  b.dataset.w = p.w; b.dataset.h = p.h;
+  b.addEventListener('click', () => applyPreset(p.w, p.h));
+  presetsBox.appendChild(b);
+});
+
+/* ============ 生成算法 ============ */
+const ALGORITHMS = [
+  { id: 'classic',    name: '经典拼豆',  sub: '平滑映射 · 标准色板', outline: false },
+  { id: 'comic',      name: '漫画描边',  sub: '单像素轮廓线 · 漫画风', outline: true  },
+  { id: 'flat',       name: '色块漫画',  sub: '8色简化 + 描边',       outline: true  },
+  { id: 'vivid',      name: '鲜艳',      sub: '高饱和 · 更浓烈',     outline: false },
+  { id: 'silhouette', name: '剪影',      sub: '主体提取 · 白底黑影', outline: false },
+  { id: 'mono',       name: '黑白',      sub: '灰度 · 怀旧',         outline: false },
+];
+function renderAlgoButtons(){
+  algoBox.innerHTML = '';
+  ALGORITHMS.forEach(a => {
+    const b = document.createElement('button');
+    b.className = 'algo-btn' + (a.id === state.algo ? ' active' : '');
+    b.innerHTML = `<span>${a.name}</span><span class="sub">${a.sub}</span>`;
+    b.addEventListener('click', () => {
+      state.algo = a.id;
+      renderAlgoButtons();
+      processImage();
+    });
+    algoBox.appendChild(b);
+  });
+  outlineGroup.style.display = ALGORITHMS.find(a => a.id === state.algo).outline ? 'block' : 'none';
+}
+renderAlgoButtons();
+
+/* ============ 最近色匹配（感知加权色差） ============ */
+function colorDistance(a, b){
+  const rmean = (a.r + b.r) / 2;
+  const dr = a.r - b.r, dg = a.g - b.g, db = a.b - b.b;
+  return Math.sqrt((2 + rmean/256)*dr*dr + 4*dg*dg + (2 + (255-rmean)/256)*db*db);
+}
+function findNearest(r, g, b){
+  const src = { r, g, b };
+  let best = 0, bestDist = Infinity;
+  for (let i = 0; i < PALETTE.length; i++){
+    const d = colorDistance(src, PALETTE[i].rgb);
+    if (d < bestDist){ bestDist = d; best = i; }
+  }
+  return best;
+}
+
+/* ============ 算法预处理（饱和度 / 灰度 / 二值化） ============ */
+function saturate(r, g, b, f){
+  const gray = 0.299*r + 0.587*g + 0.114*b;
+  return [
+    clamp(gray + (r - gray) * f, 0, 255),
+    clamp(gray + (g - gray) * f, 0, 255),
+    clamp(gray + (b - gray) * f, 0, 255)
+  ];
+}
+function preprocess(algoId, p){
+  switch (algoId){
+    case 'vivid':      return saturate(p[0], p[1], p[2], 1.9);
+    case 'mono': {
+      const l = 0.299*p[0] + 0.587*p[1] + 0.114*p[2];
+      return [l, l, l];
+    }
+    case 'silhouette': return p; // 剪影交给 extractSilhouette 处理，保留原始颜色用于连通判断
+    default: return p;
+  }
+}
+const luminance = idx => {
+  const c = PALETTE[idx].rgb;
+  return 0.299*c.r + 0.587*c.g + 0.114*c.b;
+};
+
+/* ============ 描边：色块边界铺单像素黑色轮廓线（防扩散） ============ */
+function applyOutline(grid, threshold){
+  const BLACK = PALETTE.length - 1; // 黑色索引
+  const rows = grid.length, cols = grid[0].length;
+  const lum = grid.map(r => r.map(idx => luminance(idx)));
+  const edge = Array.from({length: rows}, () => new Array(cols).fill(false));
+  // 只与右/下邻居比较；每对色块边界只在较亮一侧描黑 → 1px 线、无传染
+  for (let y = 0; y < rows; y++){
+    for (let x = 0; x < cols; x++){
+      const idx = grid[y][x];
+      const c = PALETTE[idx];
+      if (x + 1 < cols){
+        const nIdx = grid[y][x+1];
+        if (colorDistance(c.rgb, PALETTE[nIdx].rgb) > threshold){
+          if (lum[y][x] >= lum[y][x+1]) edge[y][x] = true;
+          else edge[y][x+1] = true;
+        }
+      }
+      if (y + 1 < rows){
+        const nIdx = grid[y+1][x];
+        if (colorDistance(c.rgb, PALETTE[nIdx].rgb) > threshold){
+          if (lum[y][x] >= lum[y+1][x]) edge[y][x] = true;
+          else edge[y+1][x] = true;
+        }
+      }
+    }
+  }
+  const res = grid.map(r => r.slice());
+  for (let y = 0; y < rows; y++)
+    for (let x = 0; x < cols; x++)
+      if (edge[y][x]) res[y][x] = BLACK;
+  return res;
+}
+
+/* ============ 剪影：从边缘提取背景（flood fill），主体铺黑 ============ */
+function extractSilhouette(grid, tol){
+  const WHITE = 0, BLACK = PALETTE.length - 1;
+  const rows = grid.length, cols = grid[0].length;
+  // 背景参考色集合 = 图片四边所有颜色（覆盖渐变背景）
+  const bgSet = new Set();
+  for (let x = 0; x < cols; x++){
+    bgSet.add(grid[0][x]); bgSet.add(grid[rows-1][x]);
+  }
+  for (let y = 0; y < rows; y++){
+    bgSet.add(grid[y][0]); bgSet.add(grid[y][cols-1]);
+  }
+
+  // BFS：从四边向内扩散，颜色与任一背景参考色接近的像素标为背景
+  const isBg = Array.from({length: rows}, () => new Array(cols).fill(false));
+  const queue = [];
+  const nearBg = v => {
+    for (const ref of bgSet){
+      if (colorDistance(PALETTE[v].rgb, PALETTE[ref].rgb) < tol) return true;
+    }
+    return false;
+  };
+  const push = (x, y) => {
+    if (x < 0 || y < 0 || x >= cols || y >= rows || isBg[y][x]) return;
+    if (nearBg(grid[y][x])){
+      isBg[y][x] = true;
+      queue.push([x, y]);
+    }
+  };
+  for (let x = 0; x < cols; x++){ push(x, 0); push(x, rows-1); }
+  for (let y = 0; y < rows; y++){ push(0, y); push(cols-1, y); }
+  while (queue.length){
+    const [x, y] = queue.shift();
+    push(x+1, y); push(x-1, y); push(x, y+1); push(x, y-1);
+  }
+
+  const res = grid.map(r => r.slice());
+  for (let y = 0; y < rows; y++)
+    for (let x = 0; x < cols; x++)
+      res[y][x] = isBg[y][x] ? WHITE : BLACK;
+  return res;
+}
+
+/* ============ 像素采样 + 映射 ============ */
+
+
+function sampleArray(arr, m){
+  if (arr.length <= m) return arr;
+  const out = new Array(m);
+  const step = (arr.length - 1) / (m - 1);
+  for (let i = 0; i < m; i++) out[i] = arr[Math.round(i * step)];
+  return out;
+}
+
+function quantize(pixels, k){
+  // pixels: [r,g,b][]，k：目标颜色数；返回 k 个中心色
+  if (pixels.length === 0) return [[255,255,255]];
+  if (pixels.length <= k) return pixels.slice(0, k);
+  const centers = [];
+  const step = Math.floor(pixels.length / k);
+  for (let i = 0; i < k; i++) centers.push(pixels[Math.min(i * step, pixels.length - 1)].slice());
+  const assign = new Array(pixels.length);
+  for (let iter = 0; iter < 14; iter++){
+    for (let i = 0; i < pixels.length; i++){
+      const p = pixels[i];
+      let best = 0, bd = Infinity;
+      for (let c = 0; c < k; c++){
+        const dr = p[0]-centers[c][0], dg = p[1]-centers[c][1], db = p[2]-centers[c][2];
+        const d = dr*dr + dg*dg + db*db;
+        if (d < bd){ bd = d; best = c; }
+      }
+      assign[i] = best;
+    }
+    const sums = Array.from({length:k}, () => [0,0,0,0]);
+    for (let i = 0; i < pixels.length; i++){
+      const c = assign[i], p = pixels[i];
+      sums[c][0]+=p[0]; sums[c][1]+=p[1]; sums[c][2]+=p[2]; sums[c][3]++;
+    }
+    let moved = 0;
+    for (let c = 0; c < k; c++){
+      if (sums[c][3] === 0) continue;
+      const nr = sums[c][0]/sums[c][3], ng = sums[c][1]/sums[c][3], nb = sums[c][2]/sums[c][3];
+      moved += Math.abs(nr-centers[c][0]) + Math.abs(ng-centers[c][1]) + Math.abs(nb-centers[c][2]);
+      centers[c] = [nr, ng, nb];
+    }
+    if (moved < 1) break;
+  }
+  return centers;
+}
+
+function processImage(){
+  if (!state.img) return;
+  const cols = state.cols, rows = state.rows;
+  const off = document.createElement('canvas');
+  off.width = cols; off.height = rows;
+  const octx = off.getContext('2d', { willReadFrequently: true });
+  octx.imageSmoothingEnabled = true;
+  octx.imageSmoothingQuality = 'high';
+  octx.drawImage(state.img, 0, 0, cols, rows);
+  const data = octx.getImageData(0, 0, cols, rows).data;
+  const algo = ALGORITHMS.find(a => a.id === state.algo) || ALGORITHMS[0];
+
+  // 1) 收集像素 + 算法预处理（饱和度/灰度）
+  const n = cols * rows;
+  const px = new Array(n);
+  for (let i = 0; i < n; i++){
+    const a = data[i*4+3];
+    const raw = a < 128 ? null : [data[i*4], data[i*4+1], data[i*4+2]];
+    px[i] = raw ? preprocess(algo.id, raw) : null;
+  }
+
+  // 2) 颜色量化（限制颜色数量；色块漫画强制 8 色）
+  const limit = algo.id === 'flat' ? Math.min(state.colorLimit, 8) : state.colorLimit;
+  let centers = null, centerPalette = null;
+  if (limit < 44){
+    const opaque = px.filter(p => p !== null);
+    const sample = sampleArray(opaque, 4000);
+    centers = quantize(sample, limit);
+    centerPalette = centers.map(c => findNearest(c[0], c[1], c[2]));
+  }
+
+  // 3) 填充 grid
+  const grid = [];
+  for (let y = 0; y < rows; y++){
+    const row = [];
+    for (let x = 0; x < cols; x++){
+      const p = px[y*cols+x];
+      if (p === null){ row.push(0); continue; }
+      if (centers){
+        let best = 0, bd = Infinity;
+        for (let c = 0; c < centers.length; c++){
+          const dr = p[0]-centers[c][0], dg = p[1]-centers[c][1], db = p[2]-centers[c][2];
+          const d = dr*dr + dg*dg + db*db;
+          if (d < bd){ bd = d; best = c; }
+        }
+        row.push(centerPalette[best]);
+      } else {
+        row.push(findNearest(p[0], p[1], p[2]));
+      }
+    }
+    grid.push(row);
+  }
+
+  // 4) 后处理：描边 / 剪影主体提取
+  if (algo.id === 'silhouette'){
+    state.grid = extractSilhouette(grid, 130);
+  } else {
+    state.grid = algo.outline ? applyOutline(grid, state.outlineThreshold) : grid;
+  }
+
+  render();
+  updateStats();
+  updateMeta();
+}
+
+/* ============ 渲染（珠子 / 烫豆 + 网格） ============ */
+function roundRectPath(targetCtx, x, y, w, h, r){
+  const rr = Math.min(r, w/2, h/2);
+  targetCtx.beginPath();
+  targetCtx.moveTo(x+rr, y);
+  targetCtx.arcTo(x+w, y, x+w, y+h, rr);
+  targetCtx.arcTo(x+w, y+h, x, y+h, rr);
+  targetCtx.arcTo(x, y+h, x, y, rr);
+  targetCtx.arcTo(x, y, x+w, y, rr);
+  targetCtx.closePath();
+}
+
+function drawBeads(targetCtx, cell){
+  const cols = state.cols, rows = state.rows;
+  const r = cell * 0.42;
+  for (let y = 0; y < rows; y++){
+    for (let x = 0; x < cols; x++){
+      const c = (state.grid[y] && PALETTE[state.grid[y][x]]) || PALETTE[0];
+      const cx = x*cell + cell/2, cy = y*cell + cell/2;
+      targetCtx.beginPath();
+      targetCtx.arc(cx, cy, r, 0, Math.PI*2);
+      targetCtx.fillStyle = c.hex;
+      targetCtx.fill();
+      const hl = targetCtx.createRadialGradient(cx-r*0.35, cy-r*0.42, 0, cx-r*0.35, cy-r*0.42, r*0.55);
+      hl.addColorStop(0, 'rgba(255,255,255,0.55)');
+      hl.addColorStop(1, 'rgba(255,255,255,0)');
+      targetCtx.beginPath();
+      targetCtx.arc(cx, cy, r, 0, Math.PI*2);
+      targetCtx.fillStyle = hl;
+      targetCtx.fill();
+      if (state.showHole){
+        targetCtx.beginPath();
+        targetCtx.arc(cx, cy, cell*0.14, 0, Math.PI*2);
+        targetCtx.fillStyle = 'rgba(0,0,0,0.20)';
+        targetCtx.fill();
+      }
+      targetCtx.beginPath();
+      targetCtx.arc(cx, cy, r, 0, Math.PI*2);
+      targetCtx.strokeStyle = 'rgba(0,0,0,0.10)';
+      targetCtx.lineWidth = 0.6;
+      targetCtx.stroke();
+    }
+  }
+}
+
+function drawIroned(targetCtx, cell){
+  const cols = state.cols, rows = state.rows;
+  const pad = cell * 0.03;
+  const size = cell - pad*2;
+  for (let y = 0; y < rows; y++){
+    for (let x = 0; x < cols; x++){
+      const c = (state.grid[y] && PALETTE[state.grid[y][x]]) || PALETTE[0];
+      const px = x*cell + pad, py = y*cell + pad;
+      roundRectPath(targetCtx, px, py, size, size, cell*0.16);
+      targetCtx.fillStyle = c.hex;
+      targetCtx.fill();
+      // 熔化后的柔和光泽：顶部亮、底部微暗
+      const gl = targetCtx.createLinearGradient(px, py, px, py+size);
+      gl.addColorStop(0, 'rgba(255,255,255,0.28)');
+      gl.addColorStop(0.35, 'rgba(255,255,255,0.05)');
+      gl.addColorStop(1, 'rgba(0,0,0,0.06)');
+      roundRectPath(targetCtx, px, py, size, size, cell*0.16);
+      targetCtx.fillStyle = gl;
+      targetCtx.fill();
+    }
+  }
+}
+
+function renderTo(targetCtx, cell){
+  const cols = state.cols, rows = state.rows;
+  targetCtx.clearRect(0, 0, cols*cell, rows*cell);
+  targetCtx.fillStyle = '#ffffff';
+  targetCtx.fillRect(0, 0, cols*cell, rows*cell);
+
+  if (state.ironed) drawIroned(targetCtx, cell);
+  else drawBeads(targetCtx, cell);
+
+  if (state.showGrid){
+    targetCtx.strokeStyle = state.ironed ? 'rgba(0,0,0,0.06)' : 'rgba(0,0,0,0.10)';
+    targetCtx.lineWidth = 0.5;
+    for (let i = 0; i <= cols; i++){
+      targetCtx.beginPath(); targetCtx.moveTo(i*cell, 0); targetCtx.lineTo(i*cell, rows*cell); targetCtx.stroke();
+    }
+    for (let i = 0; i <= rows; i++){
+      targetCtx.beginPath(); targetCtx.moveTo(0, i*cell); targetCtx.lineTo(cols*cell, i*cell); targetCtx.stroke();
+    }
+  }
+}
+
+function render(){
+  // 根据面板可用空间自适应珠子大小：大窗口珠子更大更清晰
+  const holder = $('canvasHolder');
+  const availW = Math.max((holder.clientWidth || 400) - 28, 120);
+  const availH = Math.max((holder.clientHeight || 400) - 28, 120);
+  let cell = Math.floor(Math.min(availW / state.cols, availH / state.rows));
+  cell = clamp(cell, 6, 34);
+  const dpr = window.devicePixelRatio || 1;
+  const W = state.cols * cell, H = state.rows * cell;
+  canvas.width = W * dpr;
+  canvas.height = H * dpr;
+  canvas.style.width = W + 'px';
+  canvas.style.height = H + 'px';
+  ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+  renderTo(ctx, cell);
+}
+
+/* ============ 统计 ============ */
+function getCounts(){
+  const counts = {};
+  let total = 0;
+  for (let y = 0; y < state.grid.length; y++){
+    for (let x = 0; x < state.grid[y].length; x++){
+      const idx = state.grid[y][x];
+      if (idx < 0) continue;
+      counts[idx] = (counts[idx] || 0) + 1;
+      total++;
+    }
+  }
+  const entries = Object.entries(counts).sort((a, b) => b[1] - a[1]);
+  return { counts, total, entries };
+}
+
+function updateStats(){
+  const { total, entries } = getCounts();
+  $('totalBeads').textContent = total;
+  $('colorCount').textContent = entries.length;
+  legendBox.innerHTML = '';
+  entries.forEach(([idx, n]) => {
+    const c = PALETTE[idx];
+    const el = document.createElement('span');
+    el.className = 'legend-item';
+    const dot = document.createElement('span');
+    dot.className = 'dot';
+    dot.style.background = c.hex;
+    const cnt = document.createElement('span');
+    cnt.className = 'cnt';
+    cnt.textContent = '×' + n;
+    el.append(dot, document.createTextNode(c.name), cnt);
+    legendBox.appendChild(el);
+  });
+}
+
+function updateMeta(){
+  const { total } = getCounts();
+  metaInfo.textContent = `${state.cols} × ${state.rows}  ·  ${total} 颗`;
+}
+
+/* ============ 预设 & 尺寸 ============ */
+function applyPreset(w, h){
+  state.cols = w; state.rows = h;
+  syncSizeUI();
+  updatePresetActive();
+  processImage();
+}
+function syncSizeUI(){
+  colsRange.value = state.cols; rowsRange.value = state.rows;
+  colsVal.textContent = state.cols; rowsVal.textContent = state.rows;
+}
+function updatePresetActive(){
+  document.querySelectorAll('.preset').forEach(b => {
+    b.classList.toggle('active', +b.dataset.w === state.cols && +b.dataset.h === state.rows);
+  });
+}
+
+function onColsChange(v){
+  state.cols = v;
+  if (state.lockRatio && state.img){
+    state.rows = clamp(Math.round(v * state.imgH / state.imgW), 5, 100);
+  }
+  syncSizeUI();
+  updatePresetActive();
+  processImage();
+}
+function onRowsChange(v){
+  state.rows = v;
+  if (state.lockRatio && state.img){
+    state.cols = clamp(Math.round(v * state.imgW / state.imgH), 5, 100);
+  }
+  syncSizeUI();
+  updatePresetActive();
+  processImage();
+}
+
+/* ============ 图片加载 ============ */
+function loadImage(file){
+  const url = URL.createObjectURL(file);
+  const img = new Image();
+  img.onload = () => {
+    state.img = img;
+    state.imgW = img.naturalWidth;
+    state.imgH = img.naturalHeight;
+    origImg.src = url;
+    origMeta.textContent = `${img.naturalWidth} × ${img.naturalHeight}px`;
+    state.cols = 29;
+    state.rows = clamp(Math.round(29 * img.naturalHeight / img.naturalWidth), 5, 100);
+    syncSizeUI();
+    updatePresetActive();
+    showApp();
+    processImage();
+    setTimeout(() => URL.revokeObjectURL(url), 2000);
+  };
+  img.onerror = () => { toast('图片加载失败，请换一张试试'); };
+  img.src = url;
+}
+function showApp(){
+  empty.style.display = 'none';
+  previewCard.style.display = 'grid';
+  controls.style.display = 'block';
+  btnExport.disabled = false;
+  btnCopy.disabled = false;
+}
+
+/* ============ 导出 PNG（高清） ============ */
+function exportPNG(){
+  const cell = 30;
+  const cols = state.cols, rows = state.rows;
+  const c = document.createElement('canvas');
+  c.width = cols * cell;
+  c.height = rows * cell;
+  renderTo(c.getContext('2d'), cell);
+  const a = document.createElement('a');
+  a.download = `拼豆图案_${cols}x${rows}.png`;
+  a.href = c.toDataURL('image/png');
+  a.click();
+  toast('PNG 已导出');
+}
+
+/* ============ 复制配色清单 ============ */
+function copyScheme(){
+  const { total, entries } = getCounts();
+  let txt = `拼豆图案配色清单  ${state.cols}×${state.rows}  ·  共 ${total} 颗\n`;
+  txt += '─'.repeat(28) + '\n';
+  entries.forEach(([idx, n]) => {
+    const c = PALETTE[idx];
+    txt += `${c.name.padEnd(5, '　')} ${c.hex.toUpperCase()}  × ${n}\n`;
+  });
+  navigator.clipboard.writeText(txt).then(
+    () => toast('配色清单已复制到剪贴板'),
+    () => toast('复制失败，请手动复制')
+  );
+}
+
+/* ============ Toast ============ */
+let toastTimer;
+function toast(msg){
+  const t = $('toast');
+  t.textContent = msg;
+  t.classList.add('show');
+  clearTimeout(toastTimer);
+  toastTimer = setTimeout(() => t.classList.remove('show'), 1800);
+}
+
+/* ============ 事件绑定 ============ */
+dropzone.addEventListener('click', () => fileInput.click());
+dropzone.addEventListener('dragover', e => { e.preventDefault(); dropzone.classList.add('dragover'); });
+dropzone.addEventListener('dragleave', () => dropzone.classList.remove('dragover'));
+dropzone.addEventListener('drop', e => {
+  e.preventDefault();
+  dropzone.classList.remove('dragover');
+  const f = e.dataTransfer.files && e.dataTransfer.files[0];
+  if (f && f.type.startsWith('image/')) loadImage(f);
+});
+fileInput.addEventListener('change', () => {
+  const f = fileInput.files[0];
+  if (f) loadImage(f);
+  fileInput.value = '';
+});
+
+colsRange.addEventListener('input', () => onColsChange(+colsRange.value));
+rowsRange.addEventListener('input', () => onRowsChange(+rowsRange.value));
+lockRatio.addEventListener('change', () => {
+  state.lockRatio = lockRatio.checked;
+  if (state.lockRatio && state.img){
+    state.rows = clamp(Math.round(state.cols * state.imgH / state.imgW), 5, 100);
+    syncSizeUI();
+    processImage();
+  }
+});
+showHole.addEventListener('change', () => { state.showHole = showHole.checked; render(); });
+showGrid.addEventListener('change', () => { state.showGrid = showGrid.checked; render(); });
+ironed.addEventListener('change', () => { state.ironed = ironed.checked; render(); });
+
+colorLimitRange.addEventListener('input', () => {
+  state.colorLimit = +colorLimitRange.value;
+  colorLimitVal.textContent = state.colorLimit >= 44 ? '自动' : state.colorLimit;
+  processImage();
+});
+outlineRange.addEventListener('input', () => {
+  state.outlineThreshold = +outlineRange.value;
+  outlineVal.textContent = state.outlineThreshold;
+  processImage();
+});
+
+btnExport.addEventListener('click', exportPNG);
+
+btnCopy.addEventListener('click', copyScheme);
+
+// 粘贴图片支持
+window.addEventListener('paste', e => {
+  const items = e.clipboardData && e.clipboardData.items;
+  if (!items) return;
+  for (const it of items){
+    if (it.type && it.type.startsWith('image/')){
+      const f = it.getAsFile();
+      if (f){ loadImage(f); break; }
+    }
+  }
+});
+
+// 窗口大小变化时重新适配预览
+let resizeTimer;
+window.addEventListener('resize', () => {
+  clearTimeout(resizeTimer);
+  resizeTimer = setTimeout(() => { if (state.img) render(); }, 120);
+});
+</script>
+</body>
+</html>
