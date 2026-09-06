@@ -1,0 +1,138 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<title>六年级分数乘除法口算练习</title>
+<style>
+@page{size:A4;margin:10mm}
+*{box-sizing:border-box}
+body{margin:0;color:#111;font-family:"Microsoft YaHei","SimSun",sans-serif;background:#ececec}
+.toolbar{position:sticky;top:0;z-index:9;display:flex;align-items:center;justify-content:center;gap:12px;padding:10px;background:#263746}
+.toolbar button{border:0;border-radius:6px;padding:8px 18px;color:#fff;background:#2776bb;font-size:14px;cursor:pointer}
+.toolbar button:nth-of-type(2){background:#258451}
+.credit{margin-left:10px;padding-left:18px;border-left:1px solid rgba(255,255,255,.35);color:#dce8f1;font-size:12px;white-space:nowrap}
+.page{width:210mm;min-height:283mm;margin:10px auto;padding:10mm 13mm 7mm;background:#fff;box-shadow:0 2px 12px #aaa}
+.title{text-align:center;font:700 21px "SimHei";letter-spacing:1px}
+.meta{text-align:center;font-size:12px;margin:7px 0 4px;padding-bottom:6px;border-bottom:1px solid #555}
+.part{margin-top:2.5mm}
+.part h2{font:700 13.5px "SimHei";margin:0 0 1mm;display:flex;align-items:baseline;gap:8px}
+.part h2 .hint{font:400 10.5px "Microsoft YaHei";color:#777}
+.grid{display:grid;grid-template-columns:repeat(5,1fr);grid-auto-rows:17.5mm;column-gap:3mm}
+.q{display:flex;align-items:center;white-space:nowrap;font-family:"Times New Roman","SimSun";font-size:16px}
+.num{font-size:11px;width:20px;flex:none;color:#333}
+.frac{display:inline-flex;vertical-align:middle;flex-direction:column;align-items:center;line-height:1;font-size:14px;min-width:20px;margin:0 2px}
+.frac .top{padding:0 3px 2px;border-bottom:1px solid #111}
+.frac .bottom{padding-top:2px}
+.op{margin:0 3px}
+.blank{display:inline-block;width:30px;height:22px;margin-left:4px}
+.tip{text-align:center;font-size:11px;margin-top:3mm;color:#444}
+.answer .q{font-size:15px}
+.answer .num{color:#999}
+.answer .ans{font-weight:700;color:#174a7e}
+@media print{.toolbar{display:none}body{background:#fff}.page{width:auto;min-height:277mm;margin:0;padding:4mm 2mm;box-shadow:none;page-break-after:always}.page:last-child{page-break-after:auto}}
+</style>
+</head>
+<body>
+<div class="toolbar"><button onclick="makePaper()">换一组新题</button><button onclick="window.print()">打印试题和答案</button><span class="credit">有志青年 · vibe coding　ntcyz@126.com</span></div>
+
+<section class="page">
+  <div class="title">六年级分数乘除法口算练习</div>
+  <div class="meta">班级：________　姓名：________　用时：________　正确：________　组号：<span class="setNo"></span></div>
+  <div id="paper"></div>
+  <div class="tip">要求：直接写出得数，结果必须化成最简分数；能约分的先约分再计算。</div>
+</section>
+
+<section class="page answer">
+  <div class="title">六年级分数乘除法口算练习·参考答案</div>
+  <div class="meta">组号：<span class="setNo"></span>　答案均已化成最简形式</div>
+  <div id="answers"></div>
+  <div class="tip">每次打开页面或点击“换一组新题”，试题与答案都会同步更新。</div>
+</section>
+
+<script>
+const gcd=(a,b)=>b?gcd(b,a%b):a;
+const ri=(a,b)=>a+Math.floor(Math.random()*(b-a+1));
+const frac=(n,d)=>`<span class="frac"><span class="top">${n}</span><span class="bottom">${d}</span></span>`;
+const iv=n=>`<span class="iv">${n}</span>`;
+function simplify(n,d){const g=gcd(n,d);return [n/g,d/g]}
+function ansHtml(n,d){const [a,b]=simplify(n,d);return b===1?iv(a):frac(a,b)}
+
+// 一、分数乘整数
+function genMulInt(){
+  for(let t=0;t<3000;t++){
+    const d=ri(2,12),n=ri(1,d-1),m=ri(2,9);
+    if(gcd(n,d)!==1)continue;
+    const [rn,rd]=simplify(n*m,d);
+    if(rn>24||rn===rd)continue;
+    return {l:frac(n,d),op:'×',r:iv(m),a:ansHtml(n*m,d),k:n+'/'+d+'*'+m};
+  }
+  return null;
+}
+// 二、分数乘分数
+function genMulFrac(){
+  for(let t=0;t<4000;t++){
+    const b=ri(2,12),a=ri(1,b-1);
+    if(gcd(a,b)!==1)continue;
+    const d=ri(2,12),c=ri(1,d-1);
+    if(gcd(c,d)!==1||(a===c&&b===d))continue;
+    const [rn,rd]=simplify(a*c,b*d);
+    if(rd>36||rn>12)continue;
+    return {l:frac(a,b),op:'×',r:frac(c,d),a:ansHtml(a*c,b*d),k:a+'/'+b+'*'+c+'/'+d};
+  }
+  return null;
+}
+// 三、分数除以整数
+function genDivInt(){
+  for(let t=0;t<4000;t++){
+    const b=ri(2,12),a=ri(1,b-1);
+    if(gcd(a,b)!==1)continue;
+    const m=ri(2,9);
+    const [,rd]=simplify(a,b*m);
+    if(rd>40)continue;
+    return {l:frac(a,b),op:'÷',r:iv(m),a:ansHtml(a,b*m),k:a+'/'+b+'/'+m};
+  }
+  return null;
+}
+// 四、分数除以分数
+function genDivFrac(){
+  for(let t=0;t<6000;t++){
+    const b=ri(2,12),a=ri(1,b-1);
+    if(gcd(a,b)!==1)continue;
+    const d=ri(2,12),c=ri(1,d-1);
+    if(gcd(c,d)!==1)continue;
+    const [rn,rd]=simplify(a*d,b*c);
+    if(rd>16||rn>40||rn===rd)continue;
+    return {l:frac(a,b),op:'÷',r:frac(c,d),a:ansHtml(a*d,b*c),k:a+'/'+b+'/'+c+'/'+d};
+  }
+  return null;
+}
+
+const PARTS=[
+  {t:'一、分数乘整数',h:'分子与整数相乘的积作分子，分母不变',gen:genMulInt},
+  {t:'二、分数乘分数',h:'分子相乘的积作分子，分母相乘的积作分母',gen:genMulFrac},
+  {t:'三、分数除以整数',h:'除以整数（0除外），等于乘这个整数的倒数',gen:genDivInt},
+  {t:'四、分数除以分数',h:'除以一个不为0的数，等于乘这个数的倒数',gen:genDivFrac}
+];
+function pick(gen){const out=[],seen=new Set();let g=0;while(out.length<15&&g++<8000){const q=gen();if(!q)break;if(seen.has(q.k))continue;seen.add(q.k);out.push(q)}return out}
+function item(no,q,answer){
+  return `<div class="q"><span class="num">${no}.</span>${q.l}<span class="op">${q.op}</span>${q.r}<span class="op">=</span>${answer?`<span class="ans">${q.a}</span>`:'<span class="blank"></span>'}</div>`;
+}
+function makePaper(){
+  const sets=PARTS.map(p=>pick(p.gen));
+  const no=String(Math.floor(100000+Math.random()*900000));
+  document.querySelectorAll('.setNo').forEach(x=>x.textContent=no);
+  for(const [id,isAns] of [['paper',false],['answers',true]]){
+    let html='',idx=0;
+    PARTS.forEach((p,i)=>{
+      html+=`<div class="part"><h2>${p.t}<span class="hint">${p.h}</span></h2><div class="grid">`;
+      html+=sets[i].map(q=>item(++idx,q,isAns)).join('');
+      html+='</div></div>';
+    });
+    document.getElementById(id).innerHTML=html;
+  }
+  window.scrollTo({top:0,behavior:'smooth'});
+}
+makePaper();
+</script>
+</body>
+</html>
