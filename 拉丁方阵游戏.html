@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>四阶拉丁方阵 · 形状颜色推理游戏</title>
+<style>
+:root{
+  --bg1:#0f172a; --bg2:#1e293b; --card:#ffffff; --ink:#1e293b;
+  --mut:#64748b; --line:#e2e8f0; --acc:#6366f1; --acc2:#10b981;
+  --danger:#ef4444; --warn:#f59e0b;
+  --c0:#e74c3c; --c1:#3498db; --c2:#27ae60; --c3:#f59e0b;
+}
+*{box-sizing:border-box; margin:0; padding:0; -webkit-tap-highlight-color:transparent;}
+html,body{height:100%;}
+body{
+  font-family:"PingFang SC","Microsoft YaHei","Segoe UI",system-ui,sans-serif;
+  background:linear-gradient(160deg,var(--bg1),var(--bg2));
+  color:var(--ink); min-height:100vh;
+  display:flex; flex-direction:column; align-items:center;
+  padding:16px 12px 40px;
+}
+.wrap{width:100%; max-width:1000px;}
+header{text-align:center; color:#fff; margin-bottom:14px;}
+header h1{font-size:26px; letter-spacing:1px;}
+header h1 .accent{color:#fbbf24;}
+header p{color:#cbd5e1; font-size:13px; margin-top:6px;}
+.toolbar{
+  display:flex; flex-wrap:wrap; gap:8px; align-items:center; justify-content:center;
+  background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.12);
+  border-radius:14px; padding:10px 14px; margin-bottom:16px; backdrop-filter:blur(6px);
+}
+.toolbar .grp{display:flex; gap:6px; align-items:center; flex-wrap:wrap;}
+.toolbar .sep{width:1px; height:24px; background:rgba(255,255,255,.18); margin:0 4px;}
+.diff-btn{
+  border:1px solid rgba(255,255,255,.25); background:transparent; color:#e2e8f0;
+  padding:6px 12px; border-radius:999px; font-size:13px; cursor:pointer; transition:.15s;
+}
+.diff-btn.active{background:#fbbf24; border-color:#fbbf24; color:#0f172a; font-weight:600;}
+.diff-btn:hover{background:rgba(255,255,255,.15);}
+.action-btn{
+  display:inline-flex; align-items:center; gap:5px;
+  border:1px solid rgba(255,255,255,.25); background:rgba(255,255,255,.06); color:#fff;
+  padding:6px 12px; border-radius:999px; font-size:13px; cursor:pointer; transition:.15s;
+}
+.action-btn:hover{background:rgba(255,255,255,.18);}
+.action-btn.primary{background:var(--acc); border-color:var(--acc);}
+.action-btn.primary:hover{background:#818cf8;}
+.action-btn.warn{background:var(--warn); border-color:var(--warn); color:#0f172a; font-weight:600;}
+#timer{
+  font-variant-numeric:tabular-nums; color:#fbbf24; font-size:16px; font-weight:700;
+  letter-spacing:1px; min-width:64px; text-align:center;
+}
+main{display:flex; gap:20px; align-items:flex-start; justify-content:center; flex-wrap:wrap;}
+</style>
+<style>
+#board-wrap{position:relative;}
+#board{
+  display:grid; grid-template-columns:repeat(4,1fr); gap:10px;
+  width:min(88vw,420px); aspect-ratio:1; padding:12px;
+  background:rgba(255,255,255,.94); border-radius:20px;
+  box-shadow:0 20px 50px rgba(0,0,0,.35);
+}
+.cell{
+  position:relative; border-radius:14px; background:#f8fafc;
+  border:3px solid var(--line); cursor:pointer;
+  display:flex; align-items:center; justify-content:center;
+  transition:transform .1s, box-shadow .15s, border-color .15s;
+}
+.cell:hover{transform:scale(1.03); box-shadow:0 4px 14px rgba(0,0,0,.12);}
+.cell svg{width:62%; height:62%; display:block;}
+.cell.clue{background:#eef2ff; border-color:#c7d2fe; cursor:default;}
+.cell.clue:hover{transform:none; box-shadow:none;}
+.cell.empty{background:repeating-linear-gradient(45deg,#f8fafc,#f8fafc 8px,#f1f5f9 8px,#f1f5f9 16px);}
+.cell.diag{border-style:dashed;}
+.cell.diag:not(.clue):not(.err):not(.done){border-color:#f59e0b;}
+.cell.clue.diag{border-color:#f59e0b;}
+.cell.selected{border-color:var(--acc); box-shadow:0 0 0 3px rgba(99,102,241,.35);}
+.cell.err{border-color:var(--danger); background:#fef2f2; animation:shake .3s;}
+.cell.done{border-color:#fbbf24; box-shadow:0 0 18px rgba(251,191,36,.55);}
+.cell .marks{
+  position:absolute; inset:4px; display:grid;
+  grid-template-columns:1fr 1fr; grid-template-rows:1fr 1fr; pointer-events:none;
+}
+.cell .marks span{display:flex; align-items:center; justify-content:center;}
+.cell .marks svg{width:80%; height:80%; opacity:.55;}
+.cell .marks .dot{width:55%; height:55%; border-radius:50%; opacity:.75;}
+@keyframes shake{
+  0%,100%{transform:translateX(0);} 25%{transform:translateX(-3px);}
+  50%{transform:translateX(3px);} 75%{transform:translateX(-2px);}
+}
+@keyframes pop{0%{transform:scale(.6); opacity:0;} 100%{transform:scale(1); opacity:1;}}
+.cell.just-filled{animation:pop .18s ease-out;}
+/* ---- 右侧面板 ---- */
+#side{width:min(88vw,340px); display:flex; flex-direction:column; gap:12px;}
+.panel{
+  background:#fff; border-radius:16px; padding:14px 16px;
+  box-shadow:0 10px 30px rgba(0,0,0,.25);
+}
+.panel h3{font-size:14px; color:var(--mut); margin-bottom:10px; display:flex; align-items:center; gap:6px;}
+.panel h3 .n{color:var(--acc); font-size:12px; background:#eef2ff; padding:2px 8px; border-radius:999px;}
+#sel-info{font-size:13px; color:var(--mut); margin-bottom:10px; line-height:1.5;}
+#sel-info b{color:var(--ink);}
+.combo-grid{display:grid; grid-template-columns:repeat(4,1fr); gap:6px;}
+.combo-btn{
+  aspect-ratio:1; border-radius:10px; border:2px solid var(--line); background:#f8fafc;
+  cursor:pointer; display:flex; align-items:center; justify-content:center; transition:.12s;
+}
+.combo-btn:hover{border-color:var(--acc); background:#eef2ff; transform:scale(1.06);}
+.combo-btn svg{width:62%; height:62%;}
+.tab-row{display:flex; gap:6px; margin-bottom:10px;}
+.tab-btn{
+  flex:1; padding:6px 0; border-radius:10px; border:1px solid var(--line);
+  background:#f8fafc; font-size:13px; cursor:pointer; color:var(--mut); transition:.15s;
+}
+.tab-btn.active{background:var(--acc); border-color:var(--acc); color:#fff; font-weight:600;}
+.mark-shapes,.mark-colors{display:flex; gap:8px; margin-bottom:8px; flex-wrap:wrap;}
+.mark-item{
+  width:42px; height:42px; border-radius:10px; border:2px solid var(--line);
+  background:#fff; cursor:pointer; display:flex; align-items:center; justify-content:center;
+}
+.mark-item.on{border-color:var(--acc); background:#eef2ff;}
+.mark-item svg{width:68%; height:68%;}
+.mark-item .mcolor{width:22px; height:22px; border-radius:50%;}
+.small-note{font-size:12px; color:var(--mut); margin-top:6px; line-height:1.5;}
+</style>
+<style>
+/* ---- 模态框 ---- */
+#overlay{
+  position:fixed; inset:0; background:rgba(15,23,42,.55); z-index:50;
+  display:none; align-items:center; justify-content:center; padding:16px;
+}
+#overlay.show{display:flex;}
+#modal{
+  background:#fff; border-radius:20px; padding:18px; width:min(92vw,380px);
+  box-shadow:0 30px 80px rgba(0,0,0,.4); animation:pop .18s ease-out;
+}
+#modal-title{font-size:15px; font-weight:700; margin-bottom:4px; text-align:center;}
+#modal-sub{font-size:12px; color:var(--mut); text-align:center; margin-bottom:12px;}
+#modal .combo-grid{margin-top:4px;}
+#modal .combo-grid .combo-btn{aspect-ratio:1.4;}
+#modal .mark-item{width:46px; height:46px;}
+#modal .btn-row{display:flex; gap:8px; margin-top:14px;}
+#modal .btn-row button{
+  flex:1; padding:9px 0; border-radius:12px; font-size:14px; cursor:pointer; transition:.15s;
+  border:1px solid var(--line); background:#f8fafc; color:var(--mut);
+}
+#modal .btn-row button.primary{background:var(--acc); border-color:var(--acc); color:#fff; font-weight:600;}
+#modal .btn-row button.primary:hover{background:#818cf8;}
+#modal .btn-row button:hover{background:#eef2ff; color:var(--ink);}
+/* ---- 教育面板 ---- */
+#edu{
+  width:100%; margin-top:20px; background:rgba(255,255,255,.06);
+  border:1px solid rgba(255,255,255,.12); border-radius:16px; color:#e2e8f0;
+}
+#edu summary{
+  cursor:pointer; padding:14px 18px; font-size:15px; font-weight:600; color:#fff;
+  list-style:none; display:flex; align-items:center; gap:8px;
+}
+#edu summary::-webkit-details-marker{display:none;}
+#edu summary .arrow{transition:.2s; display:inline-block;}
+#edu[open] summary .arrow{transform:rotate(90deg);}
+#edu .body{padding:0 18px 16px; font-size:13.5px; line-height:1.9; color:#cbd5e1;}
+#edu .body b{color:#fbbf24;}
+#edu .body .box{
+  background:rgba(255,255,255,.07); border-radius:12px; padding:10px 14px; margin:10px 0;
+  font-size:13px;
+}
+/* ---- 完成庆祝 ---- */
+#confetti{position:fixed; inset:0; pointer-events:none; z-index:100;}
+#win-banner{
+  position:fixed; left:50%; top:38%; transform:translate(-50%,-50%); z-index:101;
+  background:#fff; border-radius:22px; padding:28px 40px; text-align:center;
+  box-shadow:0 30px 90px rgba(0,0,0,.5); display:none; animation:pop .3s ease-out;
+}
+#win-banner.show{display:block;}
+#win-banner .big{font-size:40px;}
+#win-banner h2{font-size:22px; margin:8px 0 4px; color:var(--ink);}
+#win-banner p{color:var(--mut); font-size:14px; margin-bottom:14px;}
+#win-banner button{
+  background:var(--acc); color:#fff; border:none; padding:10px 26px; border-radius:999px;
+  font-size:15px; cursor:pointer; font-weight:600;
+}
+#win-banner button:hover{background:#818cf8;}
+footer{margin-top:18px; color:#64748b; font-size:12px; text-align:center;}
+</style>
+</head>
+<body>
+<div class="wrap">
+<header>
+  <h1>🧩 四阶拉丁方阵 <span class="accent">· 形状 × 颜色</span></h1>
+  <p>在 4×4 网格中填入图形：<b>每行、每列</b>的形状和颜色都<b>不重复</b>（每种图形恰好出现 4 次）</p>
+</header>
+
+<div class="toolbar">
+  <div class="grp" id="diff-grp">
+    <button class="diff-btn active" data-diff="easy">😊 简单</button>
+    <button class="diff-btn" data-diff="medium">🤔 中等</button>
+    <button class="diff-btn" data-diff="hard">🔥 困难</button>
+    <button class="diff-btn" data-diff="ultra">💎 究极</button>
+  </div>
+  <div class="sep"></div>
+  <div class="grp">
+    <button class="action-btn warn" id="btn-new">🔄 新游戏</button>
+    <button class="action-btn" id="btn-check">✅ 检查</button>
+    <button class="action-btn" id="btn-hint">💡 提示</button>
+    <button class="action-btn" id="btn-erase">🧽 橡皮</button>
+  </div>
+  <div class="sep"></div>
+  <div class="grp">⏱️ <span id="timer">00:00</span></div>
+</div>
+
+<main>
+  <div id="board-wrap">
+    <div id="board"></div>
+    <div id="legend" style="color:#94a3b8; font-size:12px; text-align:center; margin-top:8px;">紫色 = 题目线索 · 金色虚线框 = 两条对角线（究极难度：对角线也不重复）</div>
+  </div>
+
+  <div id="side">
+    <div class="panel">
+      <h3>✏️ 操作说明</h3>
+      <div id="sel-info">点击空白格子，选择「图形 + 颜色」填入。<br>紫色格子为题目线索，不可修改。</div>
+      <div class="tab-row">
+        <button class="tab-btn active" id="tab-fill" data-tab="fill">填充</button>
+        <button class="tab-btn" id="tab-mark" data-tab="mark">标记</button>
+      </div>
+      <div id="tab-fill-body">
+        <div class="combo-grid" id="combo-grid"></div>
+      </div>
+      <div id="tab-mark-body" style="display:none">
+        <div class="small-note">选中格子后，点按下面按钮切换<b>候选标记</b>（推理时的草稿，不参与判定）。</div>
+        <div class="mark-shapes" id="mark-shapes"></div>
+        <div class="mark-colors" id="mark-colors"></div>
+        <div class="btn-row" style="margin-top:8px">
+          <button class="tab-btn" id="btn-clear-marks" style="flex:1">清除该格标记</button>
+        </div>
+      </div>
+    </div>
+    <div class="panel" style="background:rgba(255,255,255,.06); border:1px solid rgba(255,255,255,.12); color:#e2e8f0">
+      <h3 style="color:#cbd5e1">🎯 目标</h3>
+      <div style="font-size:13px; line-height:1.8">用 <b style="color:#fbbf24">4 种图形</b>（●▲■★）× <b style="color:#fbbf24">4 种颜色</b>填满 16 格：<br>· 每行每列形状不重复<br>· 每行每列颜色不重复</div>
+    </div>
+  </div>
+</main>
+
+<details id="edu">
+  <summary><span class="arrow">▶</span> 📐 数学小课堂：什么是拉丁方阵？（适合课堂讲解）</summary>
+  <div class="body">
+    <p><b>拉丁方阵</b>：将 n 种不同元素排成 n×n 方阵，使每行、每列都恰好包含全部 n 种元素各一次，就是 n 阶拉丁方阵。18 世纪瑞士数学家<b>欧拉</b>（Euler）最先系统研究它，并用拉丁字母作元素命名，故称"拉丁方"。</p>
+    <p>本题要求"形状"与"颜色"两个条件<b>同时</b>满足，相当于把两个 4 阶拉丁方阵<b>叠加</b>在一起——数学上称为<b>正交拉丁方阵</b>。四个形状、四个颜色一共有 16 种组合，恰好填满 16 格，每种组合只出现一次。</p>
+    <div class="box">💡 <b>课堂互动建议</b>：可以先做纯数字版（1~4 填入，每行每列不重复，即 4 阶拉丁方阵），再升级到本题的形状×颜色双重约束，引导学生体会"多条件推理"。</div>
+    <p>🌍 <b>生活中的应用</b>：拉丁方阵广泛用于<b>实验设计</b>（安排试验避免偏差）、<b>课程表编排</b>、<b>密码学</b>与<b>数独</b>。4×4 数独就是在拉丁方阵基础上增加 4 个 2×2 小宫的约束。</p>
+    <div class="box">💎 <b>究极难度</b>：在行列约束之外，还要求<b>两条对角线</b>（主对角线↘ 与副对角线↙）上的形状、颜色也不重复——这就是数学中的<b>对角线拉丁方阵</b>（Diagonal Latin Square），约束更强，推理更有挑战！</div>
+  </div>
+</details>
+
+<footer>四阶正交拉丁方阵 · 推理小游戏 · 适合数学课堂与思维训练<br><span class="signature">灵璧小聂 vibe coding</span></footer>
+</div>
+
+<canvas id="confetti"></canvas>
+
+
+
+<div id="win-banner">
+  <div class="big">🎉</div>
+  <h2>太棒了，全部正确！</h2>
+  <p id="win-msg"></p>
+  <button id="btn-win-new">再来一局</button>
+</div>
+<script>
+/* ================= 常量与工具 ================= */
+const SHAPES=[
+  {name:'圆形', path:'<circle cx="50" cy="50" r="27"/>'},
+  {name:'三角形', path:'<polygon points="50,24 82,76 18,76"/>'},
+  {name:'正方形', path:'<rect x="25" y="25" width="50" height="50" rx="6"/>'},
+  {name:'五角星', path:'<polygon points="50,24 56.5,41.1 74.7,42.0 60.5,53.4 65.3,71.0 50,61 34.7,71.0 39.5,53.4 25.3,42.0 43.5,41.1"/>'}
+];
+const COLORS=[
+  {name:'红', hex:'#e74c3c'},
+  {name:'蓝', hex:'#3498db'},
+  {name:'绿', hex:'#27ae60'},
+  {name:'橙', hex:'#f59e0b'}
+];
+const DIFF_HOLES={easy:6, medium:10, hard:11, ultra:12};
+
+function shapeSVG(s,color,extra){return '<svg viewBox="0 0 100 100"'+(extra||'')+'><g fill="'+color+'">'+SHAPES[s].path+'</g></svg>';}
+function dotSVG(color){return '<svg viewBox="0 0 100 100"><circle cx="50" cy="50" r="40" fill="'+color+'"/></svg>';}
+function shuffle(arr){
+  const a=arr.slice();
+  for(let i=a.length-1;i>0;i--){const j=Math.floor(Math.random()*(i+1));[a[i],a[j]]=[a[j],a[i]];}
+  return a;
+}
+function pad(n){return n<10?'0'+n:''+n;}
+
+/* ================= 游戏状态 ================= */
+const state={
+  diff:'easy', grid:null, solution:null, clue:null,
+  marks:null, selected:null, tab:'fill',
+  elapsed:0, timer:null, won:false, toasts:[]
+};
+
+/* ================= 生成器：正交拉丁方阵 =================
+ * 使用有限域 GF(4) 构造（4 = 2²，域元 0,1,ω,ω² 记为 0,1,2,3）：
+ *   形状 s = i ⊕ j，颜色 c = (ω·i) ⊕ j，其中 ⊕ 为按位异或（域加法），
+ *   ω·x 的乘法表为 [0,2,3,1]（ω·1=ω=2，ω·ω=ω²=3，ω·ω²=1）。
+ * GF(4) 中 1 与 ω 是 F4 上两个不同的非零系数，故两方阵正交：
+ * 16 种「形状×颜色」组合各出现一次，且每行每列的形状、颜色均不重复。
+ * 再随机置换行列与标签，生成不同开局。
+ */
+function makeSolution(){
+  const GF_MUL2=[0,2,3,1];
+  const base=[];
+  for(let i=0;i<4;i++)for(let j=0;j<4;j++) base.push({s:i^j, c:GF_MUL2[i]^j});
+  const rp=shuffle([0,1,2,3]), cp=shuffle([0,1,2,3]);
+  const M=new Array(16);
+  for(let i=0;i<4;i++)for(let j=0;j<4;j++) M[i*4+j]=base[rp[i]*4+cp[j]];
+  const sp=shuffle([0,1,2,3]), kp=shuffle([0,1,2,3]);
+  for(let k=0;k<16;k++) M[k]={s:sp[M[k].s], c:kp[M[k].c]};
+  return M;
+}
+/* ================= 究极难度生成器：对角约束正交拉丁方阵 =================
+ * 在 GF(4) 中取另一组系数：形状 s = i ⊕ (2·j)，颜色 c = i ⊕ (3·j)
+ * （2=ω，3=ω²，⊕ 为域加法即按位异或）：
+ *   - 主对角线 (i=j)：s=(1⊕2)·i=3·i 遍历 0..3；c=(1⊕3)·i=2·i 遍历 0..3
+ *   - 副对角线 (i=3-j)：s=i⊕2(3⊕i) 遍历；c=i⊕3(3⊕i) 遍历
+ *   - 行列式 aq⊕bp = 1·3 ⊕ 2·1 = 1 ≠ 0 → (s,c) 双射，正交
+ * 普通解允许任意行列置换；但置换会破坏对角线的几何位置，
+ * 故究极难度只施加 D4 棋盘对称变换（8 种）+ 形状/颜色标签置换。
+ */
+function makeUltraSolution(){
+  const GF_MUL2=[0,2,3,1], GF_MUL3=[0,3,1,2];
+  const base=[];
+  for(let i=0;i<4;i++)for(let j=0;j<4;j++) base.push({s:i^GF_MUL2[j], c:i^GF_MUL3[j]});
+  const trans=[
+    (i,j)=>[i,j],(i,j)=>[j,3-i],(i,j)=>[3-i,3-j],(i,j)=>[3-j,i],
+    (i,j)=>[i,3-j],(i,j)=>[3-i,j],(i,j)=>[j,i],(i,j)=>[3-j,3-i]
+  ];
+  const t=trans[Math.floor(Math.random()*trans.length)];
+  const M=new Array(16);
+  for(let i=0;i<4;i++)for(let j=0;j<4;j++){
+    const p=t(i,j);
+    M[p[0]*4+p[1]]=base[i*4+j];
+  }
+  const sp=shuffle([0,1,2,3]), kp=shuffle([0,1,2,3]);
+  for(let k=0;k<16;k++) M[k]={s:sp[M[k].s], c:kp[M[k].c]};
+  return M;
+}
+
+
+
+/* ================= 回溯求解器（统计解个数，限 2 个） =================
+ * diag=true 时额外要求两条对角线上的形状、颜色也不重复（究极难度）。
+ */
+function countSolutions(grid, limit, diag){
+  const g=grid.map(x=>x?{s:x.s,c:x.c}:null);
+  const rowS=[0,1,2,3].map(()=>new Array(4).fill(false));
+  const colS=[0,1,2,3].map(()=>new Array(4).fill(false));
+  const rowC=[0,1,2,3].map(()=>new Array(4).fill(false));
+  const colC=[0,1,2,3].map(()=>new Array(4).fill(false));
+  const mS=[0,0,0,0], mC=[0,0,0,0], aS=[0,0,0,0], aC=[0,0,0,0];
+  for(let i=0;i<16;i++) if(g[i]){
+    const r=i>>2, c=i&3;
+    rowS[r][g[i].s]=colS[c][g[i].s]=rowC[r][g[i].c]=colC[c][g[i].c]=true;
+    if(diag){
+      if(r===c){mS[g[i].s]=mC[g[i].c]=1;}
+      if(r+c===3){aS[g[i].s]=aC[g[i].c]=1;}
+    }
+  }
+  let cnt=0;
+  (function dfs(pos){
+    if(cnt>=limit) return;
+    while(pos<16 && g[pos]) pos++;
+    if(pos>=16){cnt++; return;}
+    const r=pos>>2, c=pos&3;
+    const isMain=r===c, isAnti=r+c===3;
+    for(let s=0;s<4 && cnt<limit;s++){
+      if(rowS[r][s]||colS[c][s]) continue;
+      if(diag && (isMain&&mS[s] || isAnti&&aS[s])) continue;
+      for(let k=0;k<4 && cnt<limit;k++){
+        if(rowC[r][k]||colC[c][k]) continue;
+        if(diag && (isMain&&mC[k] || isAnti&&aC[k])) continue;
+        rowS[r][s]=colS[c][s]=rowC[r][k]=colC[c][k]=true;
+        if(diag){
+          if(isMain){mS[s]=mC[k]=1;}
+          if(isAnti){aS[s]=aC[k]=1;}
+        }
+        g[pos]={s,c};
+        dfs(pos+1);
+        g[pos]=null;
+        rowS[r][s]=colS[c][s]=rowC[r][k]=colC[c][k]=false;
+        if(diag){
+          if(isMain){mS[s]=mC[k]=0;}
+          if(isAnti){aS[s]=aC[k]=0;}
+        }
+      }
+    }
+  })(0);
+  return cnt;
+}
+
+/* ================= 挖空生成谜题（保证唯一解） ================= */
+/* ================= 挖空生成谜题（保证唯一解） ================= */
+function makePuzzle(holes, diag){
+  for(let att=0; att<400; att++){
+    const sol=diag?makeUltraSolution():makeSolution();
+    const grid=sol.map(x=>({s:x.s,c:x.c}));
+    let dug=0;
+    for(const idx of shuffle([0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15])){
+      if(dug>=holes) break;
+      const save=grid[idx];
+      grid[idx]=null;
+      if(countSolutions(grid,2,diag)>1){grid[idx]=save;}
+      else dug++;
+    }
+    if(dug>=holes) return {sol, grid};
+  }
+  return null;
+}
+</script>
+<script>
+/* ================= 渲染 ================= */
+function computeErrors(){
+  const err=new Set();
+  for(let r=0;r<4;r++){
+    for(let kind=0;kind<2;kind++){
+      const seen=new Map();
+      for(let c=0;c<4;c++){
+        const v=state.grid[r*4+c]; if(!v) continue;
+        const key=kind?v.c:v.s;
+        if(seen.has(key)){err.add(seen.get(key)); err.add(r*4+c);}
+        else seen.set(key,r*4+c);
+      }
+    }
+  }
+  for(let c=0;c<4;c++){
+    for(let kind=0;kind<2;kind++){
+      const seen=new Map();
+      for(let r=0;r<4;r++){
+        const v=state.grid[r*4+c]; if(!v) continue;
+        const key=kind?v.c:v.s;
+        if(seen.has(key)){err.add(seen.get(key)); err.add(r*4+c);}
+        else seen.set(key,r*4+c);
+      }
+    }
+  }
+  // 究极难度：两条对角线也不重复（主 i*5，副 i*3+3）
+  if(state.diff==='ultra'){
+    for(const fn of [i=>i*5, i=>i*3+3]){
+      for(let kind=0;kind<2;kind++){
+        const seen=new Map();
+        for(let d=0;d<4;d++){
+          const idx=fn(d);
+          const v=state.grid[idx]; if(!v) continue;
+          const key=kind?v.c:v.s;
+          if(seen.has(key)){err.add(seen.get(key)); err.add(idx);}
+          else seen.set(key,idx);
+        }
+      }
+    }
+  }
+  return err;
+}
+
+function render(){
+  const board=document.getElementById('board');
+  board.innerHTML='';
+  const errs=computeErrors();
+  for(let i=0;i<16;i++){
+    const cell=document.createElement('div');
+    cell.className='cell';
+    const v=state.grid[i];
+    if(v){
+      cell.innerHTML=shapeSVG(v.s,COLORS[v.c].hex);
+      if(state.clue[i]) cell.classList.add('clue');
+    }else{
+      cell.classList.add('empty');
+      const m=state.marks[i];
+      if(m && (m.ss.length||m.cs.length)){
+        const marks=document.createElement('div');
+        marks.className='marks';
+        for(let r=0;r<2;r++)for(let q=0;q<2;q++){
+          const span=document.createElement('span');
+          if(r===0){ if(q<m.ss.length) span.innerHTML=shapeSVG(m.ss[q],'#94a3b8'); }
+          else{ if(q<m.cs.length) span.innerHTML='<span class="dot" style="background:'+COLORS[m.cs[q]].hex+'"></span>'; }
+          marks.appendChild(span);
+        }
+        cell.appendChild(marks);
+      }
+    }
+    if(i===state.selected) cell.classList.add('selected');
+    if(errs.has(i)) cell.classList.add('err');
+    const rr=Math.floor(i/4), cc=i%4;
+    if(rr===cc || rr+cc===3) cell.classList.add('diag');
+    cell.onclick=()=>onCellClick(i);
+    board.appendChild(cell);
+  }
+  updatePanel();
+}
+
+/* ================= 交互 ================= */
+function onCellClick(i){
+  if(state.won) return;
+  if(state.clue[i]){ state.selected=null; render(); return; }
+  state.selected=(state.selected===i)?null:i;
+  render();
+}
+
+function setCell(i,s,c,isHint){
+  state.grid[i]={s,c};
+  state.marks[i]={ss:[],cs:[]};
+  const cell=document.getElementById('board').children[i];
+  if(cell && !isHint) cell.classList.add('just-filled');
+  if(!isHint) state.justHinted=false;
+  render();
+  checkWin();
+}
+
+function onComboClick(s,c){
+  const i=state.selected;
+  if(i===null) return;
+  setCell(i,s,c);
+}
+
+function toggleMark(kind,val){
+  const i=state.selected;
+  if(i===null) return;
+  const m=state.marks[i];
+  const arr=kind==='s'?m.ss:m.cs;
+  const pos=arr.indexOf(val);
+  if(pos>=0) arr.splice(pos,1); else arr.push(val);
+  arr.sort((a,b)=>a-b);
+  render();
+}
+
+function eraseSelected(){
+  const i=state.selected;
+  if(i===null) return;
+  if(state.clue[i]) return;
+  state.grid[i]=null;
+  state.marks[i]={ss:[],cs:[]};
+  render();
+}
+
+function clearMarks(){
+  const i=state.selected;
+  if(i===null) return;
+  state.marks[i]={ss:[],cs:[]};
+  render();
+}
+
+/* ================= 面板 ================= */
+function updatePanel(){
+  const info=document.getElementById('sel-info');
+  const i=state.selected;
+  if(i===null){
+    info.innerHTML='点击空白格子，再选择「图形 + 颜色」填入。<br>紫色格子为题目线索，不可修改。';
+  }else{
+    const r=Math.floor(i/4)+1, c=i%4+1;
+    const v=state.grid[i];
+    info.innerHTML='已选中 <b>第 '+r+' 行 · 第 '+c+' 列</b>'+(v?'（'+(v.s!==undefined?'当前：'+SHAPES[v.s].name+COLORS[v.c].name+'色':'')+'）':'（空白）');
+  }
+  // 标记按钮状态
+  const m=(i!==null)?state.marks[i]:null;
+  document.querySelectorAll('#mark-shapes .mark-item').forEach((el,idx)=>{
+    el.classList.toggle('on', !!(m&&m.ss.indexOf(idx)>=0));
+  });
+  document.querySelectorAll('#mark-colors .mark-item').forEach((el,idx)=>{
+    el.classList.toggle('on', !!(m&&m.cs.indexOf(idx)>=0));
+  });
+}
+
+function buildComboGrid(){
+  const grid=document.getElementById('combo-grid');
+  grid.innerHTML='';
+  for(let c=0;c<4;c++){        // 行 = 颜色
+    for(let s=0;s<4;s++){      // 列 = 形状
+      const b=document.createElement('button');
+      b.className='combo-btn';
+      b.title=SHAPES[s].name+'·'+COLORS[c].name;
+      b.innerHTML=shapeSVG(s,COLORS[c].hex);
+      b.onclick=()=>onComboClick(s,c);
+      grid.appendChild(b);
+    }
+  }
+}
+
+function buildMarkPanel(){
+  const sh=document.getElementById('mark-shapes');
+  sh.innerHTML='';
+  for(let s=0;s<4;s++){
+    const b=document.createElement('button');
+    b.className='mark-item';
+    b.innerHTML=shapeSVG(s,'#94a3b8');
+    b.title='标记'+SHAPES[s].name;
+    b.onclick=()=>toggleMark('s',s);
+    sh.appendChild(b);
+  }
+  const co=document.getElementById('mark-colors');
+  co.innerHTML='';
+  for(let c=0;c<4;c++){
+    const b=document.createElement('button');
+    b.className='mark-item';
+    b.innerHTML='<span class="mcolor" style="background:'+COLORS[c].hex+'"></span>';
+    b.title='标记'+COLORS[c].name+'色';
+    b.onclick=()=>toggleMark('c',c);
+    co.appendChild(b);
+  }
+}
+</script>
+<script>
+/* ================= 计时 ================= */
+function startTimer(){
+  if(state.timer) clearInterval(state.timer);
+  state.elapsed=0;
+  document.getElementById('timer').textContent='00:00';
+  state.timer=setInterval(()=>{
+    state.elapsed++;
+    document.getElementById('timer').textContent=pad(Math.floor(state.elapsed/60))+':'+pad(state.elapsed%60);
+  },1000);
+}
+
+/* ================= 提示 / 检查 ================= */
+function giveHint(){
+  if(state.won) return;
+  const empties=[];
+  for(let i=0;i<16;i++) if(!state.grid[i]) empties.push(i);
+  if(!empties.length) return;
+  const i=empties[Math.floor(Math.random()*empties.length)];
+  state.grid[i]={s:state.solution[i].s,c:state.solution[i].c};
+  state.marks[i]={ss:[],cs:[]};
+  state.selected=i;
+  const cell=document.getElementById('board').children[i];
+  if(cell) cell.classList.add('just-filled');
+  render();
+  flashMsg('💡 已为你填入一格（正确）');
+  checkWin();
+}
+
+function doCheck(){
+  const errs=computeErrors();
+  const empty=state.grid.filter(v=>!v).length;
+  if(empty) flashMsg('还有 '+empty+' 格未填');
+  if(errs.size){
+    flashMsg('⚠️ 红色标记处有重复：同一行/列中形状或颜色重复');
+    errs.forEach(i=>{
+      const cell=document.getElementById('board').children[i];
+      cell.classList.remove('err');
+      void cell.offsetWidth; // 重触发抖动动画
+      cell.classList.add('err');
+    });
+  }else if(!empty){
+    flashMsg('✅ 全部正确！');
+  }else{
+    flashMsg('✅ 目前没有冲突，继续加油！');
+  }
+}
+
+/* ================= 轻提示 ================= */
+function flashMsg(txt){
+  let el=document.getElementById('flash');
+  if(!el){
+    el=document.createElement('div');
+    el.id='flash';
+    el.style.cssText='position:fixed;left:50%;bottom:36px;transform:translateX(-50%);background:rgba(15,23,42,.92);color:#fff;padding:10px 20px;border-radius:999px;font-size:14px;z-index:90;box-shadow:0 8px 30px rgba(0,0,0,.4);transition:opacity .3s;max-width:90vw;text-align:center;';
+    document.body.appendChild(el);
+  }
+  el.textContent=txt;
+  el.style.opacity='1';
+  clearTimeout(el._t);
+  el._t=setTimeout(()=>{el.style.opacity='0';},2200);
+}
+
+/* ================= 完成庆祝 ================= */
+function startConfetti(duration){
+  const cv=document.getElementById('confetti');
+  const ctx=cv.getContext('2d');
+  cv.width=innerWidth; cv.height=innerHeight;
+  const colors=['#e74c3c','#3498db','#27ae60','#f59e0b','#6366f1','#fbbf24'];
+  const parts=[];
+  for(let i=0;i<150;i++){
+    parts.push({
+      x:Math.random()*cv.width, y:Math.random()*-cv.height,
+      w:6+Math.random()*6, h:8+Math.random()*8,
+      vx:(Math.random()-.5)*2, vy:2+Math.random()*3.5,
+      color:colors[i%colors.length], rot:Math.random()*Math.PI, vr:(Math.random()-.5)*.2
+    });
+  }
+  const t0=performance.now();
+  (function frame(){
+    ctx.clearRect(0,0,cv.width,cv.height);
+    for(const p of parts){
+      p.x+=p.vx; p.y+=p.vy; p.rot+=p.vr;
+      if(p.y>cv.height){p.y=-20; p.x=Math.random()*cv.width;}
+      ctx.save(); ctx.translate(p.x,p.y); ctx.rotate(p.rot);
+      ctx.fillStyle=p.color; ctx.fillRect(-p.w/2,-p.h/2,p.w,p.h); ctx.restore();
+    }
+    if(performance.now()-t0<duration) requestAnimationFrame(frame);
+    else ctx.clearRect(0,0,cv.width,cv.height);
+  })();
+}
+
+function checkWin(){
+  if(state.won) return;
+  if(state.grid.some(v=>!v)) return;
+  if(computeErrors().size>0) return;
+  state.won=true;
+  clearInterval(state.timer);
+  const mm=pad(Math.floor(state.elapsed/60))+':'+pad(state.elapsed%60);
+  document.getElementById('win-msg').textContent='用时 '+mm+' · 难度：'+({easy:'简单',medium:'中等',hard:'困难',ultra:'💎 究极'})[state.diff];
+  document.getElementById('win-banner').classList.add('show');
+  startConfetti(3500);
+  for(let i=0;i<16;i++){
+    const cell=document.getElementById('board').children[i];
+    if(cell) cell.classList.add('done');
+  }
+}
+
+/* ================= 新游戏 ================= */
+function startGame(){
+  const holes=DIFF_HOLES[state.diff];
+  const diag=state.diff==='ultra';
+  let p=null;
+  for(let tries=0; tries<8 && !p; tries++) p=makePuzzle(holes,diag);
+  if(!p){flashMsg('⚠️ 生成失败，请再试一次'); return;}
+  state.solution=p.sol;
+  state.grid=p.grid;
+  state.clue=p.grid.map(v=>v!==null);
+  state.marks=p.grid.map(v=>({ss:[],cs:[]}));
+  state.selected=null;
+  state.won=false;
+  document.getElementById('win-banner').classList.remove('show');
+  startTimer();
+  render();
+}
+
+/* ================= 事件绑定与初始化 ================= */
+document.getElementById('btn-new').onclick=()=>startGame();
+document.getElementById('btn-hint').onclick=giveHint;
+document.getElementById('btn-check').onclick=doCheck;
+document.getElementById('btn-erase').onclick=eraseSelected;
+document.getElementById('btn-clear-marks').onclick=clearMarks;
+document.getElementById('btn-win-new').onclick=()=>startGame();
+document.querySelectorAll('.diff-btn').forEach(b=>{
+  b.onclick=()=>{
+    document.querySelectorAll('.diff-btn').forEach(x=>x.classList.remove('active'));
+    b.classList.add('active');
+    state.diff=b.dataset.diff;
+    startGame();
+  };
+});
+document.querySelectorAll('.tab-btn[data-tab]').forEach(b=>{
+  b.onclick=()=>{
+    state.tab=b.dataset.tab;
+    document.querySelectorAll('.tab-btn[data-tab]').forEach(x=>x.classList.toggle('active',x===b));
+    document.getElementById('tab-fill-body').style.display=(state.tab==='fill')?'':'none';
+    document.getElementById('tab-mark-body').style.display=(state.tab==='mark')?'':'none';
+  };
+});
+
+buildComboGrid();
+buildMarkPanel();
+startGame();
+</script>
+</body>
+</html>
