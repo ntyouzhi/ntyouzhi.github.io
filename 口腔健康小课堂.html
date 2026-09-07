@@ -1,0 +1,982 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>乳牙"罢工"记 · 口腔卡通动画（二年级）</title>
+<style>
+  * { margin:0; padding:0; box-sizing:border-box; }
+  html,body { width:100%; height:100%; overflow:hidden; font-family:"Comic Sans MS","Microsoft YaHei","PingFang SC",sans-serif; }
+  #stage { position:relative; width:100vw; height:100vh; background:linear-gradient(180deg,#bfe9ff 0%,#e6f7ff 55%,#d5f5e3 100%); overflow:hidden; }
+
+  /* ====== 场景容器 ====== */
+  .scene { position:absolute; inset:0; display:none; }
+  .scene.active { display:block; }
+  .sky { position:absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; }
+
+  /* ====== 通用装饰 ====== */
+  .cloud { position:absolute; background:#ffffffcc; border-radius:60% 40% 55% 45%; filter:blur(1px); }
+  .star { position:absolute; width:14px; height:14px; background:#ffe66d; clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%); animation:twinkle 1.8s infinite alternate; }
+  @keyframes twinkle { from{opacity:.4; transform:scale(.8);} to{opacity:1; transform:scale(1.15);} }
+
+  /* ====== 台词区（顶部横幅，不遮挡画面主体） ====== */
+  #caption { position:absolute; left:50%; transform:translateX(-50%); top:5.5%; width:min(94%,1080px); z-index:50; text-align:center; pointer-events:none; }
+  .line { display:inline-block; background:rgba(255,255,255,.94); border:3px solid #ffb3c1; border-radius:22px; padding:9px 24px; font-size:clamp(19px,2.9vw,36px); font-weight:900; color:#3a4a5a; box-shadow:0 4px 0 #f8a9bb, 0 12px 24px rgba(0,0,0,.12); opacity:0; transform:translateY(-20px); transition:all .45s ease; }
+  .line.show { opacity:1; transform:translateY(0); }
+  .sub { margin-top:7px; display:inline-block; background:rgba(255,239,213,.94); border:2.5px solid #ffd28a; border-radius:14px; padding:5px 16px; font-size:clamp(14px,1.8vw,22px); font-weight:700; color:#8a5a2a; opacity:0; transform:translateY(-16px); transition:all .45s ease .25s; }
+  .sub.show { opacity:1; transform:translateY(0); }
+
+  /* ====== 控制条 ====== */
+  #controls { position:absolute; top:12px; right:12px; z-index:100; display:flex; gap:8px; align-items:center; background:#ffffffd9; padding:8px 14px; border-radius:40px; box-shadow:0 4px 14px rgba(0,0,0,.15); }
+  #controls button { border:none; background:#ff8fab; color:#fff; font-size:18px; font-weight:900; width:38px; height:38px; border-radius:50%; cursor:pointer; transition:transform .15s; box-shadow:0 3px 0 #d96b84; }
+  #controls button:hover { transform:scale(1.12); }
+  #controls button:active { transform:translateY(3px); box-shadow:none; }
+  #dots { display:flex; gap:7px; }
+  #dots span { width:11px; height:11px; border-radius:50%; background:#cbd5e0; cursor:pointer; transition:all .3s; }
+  #dots span.on { background:#ff8fab; transform:scale(1.35); }
+
+  /* ====== 标题封面 ====== */
+  #titleWrap { position:absolute; top:14%; left:50%; transform:translateX(-50%); text-align:center; z-index:60; width:100%; }
+  #bigTitle { font-size:clamp(40px,8vw,96px); font-weight:900; color:#ff6b9d; -webkit-text-stroke:3px #fff; text-shadow:0 6px 0 #e0487e, 0 14px 30px rgba(224,72,126,.35); animation:titlePop 1s ease-out both; }
+  #bigTitle .q { color:#6b8cff; }
+  @keyframes titlePop { 0%{transform:scale(.3) rotate(-6deg); opacity:0;} 60%{transform:scale(1.08) rotate(2deg);} 100%{transform:scale(1) rotate(0);} }
+  #subTitle { margin-top:10px; font-size:clamp(18px,3vw,34px); font-weight:800; color:#fff; display:inline-block; background:#6b8cff; padding:8px 26px; border-radius:40px; box-shadow:0 5px 0 #4762c9; animation:titlePop 1s .4s ease-out both; }
+  #patrol { position:absolute; top:46%; left:50%; transform:translateX(-50%); z-index:60; font-size:clamp(16px,2.4vw,28px); font-weight:800; color:#6b8cff; opacity:0; animation:fadeUp 1s .9s ease-out both; }
+  #patrol b { color:#ff6b9d; }
+#startBtn { position:absolute; top:57%; left:50%; transform:translateX(-50%); z-index:95; border:none; cursor:pointer; background:#ff8fab; color:#fff; font-weight:900; font-size:clamp(20px,3.2vw,36px); padding:16px 40px; border-radius:50px; border:4px solid #fff; box-shadow:0 6px 0 #d96b84, 0 10px 26px rgba(0,0,0,.28); animation:bounce 1.1s ease-in-out infinite; font-family:inherit; }
+  #startBtn:hover { transform:translateX(-50%) scale(1.06); }
+  #startBtn .arr { display:inline-block; margin-right:8px; }
+  @keyframes bounce { 0%,100%{transform:translateX(-50%) translateY(0);} 50%{transform:translateX(-50%) translateY(-8px);} }
+  @keyframes fadeUp { from{opacity:0; transform:translateX(-50%) translateY(24px);} to{opacity:1; transform:translateX(-50%) translateY(0);} }
+  #startOverlay { position:absolute; inset:0; z-index:200; display:flex; flex-direction:column; align-items:center; justify-content:center; background:rgba(191,233,255,.38); backdrop-filter:blur(2px); }
+  #startOverlay.hidden { display:none; }
+  #startOverlay #startBtn { position:relative; top:auto; left:auto; transform:none; animation:startPulse 1.1s ease-in-out infinite; }
+  #startOverlay #startBtn:hover { transform:scale(1.06); }
+  #startOverlay .startHint { display:none; }
+
+  @keyframes startPulse { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-8px) scale(1.03);} }
+
+/* ====== 角色：牙齿 ====== */
+  .tooth { position:absolute; z-index:10; }
+  .tooth svg { width:100%; height:100%; display:block; filter:drop-shadow(2px 5px 4px rgba(0,0,0,.12)); }
+  .tooth .face { animation:bob 2.2s ease-in-out infinite; }
+  @keyframes bob { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-9px);} }
+  .tooth.happy .face { animation:bob 2.2s ease-in-out infinite, blink 4s infinite; }
+  @keyframes blink { 0%,92%,100%{transform:translateY(0);} 95%{transform:translateY(-6px) scaleY(.9);} }
+  .tooth.wobble .face { animation:shake 1.6s ease-in-out infinite; }
+  @keyframes shake { 0%,100%{transform:translateX(0) rotate(0);} 25%{transform:translateX(-5px) rotate(-4deg);} 75%{transform:translateX(5px) rotate(4deg);} }
+  .tooth.dark svg #body { fill:#e8e0d8; }
+  .tooth.cavity svg #cav { opacity:1; }
+  .tooth.cry .face { animation:cryShake .9s ease-in-out infinite; }
+  @keyframes cryShake { 0%,100%{transform:translateX(0);} 20%{transform:translateX(-6px);} 40%{transform:translateX(6px);} 60%{transform:translateX(-4px);} 80%{transform:translateX(4px);} }
+  .tooth.bow .face { animation:bow 2.4s ease-in-out infinite; }
+  @keyframes bow { 0%,100%{transform:rotate(0); transform-origin:50% 88%;} 25%,55%{transform:rotate(-16deg); transform-origin:50% 88%;} 75%{transform:rotate(0);} }
+
+  /* ====== 角色：细菌小怪兽 ====== */
+  .bug { position:absolute; z-index:20; }
+  .bug svg { width:100%; height:100%; display:block; filter:drop-shadow(2px 4px 4px rgba(0,0,0,.15)); }
+  .bug .bface { animation:bugWig 1.6s ease-in-out infinite; }
+  @keyframes bugWig { 0%,100%{transform:rotate(0);} 50%{transform:rotate(6deg);} }
+  .bug.escape { transition:all 1.2s ease; }
+  .bug.flying { animation:flyAway 1.4s ease-in forwards; }
+  @keyframes flyAway { 0%{transform:translate(0,0) rotate(0); opacity:1;} 100%{transform:translate(-40px,-180px) rotate(-40deg); opacity:0;} }
+
+  /* ====== 角色：牙刷骑士 ====== */
+  .brush { position:absolute; z-index:30; }
+  .brush svg { width:100%; height:100%; display:block; filter:drop-shadow(4px 8px 6px rgba(0,0,0,.18)); }
+  .brush.tilt { transform:rotate(45deg); }
+
+  /* ====== 特效：酸液泡泡 / 泡沫 / 眼泪 ====== */
+  .acid { position:absolute; border-radius:50%; background:radial-gradient(circle at 30% 30%, #e3a4ff, #9b59c9 70%); box-shadow:0 0 14px #b06fd6; z-index:25; }
+  .foam { position:absolute; width:28px; height:28px; border-radius:50%; background:#fff; opacity:0; z-index:35; }
+  .foam.go { animation:foamPop 1.3s ease-in-out forwards; }
+  @keyframes foamPop { 0%{opacity:0; transform:scale(.2);} 25%{opacity:.95; transform:scale(1.1);} 100%{opacity:0; transform:scale(1.9) translateY(-22px);} }
+  .tear { position:absolute; width:10px; height:16px; border-radius:50% 50% 50% 50% / 60% 60% 40% 40%; background:#7cc7ff; z-index:20; }
+  .tear.drop { animation:tearDrop 1.2s ease-in infinite; }
+  @keyframes tearDrop { 0%{transform:translateY(0) scale(1); opacity:1;} 80%{transform:translateY(16px) scale(.95); opacity:.9;} 100%{transform:translateY(20px) scale(.8); opacity:0;} }
+
+  /* ====== 场景文字标签 ====== */
+  .tag { position:absolute; font-weight:900; color:#fff; text-shadow:0 2px 0 rgba(0,0,0,.18); z-index:40; }
+  .factory-tag { background:#c768e0; border-radius:14px; padding:4px 12px; border:3px dashed #fff; }
+  .spoils { position:absolute; z-index:22; }
+
+  /* ====== 场景入场动画 ====== */
+  .pop-in { animation:popIn .6s ease-out both; }
+  @keyframes popIn { 0%{transform:scale(0); opacity:0;} 70%{transform:scale(1.12); opacity:1;} 100%{transform:scale(1);} }
+  .drop-in { animation:dropIn .7s ease-out both; }
+  @keyframes dropIn { 0%{transform:translateY(-120px); opacity:0;} 100%{transform:translateY(0); opacity:1;} }
+  .rise-in { animation:riseIn 1.6s ease-out both; }
+  @keyframes riseIn { 0%{transform:translateY(120px) scale(.6); opacity:0;} 100%{transform:translateY(0) scale(1); opacity:1;} }
+  .float-restless { animation:floatY 3s ease-in-out infinite; }
+  @keyframes floatY { 0%,100%{transform:translateY(0);} 50%{transform:translateY(-10px);} }
+/* ====== 场景2：酸液攻击 ====== */
+  .acid-flight { position:absolute; border-radius:50%; width:26px; height:26px; background:radial-gradient(circle at 30% 30%, #e3a4ff, #9b59c9 70%); box-shadow:0 0 14px #b06fd6; z-index:25; animation:acidFly 2.4s ease-in infinite; }
+  @keyframes acidFly { 0%{transform:translate(0,0) scale(.6); opacity:0;} 12%{opacity:1;} 100%{transform:translate(-185px,-14px) scale(1.1); opacity:.9;} }
+  .factory { position:absolute; z-index:15; }
+  .factory svg { display:block; filter:drop-shadow(4px 6px 5px rgba(0,0,0,.18)); }
+  .lolly { position:absolute; z-index:16; }
+  .lolly svg { display:block; filter:drop-shadow(2px 3px 3px rgba(0,0,0,.15)); }
+
+  /* ====== 场景3：蛀牙 ====== */
+  .badge-warn { position:absolute; z-index:45; background:#ff5252; color:#fff; font-weight:900; padding:8px 18px; border-radius:30px; border:4px solid #ffd0d0; font-size:clamp(18px,2.6vw,30px); box-shadow:0 5px 0 #b71c1c; animation:badgePulse 1.1s ease-in-out infinite; }
+  @keyframes badgePulse { 0%,100%{transform:scale(1);} 50%{transform:scale(1.12) rotate(-3deg);} }
+  .bubble-say { position:absolute; z-index:45; background:#fff; border:4px solid #7cc7ff; border-radius:24px; padding:10px 20px; font-size:clamp(20px,2.8vw,32px); font-weight:900; color:#5b8dd9; box-shadow:0 5px 0 #4a7cc9, 0 10px 20px rgba(0,0,0,.12); animation:floatY 2s ease-in-out infinite; }
+  .bubble-say::after { content:""; position:absolute; left:18%; bottom:-16px; width:0; height:0; border-left:14px solid transparent; border-right:14px solid transparent; border-top:16px solid #7cc7ff; }
+
+  /* ====== 场景4：刷牙 ====== */
+  .brush-swing { animation:brushSwing 1.1s ease-in-out infinite; }
+  @keyframes brushSwing { 0%,100%{transform:rotate(45deg) translateX(0);} 50%{transform:rotate(45deg) translateX(26px);} }
+  .sparkle { position:absolute; width:16px; height:16px; background:#ffe66d; clip-path:polygon(50% 0%,61% 35%,98% 35%,68% 57%,79% 91%,50% 70%,21% 91%,32% 57%,2% 35%,39% 35%); opacity:0; z-index:36; }
+  .sparkle.go { animation:spark 1.2s ease-out forwards; }
+  @keyframes spark { 0%{opacity:0; transform:scale(.3) rotate(0);} 40%{opacity:1; transform:scale(1.25) rotate(60deg);} 100%{opacity:0; transform:scale(.4) rotate(120deg);} }
+
+  /* ====== 场景5：交接班收尾 ====== */
+  .shrink-away { animation:shrinkAway 2s ease-in forwards; }
+  @keyframes shrinkAway { 0%{opacity:1; transform:scale(1);} 70%{opacity:.85; transform:scale(.72) translateY(-6px);} 100%{opacity:0; transform:scale(.5) translateY(-16px);} }
+  .grow-in { animation:growIn 1.9s cubic-bezier(.34,1.56,.64,1) both; }
+  @keyframes growIn { 0%{transform:scale(.25) translateY(60px); opacity:0;} 70%{transform:scale(1.08) translateY(-4px); opacity:1;} 100%{transform:scale(1) translateY(0); opacity:1;} }
+  .medal { position:absolute; z-index:50; }
+  .medal svg { display:block; filter:drop-shadow(2px 4px 4px rgba(0,0,0,.2)); }
+  .rainbow-bar { position:absolute; height:14px; z-index:44; border-radius:8px; opacity:.9; }
+  #finalSlogan { position:absolute; top:34%; left:50%; transform:translateX(-50%); z-index:60; text-align:center; width:100%; }
+  #finalSlogan .s1 { font-size:clamp(26px,4.6vw,52px); font-weight:900; color:#ff6b9d; -webkit-text-stroke:2px #fff; text-shadow:0 4px 0 #e0487e; opacity:0; animation:fadeUp 1s .6s ease-out forwards; }
+  #finalSlogan .s2 { margin-top:10px; font-size:clamp(17px,2.6vw,30px); font-weight:800; color:#fff; background:#6b8cff; display:inline-block; padding:8px 24px; border-radius:40px; box-shadow:0 4px 0 #4762c9; opacity:0; animation:fadeUp 1s 1.1s ease-out forwards; }
+
+  /* ====== 恒牙飞入中央：放大 + 闪烁 + 定格 ====== */
+  .fly-center { animation:flyToCenter 1.3s cubic-bezier(.22,1,.36,1) .5s both, centerFlash .7s ease-in-out 2s 3; }
+  @keyframes flyToCenter {
+    0%   { transform:translateX(calc(-52vw - 180px)) scale(.7); opacity:0; }
+    16%  { opacity:1; }
+    55%  { transform:translateX(5vw) scale(1.04); opacity:1; }
+    75%  { transform:translateX(-2vw) scale(1.14); opacity:1; }
+    100% { transform:translateX(0) scale(1.08); opacity:1; }
+  }
+  @keyframes centerFlash {
+    0%,100% { filter:brightness(1.05) drop-shadow(0 0 8px rgba(255,255,255,.85)); }
+    50%     { filter:brightness(1.9) drop-shadow(0 0 26px #ffe66d); }
+  }
+
+  /* ====== 场景4 刷牙流程：挤牙膏→拿开→牙刷登场 ====== */
+  #sc4TP { transition:all .7s cubic-bezier(.34,1.56,.64,1); }
+  #sc4Brush { right:-300px; transition:all .65s cubic-bezier(.34,1.56,.64,1); }
+  #sc4Brush.in { left:25%; right:auto; }
+  #sc4Brush.in svg { animation:brushSwing 1.1s ease-in-out infinite; }
+  .squirt { position:absolute; z-index:34; left:8%; top:8%; width:84%; transform-origin:center top; transform:scaleY(0); opacity:0; }
+  .squirt.go { animation:squirtOut .8s cubic-bezier(.34,1.56,.64,1) forwards; }
+  @keyframes squirtOut {
+    0% { opacity:0; transform:translateY(-16px) scaleY(.2); }
+    45% { opacity:1; transform:translateY(0) scaleY(1); }
+    100% { opacity:.95; transform:translateY(0) scaleY(1); }
+  }
+
+  /* ====== 二年级优化：幕牌 / 大箭头 / 刷牙互动 / 闯关 / 音效视觉 ====== */
+  /* 保留兼容规则；课件正文已不再使用拼音标记 */
+  #sceneBadge { position:absolute; top:14px; left:14px; z-index:100; background:#ffffffd9; border-radius:24px; padding:6px 14px; font-size:clamp(13px,1.7vw,20px); font-weight:900; color:#5b8dd9; box-shadow:0 3px 10px rgba(0,0,0,.12); }
+  .navBig { position:absolute; bottom:3%; z-index:90; width:64px; height:64px; border:none; border-radius:50%; background:#6b8cff; color:#fff; font-size:26px; font-weight:900; cursor:pointer; box-shadow:0 5px 0 #4762c9, 0 8px 18px rgba(0,0,0,.2); transition:transform .15s; }
+  .navBig:hover { transform:scale(1.1); }
+  .navBig:active { transform:translateY(4px); box-shadow:none; }
+  #sc4HintWrap { position:absolute; left:0; bottom:44%; width:100%; display:none; justify-content:center; z-index:66; pointer-events:none; }
+  .tap-hint { background:#ffd23f; color:#7a5a00; font-weight:900; font-size:clamp(16px,2.3vw,26px); padding:8px 18px; border-radius:24px; border:3px solid #fff; box-shadow:0 4px 0 #d9a91f; animation:floatY 1s ease-in-out infinite; }
+  #sc4MedalWrap { position:absolute; left:0; bottom:38%; width:100%; display:none; justify-content:center; z-index:66; pointer-events:none; }
+  #sc4MedalWrap .medal { position:relative; width:92px; height:110px; }
+  .tooth.brushable { cursor:pointer; }
+  .tooth.brushable svg { animation:glowPulse 1.4s infinite; }
+  @keyframes glowPulse { 0%,100%{filter:drop-shadow(2px 5px 4px rgba(0,0,0,.12)) drop-shadow(0 0 4px #ffd23f);} 50%{filter:drop-shadow(2px 5px 4px rgba(0,0,0,.12)) drop-shadow(0 0 18px #ffd23f);} }
+  .tooth.done svg { filter:drop-shadow(0 0 14px #7cc7ff); }
+  .tooth.done svg #body { fill:#f3fbff; stroke:#7cc7ff; }
+  .tooth.wiggle .face { animation:wig .6s ease-in-out; }
+  @keyframes wig { 0%,100%{transform:translateX(0) rotate(0);} 25%{transform:translateX(-6px) rotate(-6deg);} 75%{transform:translateX(6px) rotate(6deg);} }
+  .actionTag { position:absolute; z-index:70; background:#fff; color:#5b8dd9; border:3px solid #7cc7ff; border-radius:16px; padding:5px 14px; font-weight:900; font-size:clamp(14px,1.9vw,22px); box-shadow:0 4px 12px rgba(0,0,0,.18); transform:translate(-50%,-50%); pointer-events:none; animation:tagPop 1.5s ease-out forwards; white-space:nowrap; }
+  @keyframes tagPop { 0%{opacity:0; transform:translate(-50%,-30%) scale(.6);} 15%{opacity:1; transform:translate(-50%,-50%) scale(1.06);} 80%{opacity:1; transform:translate(-50%,-70%) scale(1);} 100%{opacity:0; transform:translate(-50%,-105%) scale(.95);} }
+  .confetti { position:absolute; width:12px; height:18px; top:-6vh; z-index:95; pointer-events:none; animation:confFall 2.4s linear forwards; }
+  @keyframes confFall { 0%{transform:translateY(0) rotate(0); opacity:1;} 100%{transform:translateY(112vh) rotate(760deg); opacity:.85;} }
+  #quiz { position:absolute; left:50%; bottom:4%; transform:translate(-50%,160%); width:min(92%,720px); z-index:80; background:#ffffffee; border:4px solid #7cc7ff; border-radius:26px; padding:12px 20px 16px; box-shadow:0 10px 30px rgba(0,0,0,.28); transition:transform .7s cubic-bezier(.22,1,.36,1); text-align:center; }
+  #quiz.open { transform:translate(-50%,0); }
+  #quizTitle { font-size:clamp(18px,2.5vw,28px); font-weight:900; color:#ff6b9d; }
+  #quizN { font-size:clamp(12px,1.6vw,17px); font-weight:800; color:#8aa0b8; }
+  #quizQ { margin:6px 0 10px; font-size:clamp(20px,3vw,32px); font-weight:900; color:#3a4a5a; }
+  #quizOpts button { display:inline-block; margin:5px 8px; min-width:clamp(110px,17vw,190px); padding:11px 16px; font-size:clamp(17px,2.4vw,26px); font-weight:900; color:#fff; background:#ff8fab; border:none; border-radius:18px; box-shadow:0 4px 0 #d96b84; cursor:pointer; transition:transform .12s; }
+  #quizOpts button:hover { transform:scale(1.06); }
+  #quizOpts button.good { background:#51cf66; box-shadow:0 4px 0 #2f9e44; transform:scale(1.08); }
+  #quizOpts button.shake { animation:quizShake .45s; }
+  @keyframes quizShake { 0%,100%{transform:translateX(0);} 20%{transform:translateX(-9px);} 40%{transform:translateX(9px);} 60%{transform:translateX(-6px);} 80%{transform:translateX(6px);} }
+  #quizMsg.ok { color:#2f9e44; } #quizMsg.no { color:#e8590c; }
+  #sc5.quiz-on #finalSlogan { opacity:.25; transition:opacity .8s; }
+  #sc5.quiz-on .fly-center { animation:none; transform:translateY(130px) scale(.66); opacity:.12; }
+  #credit { position:absolute; left:50%; bottom:8px; transform:translateX(-50%); z-index:110; color:rgba(58,74,90,.72); font-size:clamp(12px,1.5vw,17px); font-weight:800; letter-spacing:.3px; pointer-events:none; white-space:nowrap; }
+</style>
+</head>
+<body>
+<div id="stage">
+  <div id="credit">小果子vibe coding</div>
+
+
+<!-- ================= 场景0：片头封面 ================= -->
+<section class="scene active" id="sc0">
+  <div class="sky">
+    <div class="cloud" style="top:8%;left:5%;width:170px;height:54px;border-radius:50% 50% 40% 40%;"></div>
+    <div class="cloud" style="top:20%;right:6%;width:210px;height:62px;border-radius:45% 55% 60% 40%;opacity:.8;"></div>
+    <div class="star" style="top:10%;left:22%;"></div>
+    <div class="star" style="top:26%;right:18%;animation-delay:.4s;"></div>
+    <div class="star" style="top:6%;left:47%;animation-delay:.8s;"></div>
+    <div class="star" style="top:16%;left:70%;animation-delay:1.2s;"></div>
+  </div>
+  <div id="titleWrap">
+    <div id="bigTitle">乳牙<span class="q">“罢工”</span>记</div>
+    <div id="subTitle">口腔健康小课堂 · 二年级</div>
+  </div>
+  <div id="patrol">护牙<b>小侦探</b>，出动！</div>
+  <div class="tooth happy pop-in" style="width:84px;height:93px;left:13.5%;bottom:14%;animation-delay:.7s;">
+    <svg viewBox="0 0 100 110"><path id="body" d="M28 18 Q50 4 72 18 L78 72 Q50 98 22 72 Z" fill="#fff" stroke="#e3d9cf" stroke-width="3"/><path id="cav" d="M55 48 q7 5 3 12 q-9 3 -12 -7 q6 -5 9 -5z" fill="#6d4c41" opacity="0"/><g class="face"><circle cx="40" cy="48" r="5" fill="#3a4a5a"/><circle cx="62" cy="48" r="5" fill="#3a4a5a"/><path id="mH" d="M42 58 Q51 66 60 58" stroke="#3a4a5a" stroke-width="3.4" fill="none" stroke-linecap="round"/><path id="mC" d="M42 68 Q51 59 60 68" stroke="#7cc7ff" stroke-width="3.4" fill="none" stroke-linecap="round" style="display:none"/></g></svg>
+  </div>
+  <div class="tooth happy pop-in" style="width:66px;height:73px;left:22.5%;bottom:11%;animation-delay:.95s;">
+    <svg viewBox="0 0 100 110"><path id="body" d="M28 18 Q50 4 72 18 L78 72 Q50 98 22 72 Z" fill="#fff" stroke="#e3d9cf" stroke-width="3"/><path id="cav" d="M55 48 q7 5 3 12 q-9 3 -12 -7 q6 -5 9 -5z" fill="#6d4c41" opacity="0"/><g class="face"><circle cx="40" cy="48" r="5" fill="#3a4a5a"/><circle cx="62" cy="48" r="5" fill="#3a4a5a"/><path id="mH" d="M42 58 Q51 66 60 58" stroke="#3a4a5a" stroke-width="3.4" fill="none" stroke-linecap="round"/><path id="mC" d="M42 68 Q51 59 60 68" stroke="#7cc7ff" stroke-width="3.4" fill="none" stroke-linecap="round" style="display:none"/></g></svg>
+  </div>
+  <div class="tooth happy pop-in" style="width:66px;height:73px;right:22.5%;bottom:11%;animation-delay:1.15s;">
+    <svg viewBox="0 0 100 110"><path id="body" d="M28 18 Q50 4 72 18 L78 72 Q50 98 22 72 Z" fill="#fff" stroke="#e3d9cf" stroke-width="3"/><path id="cav" d="M55 48 q7 5 3 12 q-9 3 -12 -7 q6 -5 9 -5z" fill="#6d4c41" opacity="0"/><g class="face"><circle cx="40" cy="48" r="5" fill="#3a4a5a"/><circle cx="62" cy="48" r="5" fill="#3a4a5a"/><path id="mH" d="M42 58 Q51 66 60 58" stroke="#3a4a5a" stroke-width="3.4" fill="none" stroke-linecap="round"/><path id="mC" d="M42 68 Q51 59 60 68" stroke="#7cc7ff" stroke-width="3.4" fill="none" stroke-linecap="round" style="display:none"/></g></svg>
+  </div>
+  <div class="tooth happy pop-in" style="width:84px;height:93px;right:13%;bottom:14%;animation-delay:1.35s;">
+    <svg viewBox="0 0 100 110"><path id="body" d="M28 18 Q50 4 72 18 L78 72 Q50 98 22 72 Z" fill="#fff" stroke="#e3d9cf" stroke-width="3"/><path id="cav" d="M55 48 q7 5 3 12 q-9 3 -12 -7 q6 -5 9 -5z" fill="#6d4c41" opacity="0"/><g class="face"><circle cx="40" cy="48" r="5" fill="#3a4a5a"/><circle cx="62" cy="48" r="5" fill="#3a4a5a"/><path id="mH" d="M42 58 Q51 66 60 58" stroke="#3a4a5a" stroke-width="3.4" fill="none" stroke-linecap="round"/><path id="mC" d="M42 68 Q51 59 60 68" stroke="#7cc7ff" stroke-width="3.4" fill="none" stroke-linecap="round" style="display:none"/></g></svg>
+  </div>
+</section>
+
+<!-- ================= 场景1：乳牙家族登场 ================= -->
+<section class="scene" id="sc1">
+  <div class="sky">
+    <div class="cloud" style="top:6%;left:12%;width:150px;height:48px;"></div>
+    <div class="cloud" style="top:16%;right:10%;width:180px;height:54px;opacity:.75;"></div>
+    <div style="position:absolute;top:24%;left:6%;width:64px;height:64px;background:#ffd23f;border-radius:50%;box-shadow:0 0 0 10px #ffd23f55,0 0 36px #ffd23f99;"></div>
+  </div>
+  <div style="position:absolute;bottom:8%;left:0;width:100%;height:128px;background:linear-gradient(180deg,#ffb6c1,#ff9fb2);border-radius:50% 50% 0 0 / 32% 32% 0 0;z-index:5;"></div>
+
+  <div class="tooth happy drop-in" style="width:75px;height:83px;left:13%;bottom:24%;animation-delay:.25s;">
+    <svg viewBox="0 0 100 110"><path id="body" d="M28 18 Q50 4 72 18 L78 72 Q50 98 22 72 Z" fill="#fff" stroke="#e3d9cf" stroke-width="3"/><path id="cav" d="M55 48 q7 5 3 12 q-9 3 -12 -7 q6 -5 9 -5z" fill="#6d4c41" opacity="0"/><g class="face"><circle cx="40" cy="48" r="5" fill="#3a4a5a"/><circle cx="62" cy="48" r="5" fill="#3a4a5a"/><path id="mH" d="M42 58 Q51 66 60 58" stroke="#3a4a5a" stroke-width="3.4" fill="none" stroke-linecap="round"/><path id="mC" d="M42 68 Q51 59 60 68" stroke="#7cc7ff" stroke-width="3.4" fill="none" stroke-linecap="round" style="display:none"/></g></svg>
+  </div>
+  <div class="tooth happy drop-in" style="width:86px;height:95px;left:25.5%;bottom:22%;animation-delay:.45s;">
+    <svg viewBox="0 0 100 110"><path id="body" d="M28 18 Q50 4 72 18 L78 72 Q50 98 22 72 Z" fill="#fff" stroke="#e3d9cf" stroke-width="3"/><path id="cav" d="M55 48 q7 5 3 12 q-9 3 -12 -7 q6 -5 9 -5z" fill="#6d4c41" opacity="0"/><g class="face"><circle cx="40" cy="48" r="5" fill="#3a4a5a"/><circle cx="62" cy="48" r="5" fill="#3a4a5a"/><path id="mH" d="M42 58 Q51 66 60 58" stroke="#3a4a5a" stroke-width="3.4" fill="none" stroke-linecap="round"/><path id="mC" d="M42 68 Q51 59 60 68" stroke="#7cc7ff" stroke-width="3.4" fill="none" stroke-linecap="round" style="display:none"/></g></svg>
+  </div>
+  <div class="tooth happy drop-in" style="width:103px;height:113px;left:41.5%;bottom:18%;animation-delay:.65s;" data-hero="1">
+    <svg viewBox="0 0 100 110"><path id="body" d="M28 18 Q50 4 72 18 L78 72 Q50 98 22 72 Z" fill="#fff" stroke="#e3d9cf" stroke-width="3"/><path id="cav" d="M55 48 q7 5 3 12 q-9 3 -12 -7 q6 -5 9 -5z" fill="#6d4c41" opacity="0"/><g class="face"><circle cx="40" cy="48" r="5" fill="#3a4a5a"/><circle cx="62" cy="48" r="5" fill="#3a4a5a"/><path id="mH" d="M42 58 Q51 66 60 58" stroke="#3a4a5a" stroke-width="3.4" fill="none" stroke-linecap="round"/><path id="mC" d="M42 68 Q51 59 60 68" stroke="#7cc7ff" stroke-width="3.4" fill="none" stroke-linecap="round" style="display:none"/></g></svg>
+  </div>
+  <div class="tooth happy drop-in" style="width:86px;height:95px;right:25.5%;bottom:22%;animation-delay:.85s;">
+    <svg viewBox="0 0 100 110"><path id="body" d="M28 18 Q50 4 72 18 L78 72 Q50 98 22 72 Z" fill="#fff" stroke="#e3d9cf" stroke-width="3"/><path id="cav" d="M55 48 q7 5 3 12 q-9 3 -12 -7 q6 -5 9 -5z" fill="#6d4c41" opacity="0"/><g class="face"><circle cx="40" cy="48" r="5" fill="#3a4a5a"/><circle cx="62" cy="48" r="5" fill="#3a4a5a"/><path id="mH" d="M42 58 Q51 66 60 58" stroke="#3a4a5a" stroke-width="3.4" fill="none" stroke-linecap="round"/><path id="mC" d="M42 68 Q51 59 60 68" stroke="#7cc7ff" stroke-width="3.4" fill="none" stroke-linecap="round" style="display:none"/></g></svg>
+  </div>
+  <div class="tooth happy drop-in" style="width:75px;height:83px;right:12%;bottom:24%;animation-delay:1.05s;">
+    <svg viewBox="0 0 100 110"><path id="body" d="M28 18 Q50 4 72 18 L78 72 Q50 98 22 72 Z" fill="#fff" stroke="#e3d9cf" stroke-width="3"/><path id="cav" d="M55 48 q7 5 3 12 q-9 3 -12 -7 q6 -5 9 -5z" fill="#6d4c41" opacity="0"/><g class="face"><circle cx="40" cy="48" r="5" fill="#3a4a5a"/><circle cx="62" cy="48" r="5" fill="#3a4a5a"/><path id="mH" d="M42 58 Q51 66 60 58" stroke="#3a4a5a" stroke-width="3.4" fill="none" stroke-linecap="round"/><path id="mC" d="M42 68 Q51 59 60 68" stroke="#7cc7ff" stroke-width="3.4" fill="none" stroke-linecap="round" style="display:none"/></g></svg>
+  </div>
+</section>
+<!-- ================= 场景2：细菌小怪兽 + 糖果工厂 ================= -->
+<section class="scene" id="sc2">
+  <div style="position:absolute;bottom:8%;left:0;width:60%;height:128px;background:linear-gradient(180deg,#ffb6c1,#ff9fb2);border-radius:50% 50% 0 0 / 32% 32% 0 0;z-index:5;"></div>
+  <div style="position:absolute;bottom:8%;right:0;width:42%;height:76px;background:linear-gradient(180deg,#f3c4d8,#ef9fc0);border-radius:50% 50% 0 0 / 20% 20% 0 0;z-index:5;"></div>
+
+  <div class="tooth happy drop-in" style="width:82px;height:90px;left:18%;bottom:26%;">
+    <svg viewBox="0 0 100 110"><path id="body" d="M28 18 Q50 4 72 18 L78 72 Q50 98 22 72 Z" fill="#fff" stroke="#7cc7ff" stroke-width="6"/><path id="cav" d="M55 48 q7 5 3 12 q-9 3 -12 -7 q6 -5 9 -5z" fill="#6d4c41" opacity="0"/><g class="face"><circle cx="40" cy="48" r="5" fill="#3a4a5a"/><circle cx="62" cy="48" r="5" fill="#3a4a5a"/><path id="mH" d="M42 58 Q51 66 60 58" stroke="#3a4a5a" stroke-width="3.4" fill="none" stroke-linecap="round"/><path id="mC" d="M42 68 Q51 59 60 68" stroke="#7cc7ff" stroke-width="3.4" fill="none" stroke-linecap="round" style="display:none"/></g></svg>
+  </div>
+  <div class="tooth happy drop-in" style="width:98px;height:108px;left:30.5%;bottom:22%;animation-delay:.2s;">
+    <svg viewBox="0 0 100 110"><path id="body" d="M28 18 Q50 4 72 18 L78 72 Q50 98 22 72 Z" fill="#fff" stroke="#7cc7ff" stroke-width="6"/><path id="cav" d="M55 48 q7 5 3 12 q-9 3 -12 -7 q6 -5 9 -5z" fill="#6d4c41" opacity="0"/><g class="face"><circle cx="40" cy="48" r="5" fill="#3a4a5a"/><circle cx="62" cy="48" r="5" fill="#3a4a5a"/><path id="mH" d="M42 58 Q51 66 60 58" stroke="#3a4a5a" stroke-width="3.4" fill="none" stroke-linecap="round"/><path id="mC" d="M42 68 Q51 59 60 68" stroke="#7cc7ff" stroke-width="3.4" fill="none" stroke-linecap="round" style="display:none"/></g></svg>
+  </div>
+
+  <div class="bug drop-in" style="width:96px;height:96px;left:52%;top:30%;">
+    <svg viewBox="0 0 100 100"><circle cx="50" cy="55" r="38" fill="#93d855" stroke="#5f9e2f" stroke-width="3"/><path d="M34 24 Q28 8 40 12" stroke="#5f9e2f" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M66 24 Q72 8 60 12" stroke="#5f9e2f" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="29" cy="22" r="6" fill="#c768e0"/><circle cx="71" cy="22" r="6" fill="#c768e0"/><g class="bface"><ellipse cx="38" cy="52" rx="9" ry="11" fill="#fff"/><ellipse cx="62" cy="52" rx="9" ry="11" fill="#fff"/><circle cx="40" cy="54" r="4.6" fill="#2b2b2b"/><circle cx="60" cy="54" r="4.6" fill="#2b2b2b"/><path d="M41 71 Q50 78 59 71 Q54 75 50 75 Q46 75 41 71" fill="#7a3b8f"/></g><circle cx="15" cy="50" r="5" fill="#7fae3f"/><circle cx="85" cy="58" r="5" fill="#7fae3f"/></svg>
+  </div>
+  <div class="bug drop-in" style="width:74px;height:74px;left:6%;top:36%;animation-delay:.35s;">
+    <svg viewBox="0 0 100 100"><circle cx="50" cy="55" r="38" fill="#93d855" stroke="#5f9e2f" stroke-width="3"/><path d="M34 24 Q28 8 40 12" stroke="#5f9e2f" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M66 24 Q72 8 60 12" stroke="#5f9e2f" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="29" cy="22" r="6" fill="#c768e0"/><circle cx="71" cy="22" r="6" fill="#c768e0"/><g class="bface"><ellipse cx="38" cy="52" rx="9" ry="11" fill="#fff"/><ellipse cx="62" cy="52" rx="9" ry="11" fill="#fff"/><circle cx="40" cy="54" r="4.6" fill="#2b2b2b"/><circle cx="60" cy="54" r="4.6" fill="#2b2b2b"/><path d="M41 71 Q50 78 59 71 Q54 75 50 75 Q46 75 41 71" fill="#7a3b8f"/></g><circle cx="15" cy="50" r="5" fill="#7fae3f"/></svg>
+  </div>
+
+  <div class="acid-flight" style="left:57%;top:52%;animation-delay:.4s;"></div>
+  <div class="acid-flight" style="left:60%;top:44%;animation-delay:1.2s;"></div>
+  <div class="acid-flight" style="left:63%;top:36%;animation-delay:2s;width:22px;height:22px;"></div>
+
+  <div class="factory drop-in" style="right:6%;bottom:10%;width:210px;height:190px;animation-delay:.5s;">
+    <svg viewBox="0 0 210 190">
+      <rect x="30" y="80" width="150" height="100" rx="10" fill="#ff9fd0" stroke="#e0709e" stroke-width="4"/>
+      <path d="M20 85 Q105 20 190 85 Z" fill="#c768e0" stroke="#9441b8" stroke-width="4"/>
+      <rect x="95" y="120" width="24" height="35" rx="6" fill="#fff" stroke="#e0709e" stroke-width="3"/>
+      <circle cx="95" cy="67" r="7" fill="#ffe66d"/>
+      <path d="M95 73 v14" stroke="#ffe66d" stroke-width="3"/>
+      <rect x="150" y="30" width="26" height="70" rx="10" fill="#e8a0c8"/>
+    </svg>
+    <div class="tag factory-tag" style="top:-14px;left:50%;transform:translateX(-50%);font-size:clamp(13px,1.8vw,20px);">糖果工厂</div>
+  </div>
+  <div class="lolly pop-in" style="right:20%;bottom:26%;width:44px;height:70px;animation-delay:.9s;">
+    <svg viewBox="0 0 44 70"><circle cx="22" cy="22" r="20" fill="#ff8fab" stroke="#e0487e" stroke-width="3"/><path d="M14 18 q4 -8 9 -2 q2 6 -3 8 q-5 3 -6 -6z" fill="#fff" opacity=".7"/><rect x="20" y="40" width="4" height="28" rx="2" fill="#fff8e1" stroke="#d8b26a" stroke-width="2"/></svg>
+  </div>
+  <div class="lolly pop-in" style="right:8%;bottom:20%;width:38px;height:60px;animation-delay:1.1s;">
+    <svg viewBox="0 0 44 70"><circle cx="22" cy="22" r="20" fill="#7cc7ff" stroke="#3f8fd9" stroke-width="3"/><path d="M14 18 q4 -8 9 -2 q2 6 -3 8 q-5 3 -6 -6z" fill="#fff" opacity=".7"/><rect x="20" y="40" width="4" height="28" rx="2" fill="#fff8e1" stroke="#d8b26a" stroke-width="2"/></svg>
+  </div>
+</section>
+<!-- ================= 场景3：蛀牙黑洞 · 乳牙罢工 ================= -->
+<section class="scene" id="sc3">
+  <div style="position:absolute;inset:0;background:radial-gradient(ellipse at 50% 100%, #f4c9d0 0%, #e8eef4 60%);"></div>
+  <div style="position:absolute;bottom:8%;left:0;width:100%;height:128px;background:linear-gradient(180deg,#efb3c0,#d99aa8);border-radius:50% 50% 0 0 / 32% 32% 0 0;z-index:5;"></div>
+
+  <div class="badge-warn" style="top:24%;left:3%;">蛀牙黑洞出现了！</div>
+
+  <div class="tooth dark cavity cry wobble" style="width:86px;height:94px;left:18%;bottom:26%;">
+    <svg viewBox="0 0 100 110"><path id="body" d="M28 18 Q50 4 72 18 L78 72 Q50 98 22 72 Z" fill="#e8e0d8" stroke="#b8a89a" stroke-width="3"/><path id="cav" d="M55 48 q7 5 3 12 q-9 3 -12 -7 q6 -5 9 -5z" fill="#6d4c41"/><g class="face"><circle cx="40" cy="48" r="5" fill="#4a5a7a"/><circle cx="62" cy="48" r="5" fill="#4a5a7a"/><path id="mH" d="M42 58 Q51 66 60 58" stroke="#4a5a7a" stroke-width="3.4" fill="none" stroke-linecap="round"/><path id="mC" d="M42 68 Q51 59 60 68" stroke="#8298c9" stroke-width="3.4" fill="none" stroke-linecap="round"/></g></svg>
+    <div class="tear drop" style="left:22%;top:56%;animation-delay:.2s;"></div>
+    <div class="tear drop" style="left:66%;top:56%;animation-delay:.7s;"></div>
+  </div>
+  <div class="tooth dark cavity cry wobble" style="width:104px;height:114px;left:33.5%;bottom:20%;animation-delay:.3s;">
+    <svg viewBox="0 0 100 110"><path id="body" d="M28 18 Q50 4 72 18 L78 72 Q50 98 22 72 Z" fill="#e8e0d8" stroke="#b8a89a" stroke-width="3"/><path id="cav" d="M40 40 q8 3 10 12 q-4 10 -13 4 q-4 -9 3 -16z" fill="#6d4c41"/><g class="face"><circle cx="40" cy="48" r="5" fill="#4a5a7a"/><circle cx="62" cy="48" r="5" fill="#4a5a7a"/><path id="mH" d="M42 58 Q51 66 60 58" stroke="#4a5a7a" stroke-width="3.4" fill="none" stroke-linecap="round"/><path id="mC" d="M42 68 Q51 59 60 68" stroke="#8298c9" stroke-width="3.4" fill="none" stroke-linecap="round"/></g></svg>
+    <div class="tear drop" style="left:24%;top:54%;animation-delay:.4s;"></div>
+  </div>
+  <div class="tooth dark cavity cry wobble" style="width:86px;height:94px;left:55%;bottom:26%;animation-delay:.5s;">
+    <svg viewBox="0 0 100 110"><path id="body" d="M28 18 Q50 4 72 18 L78 72 Q50 98 22 72 Z" fill="#e8e0d8" stroke="#b8a89a" stroke-width="3"/><path id="cav" d="M55 48 q7 5 3 12 q-9 3 -12 -7 q6 -5 9 -5z" fill="#6d4c41"/><g class="face"><circle cx="40" cy="48" r="5" fill="#4a5a7a"/><circle cx="62" cy="48" r="5" fill="#4a5a7a"/><path id="mH" d="M42 58 Q51 66 60 58" stroke="#4a5a7a" stroke-width="3.4" fill="none" stroke-linecap="round"/><path id="mC" d="M42 68 Q51 59 60 68" stroke="#8298c9" stroke-width="3.4" fill="none" stroke-linecap="round"/></g></svg>
+    <div class="tear drop" style="left:64%;top:56%;"></div>
+  </div>
+
+<div class="bubble-say" style="right:5%;top:27%;">罢工啦！罢工啦！</div>
+</section>
+<!-- ================= 场景4：护牙特工队 · 巴氏刷牙法 ================= -->
+<section class="scene" id="sc4">
+  <div style="position:absolute;bottom:8%;left:0;width:100%;height:128px;background:linear-gradient(180deg,#ffb6c1,#ff9fb2);border-radius:50% 50% 0 0 / 32% 32% 0 0;z-index:5;"></div>
+<div style="position:absolute;top:23%;left:3%;z-index:44;background:#6b8cff;color:#fff;font-weight:900;font-size:clamp(15px,2vw,24px);padding:6px 16px;border-radius:30px;border:4px solid #fff;box-shadow:0 5px 0 #4762c9;animation:floatY 2.4s ease-in-out infinite;">护牙特工队 出动！</div>
+
+  <!-- 三颗洁白牙齿 -->
+  <div class="tooth happy" id="tooth1" data-act="上牙下牙，两颗两颗轻轻刷！" style="width:92px;height:102px;left:20%;bottom:24%;">
+    <svg viewBox="0 0 100 110"><path id="body" d="M28 18 Q50 4 72 18 L78 72 Q50 98 22 72 Z" fill="#fff" stroke="#e3d9cf" stroke-width="3"/><path id="cav" d="M55 48 q7 5 3 12 q-9 3 -12 -7 q6 -5 9 -5z" fill="#6d4c41" opacity="0"/><g class="face"><circle cx="40" cy="48" r="5" fill="#3a4a5a"/><circle cx="62" cy="48" r="5" fill="#3a4a5a"/><path id="mH" d="M42 58 Q51 66 60 58" stroke="#3a4a5a" stroke-width="3.4" fill="none" stroke-linecap="round"/><path id="mC" d="M42 68 Q51 59 60 68" stroke="#7cc7ff" stroke-width="3.4" fill="none" stroke-linecap="round" style="display:none"/></g></svg>
+  </div>
+  <div class="tooth happy" id="tooth2" data-act="里面外面，都要刷一刷！" style="width:110px;height:120px;left:34.5%;bottom:18%;">
+    <svg viewBox="0 0 100 110"><path id="body" d="M28 18 Q50 4 72 18 L78 72 Q50 98 22 72 Z" fill="#fff" stroke="#e3d9cf" stroke-width="3"/><path id="cav" d="M55 48 q7 5 3 12 q-9 3 -12 -7 q6 -5 9 -5z" fill="#6d4c41" opacity="0"/><g class="face"><circle cx="40" cy="48" r="5" fill="#3a4a5a"/><circle cx="62" cy="48" r="5" fill="#3a4a5a"/><path id="mH" d="M42 58 Q51 66 60 58" stroke="#3a4a5a" stroke-width="3.4" fill="none" stroke-linecap="round"/><path id="mC" d="M42 68 Q51 59 60 68" stroke="#7cc7ff" stroke-width="3.4" fill="none" stroke-linecap="round" style="display:none"/></g></svg>
+    <div class="squirt" id="sc4Squirt"><svg viewBox="0 0 120 46"><path d="M10 34 Q22 14 36 32 Q50 48 64 30 Q78 12 92 32 Q104 48 116 28" stroke="#ffffff" stroke-width="12" fill="none" stroke-linecap="round"/><path d="M10 34 Q22 14 36 32 Q50 48 64 30 Q78 12 92 32 Q104 48 116 28" stroke="#d9f0ff" stroke-width="12" fill="none" stroke-linecap="round" stroke-dasharray="5 9"/></svg></div>
+  </div>
+  <div class="tooth happy" id="tooth3" data-act="咬合面上，来回刷刷刷！" style="width:92px;height:102px;left:51%;bottom:24%;">
+    <svg viewBox="0 0 100 110"><path id="body" d="M28 18 Q50 4 72 18 L78 72 Q50 98 22 72 Z" fill="#fff" stroke="#e3d9cf" stroke-width="3"/><path id="cav" d="M55 48 q7 5 3 12 q-9 3 -12 -7 q6 -5 9 -5z" fill="#6d4c41" opacity="0"/><g class="face"><circle cx="40" cy="48" r="5" fill="#3a4a5a"/><circle cx="62" cy="48" r="5" fill="#3a4a5a"/><path id="mH" d="M42 58 Q51 66 60 58" stroke="#3a4a5a" stroke-width="3.4" fill="none" stroke-linecap="round"/><path id="mC" d="M42 68 Q51 59 60 68" stroke="#7cc7ff" stroke-width="3.4" fill="none" stroke-linecap="round" style="display:none"/></g></svg>
+  </div>
+
+  <!-- 牙刷骑士（牙膏挤好后才登场，45度摆动） -->
+  <div class="brush" id="sc4Brush" style="width:280px;height:96px;top:56%;">
+    <svg viewBox="0 0 300 100">
+      <path d="M18 52 L182 44 Q198 42 206 50 L206 68 Q198 76 182 74 L18 66 Q4 64 2 59 Q4 54 18 52 Z" fill="#ff9a3c" stroke="#e0701e" stroke-width="4"/>
+      <path d="M42 59 L170 50" stroke="#ffd0a0" stroke-width="5" stroke-linecap="round" opacity=".85"/>
+      <rect x="204" y="30" width="86" height="56" rx="20" fill="#f7fafd" stroke="#c3d0de" stroke-width="4"/>
+      <g stroke="#7cc7ff" stroke-width="5.5" stroke-linecap="round">
+        <line x1="218" y1="34" x2="218" y2="54"/><line x1="232" y1="34" x2="232" y2="54"/>
+        <line x1="246" y1="34" x2="246" y2="54"/><line x1="260" y1="34" x2="260" y2="54"/>
+        <line x1="274" y1="34" x2="274" y2="54"/>
+      </g>
+      <g stroke="#9cc8ec" stroke-width="5.5" stroke-linecap="round">
+        <line x1="218" y1="62" x2="218" y2="82"/><line x1="232" y1="62" x2="232" y2="82"/>
+        <line x1="246" y1="62" x2="246" y2="82"/><line x1="260" y1="62" x2="260" y2="82"/>
+        <line x1="274" y1="62" x2="274" y2="82"/>
+      </g>
+      <circle cx="12" cy="59" r="3.5" fill="#c65a14" opacity=".55"/>
+    </svg>
+  </div>
+
+  <!-- 牙膏 -->
+  <div class="brush" id="sc4TP" style="width:130px;height:76px;right:3%;bottom:6%;transform:rotate(-8deg);">
+    <svg viewBox="0 0 130 76">
+      <rect x="6" y="16" width="60" height="46" rx="12" fill="#7cc7ff" stroke="#3f8fd9" stroke-width="3.5"/>
+      <path d="M66 18 L100 24 L100 52 L66 58 Z" fill="#e8f4ff" stroke="#3f8fd9" stroke-width="3.5"/>
+      <rect x="98" y="22" width="13" height="32" rx="5" fill="#5aa7e0" stroke="#3f8fd9" stroke-width="2.5"/>
+      <path d="M16 40 Q26 28 36 40 Q46 52 56 40" stroke="#3f8fd9" stroke-width="3" fill="none"/>
+      <ellipse cx="32" cy="50" rx="15" ry="6" fill="#fff" opacity=".5"/>
+      <text x="8" y="72" font-size="13" font-weight="bold" fill="#3f8fd9">护牙牙膏</text>
+    </svg>
+  </div>
+
+  <!-- 泡沫（JS 定时触发） -->
+  <div class="foam" style="left:30%;top:70%;"></div>
+  <div class="foam" style="left:38%;top:62%;"></div>
+  <div class="foam" style="left:46%;top:66%;"></div>
+  <div class="foam" style="left:48%;top:78%;"></div>
+  <div class="foam" style="left:39%;top:84%;"></div>
+  <div class="foam" style="left:29%;top:78%;"></div>
+  <div class="foam" style="left:44%;top:88%;"></div>
+  <div class="foam" style="left:25%;top:64%;"></div>
+  <div class="sparkle" style="left:27%;top:62%;"></div>
+  <div class="sparkle" style="left:47%;top:60%;"></div>
+  <div class="sparkle" style="left:36%;top:55%;"></div>
+
+  <!-- 逃跑的细菌 -->
+  <div class="bug" style="width:70px;height:70px;right:26%;top:66%;">
+    <svg viewBox="0 0 100 100"><circle cx="50" cy="55" r="38" fill="#93d855" stroke="#5f9e2f" stroke-width="3"/><path d="M34 24 Q28 8 40 12" stroke="#5f9e2f" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M66 24 Q72 8 60 12" stroke="#5f9e2f" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="29" cy="22" r="6" fill="#c768e0"/><circle cx="71" cy="22" r="6" fill="#c768e0"/><path d="M38 62 Q50 54 62 62 L58 74 L42 74 Z" fill="#fff" opacity=".8"/><circle cx="42" cy="56" r="3.4" fill="#2b2b2b"/><circle cx="58" cy="56" r="3.4" fill="#2b2b2b"/></svg>
+  </div>
+  <div class="bug" style="width:56px;height:56px;right:14%;top:76%;animation-delay:.3s;">
+    <svg viewBox="0 0 100 100"><circle cx="50" cy="55" r="38" fill="#93d855" stroke="#5f9e2f" stroke-width="3"/><path d="M34 24 Q28 8 40 12" stroke="#5f9e2f" stroke-width="5" fill="none" stroke-linecap="round"/><path d="M66 24 Q72 8 60 12" stroke="#5f9e2f" stroke-width="5" fill="none" stroke-linecap="round"/><circle cx="29" cy="22" r="6" fill="#c768e0"/><circle cx="71" cy="22" r="6" fill="#c768e0"/><path d="M38 62 Q50 54 62 62 L58 74 L42 74 Z" fill="#fff" opacity=".8"/><circle cx="42" cy="56" r="3.4" fill="#2b2b2b"/><circle cx="58" cy="56" r="3.4" fill="#2b2b2b"/></svg>
+  </div>
+</section>
+<!-- ================= 场景5：恒牙上岗 · 微笑永驻 ================= -->
+<section class="scene" id="sc5">
+  <div style="position:absolute;inset:0;background:linear-gradient(180deg,#bfe9ff 0%,#eafaf1 70%);"></div>
+
+  <!-- 彩虹 -->
+
+  <div class="rainbow-bar" style="top:21%;left:10%;width:16%;background:#ff6b6b;animation-delay:.2s;"></div>
+  <div class="rainbow-bar" style="top:23%;left:14%;width:10%;background:#ffa94d;"></div>
+  <div class="rainbow-bar" style="top:21%;right:10%;width:16%;background:#ff6b6b;"></div>
+  <div class="rainbow-bar" style="top:23%;right:14%;width:10%;background:#ffa94d;"></div>
+
+  <div id="finalSlogan">
+    <div class="s1">乳牙退休啦，恒牙上岗！😁</div>
+    <div class="s2">早晚刷牙，白牙笑哈哈 · 微笑永驻</div>
+  </div>
+
+  <!-- 牙龈地面 -->
+  <div style="position:absolute;bottom:8%;left:0;width:100%;height:128px;background:linear-gradient(180deg,#ffb6c1,#ff9fb2);border-radius:50% 50% 0 0 / 32% 32% 0 0;z-index:5;"></div>
+
+  <!-- 乳牙（鞠躬 → 退场） -->
+  <div class="tooth bow" style="width:74px;height:82px;left:18%;bottom:24%;">
+    <svg viewBox="0 0 100 110"><path id="body" d="M28 18 Q50 4 72 18 L78 72 Q50 98 22 72 Z" fill="#ffe9e9" stroke="#e3d9cf" stroke-width="3"/><path id="cav" d="M55 48 q7 5 3 12 q-9 3 -12 -7 q6 -5 9 -5z" fill="#6d4c41" opacity="0"/><g class="face"><circle cx="40" cy="48" r="5" fill="#3a4a5a"/><circle cx="62" cy="48" r="5" fill="#3a4a5a"/><path id="mH" d="M42 58 Q51 66 60 58" stroke="#3a4a5a" stroke-width="3.4" fill="none" stroke-linecap="round"/><path id="mC" d="M42 68 Q51 59 60 68" stroke="#7cc7ff" stroke-width="3.4" fill="none" stroke-linecap="round" style="display:none"/></g></svg>
+  </div>
+  <div class="tooth bow" style="width:87px;height:96px;left:31%;bottom:21%;animation-delay:.3s;">
+    <svg viewBox="0 0 100 110"><path id="body" d="M28 18 Q50 4 72 18 L78 72 Q50 98 22 72 Z" fill="#ffe9e9" stroke="#e3d9cf" stroke-width="3"/><path id="cav" d="M55 48 q7 5 3 12 q-9 3 -12 -7 q6 -5 9 -5z" fill="#6d4c41" opacity="0"/><g class="face"><circle cx="40" cy="48" r="5" fill="#3a4a5a"/><circle cx="62" cy="48" r="5" fill="#3a4a5a"/><path id="mH" d="M42 58 Q51 66 60 58" stroke="#3a4a5a" stroke-width="3.4" fill="none" stroke-linecap="round"/><path id="mC" d="M42 68 Q51 59 60 68" stroke="#7cc7ff" stroke-width="3.4" fill="none" stroke-linecap="round" style="display:none"/></g></svg>
+  </div>
+  <div class="tooth bow" style="width:74px;height:82px;right:18%;bottom:24%;animation-delay:.6s;">
+    <svg viewBox="0 0 100 110"><path id="body" d="M28 18 Q50 4 72 18 L78 72 Q50 98 22 72 Z" fill="#ffe9e9" stroke="#e3d9cf" stroke-width="3"/><path id="cav" d="M55 48 q7 5 3 12 q-9 3 -12 -7 q6 -5 9 -5z" fill="#6d4c41" opacity="0"/><g class="face"><circle cx="40" cy="48" r="5" fill="#3a4a5a"/><circle cx="62" cy="48" r="5" fill="#3a4a5a"/><path id="mH" d="M42 58 Q51 66 60 58" stroke="#3a4a5a" stroke-width="3.4" fill="none" stroke-linecap="round"/><path id="mC" d="M42 68 Q51 59 60 68" stroke="#7cc7ff" stroke-width="3.4" fill="none" stroke-linecap="round" style="display:none"/></g></svg>
+  </div>
+
+  <!-- 恒牙大宝宝（从牙龈里长出来） -->
+  <div class="tooth fly-center" style="width:140px;height:154px;left:46%;bottom:14%;">
+    <svg viewBox="0 0 100 110">
+      <path id="body" d="M28 18 Q50 4 72 18 L78 72 Q50 98 22 72 Z" fill="#ffffff" stroke="#cfe9ff" stroke-width="4"/>
+      <path d="M36 24 Q42 16 50 20 Q58 16 64 24" stroke="#d9f0ff" stroke-width="4" fill="none" stroke-linecap="round"/>
+      <path id="cav" d="M55 48 q7 5 3 12 q-9 3 -12 -7 q6 -5 9 -5z" fill="#6d4c41" opacity="0"/>
+      <g class="face"><circle cx="40" cy="48" r="5.4" fill="#2b3a55"/><circle cx="62" cy="48" r="5.4" fill="#2b3a55"/><ellipse cx="37" cy="45" rx="2.4" ry="3.2" fill="#fff"/><ellipse cx="59" cy="45" rx="2.4" ry="3.2" fill="#fff"/><path id="mH" d="M41 58 Q51 67 61 58" stroke="#2b3a55" stroke-width="3.6" fill="none" stroke-linecap="round"/><path id="mC" d="M42 68 Q51 59 60 68" stroke="#7cc7ff" stroke-width="3.4" fill="none" stroke-linecap="round" style="display:none"/></g>
+    </svg>
+    <div class="sparkle" style="left:-14px;top:-8px;width:22px;height:22px;opacity:1;animation:twinkle 1.6s infinite;"></div>
+    <div class="sparkle" style="right:-16px;top:18px;width:16px;height:16px;opacity:1;animation:twinkle 1.6s .4s infinite;"></div>
+  </div>
+
+  <!-- 金牌护牙勋章 -->
+  <div class="medal" style="left:70%;bottom:26%;width:92px;height:110px;animation:floatY 2.8s ease-in-out infinite;">
+    <svg viewBox="0 0 92 110">
+      <rect x="32" y="4" width="30" height="52" rx="10" fill="#ffd23f" stroke="#e0a91f" stroke-width="3"/>
+      <circle cx="47" cy="78" r="36" fill="#ffd23f" stroke="#e0a91f" stroke-width="5"/>
+      <circle cx="47" cy="78" r="26" fill="#fff" stroke="#e0a91f" stroke-width="3"/>
+      <text x="47" y="88" text-anchor="middle" font-size="30" font-weight="900" fill="#e0a91f">★</text>
+    </svg>
+  </div>
+  <div class="tag" style="left:72%;bottom:20%;font-size:clamp(14px,2vw,22px);color:#b8860b;">金牌护牙勋章</div>
+</section>
+<!-- ===== 幕牌 ===== -->
+<div id="sceneBadge">第 1 幕 / 6</div>
+
+<!-- ===== 台词区 ===== -->
+<div id="caption">
+  <div class="line" id="line1"></div>
+  <div class="sub" id="sub1"></div>
+</div>
+
+<!-- ===== 控制条 ===== -->
+<div id="controls">
+  <button id="btnPrev" title="上一个画面">◀</button>
+  <div id="dots"></div>
+<button id="btnNext" title="下一个画面">▶</button>
+  <button id="btnSound" title="开 / 关声音">🔊</button>
+  <button id="btnPlay" title="播放 / 暂停">⏸</button>
+</div>
+
+<!-- ===== 底部大箭头（孩子好按） ===== -->
+<button class="navBig" id="btnPrevBig" title="上一个画面" style="left:14px;">◀</button>
+<button class="navBig" id="btnNextBig" title="下一个画面" style="right:14px;">▶</button>
+
+<!-- ===== 第4幕互动：提示与勋章 ===== -->
+<div id="sc4HintWrap"><div class="tap-hint">点一点牙齿，帮我刷刷牙！👆</div></div>
+<div id="sc4MedalWrap">
+  <div class="medal">
+    <svg viewBox="0 0 92 110">
+      <rect x="32" y="4" width="30" height="52" rx="10" fill="#ffd23f" stroke="#e0a91f" stroke-width="3"/>
+      <circle cx="47" cy="78" r="36" fill="#ffd23f" stroke="#e0a91f" stroke-width="5"/>
+      <circle cx="47" cy="78" r="26" fill="#fff" stroke="#e0a91f" stroke-width="3"/>
+      <text x="47" y="88" text-anchor="middle" font-size="30" font-weight="900" fill="#e0a91f">★</text>
+    </svg>
+  </div>
+</div>
+
+<!-- ===== 第5幕：护牙小挑战 ===== -->
+<!-- ===== 开始课堂遮罩：默认不播放，点击后解锁声音 ===== -->
+<div id="startOverlay">
+  <button id="startBtn" type="button"><span class="arr">▶</span>开始课堂</button>
+</div>
+
+
+<div id="quiz">
+  <div id="quizTitle">🏅 护牙小挑战</div>
+  <div id="quizN"></div>
+  <div id="quizQ"></div>
+  <div id="quizOpts"></div>
+  <div id="quizMsg"></div>
+</div>
+</div>
+
+<script>
+(function(){
+  var scenes = document.querySelectorAll('.scene');
+  var lineEl = document.getElementById('line1');
+  var subEl = document.getElementById('sub1');
+  var dotsBox = document.getElementById('dots');
+  var badgeEl = document.getElementById('sceneBadge');
+  var quizEl = document.getElementById('quiz');
+  var hintWrap = document.getElementById('sc4HintWrap');
+  var medalWrap = document.getElementById('sc4MedalWrap');
+  var playing = false, cur = 0, timer = null, effectTimer = null, sceneTimers = [];
+  var startOverlay = document.getElementById('startOverlay');
+  var startBtn = document.getElementById('startBtn');
+  var NAMES = ['开场','乳牙家族','细菌来了','蛀牙黑洞','刷牙挑战','护牙闯关'];
+  var SCRIPTS = [
+    { sec:8,  line:'', sub:'' },
+    { sec:12, line:'白白的小卫士——乳牙！每天帮你嚼食物~', sub:'可最近，它们疼得想休息！' },
+    { sec:14, line:'细菌小怪兽在牙缝里建了"糖果工厂"，喷出酸酸的炮弹！', sub:'牙齿的"小铠甲"，顶不住啦！' },
+    { sec:13, line:'蛀牙黑洞出现啦！乳牙宝宝疼得哇哇叫——', sub:'"罢工啦！罢工啦！我要休息！"' },
+    { sec:0,  line:'护牙特工队出动！点一点牙齿，帮它们刷刷牙！', sub:'两颗两颗轻轻刷，里面外面都要刷~', doneLine:'太棒啦！细菌全部赶跑！', doneSub:'小牙刷，本领大，牙齿干净笑哈哈！' },
+    { sec:0,  line:'乳牙休息，恒牙上岗！', sub:'答对挑战，当"金牌护牙小卫士"！' }
+  ];
+  var QUIZ = [
+    { q:'嘴巴里的细菌，最喜欢吃什么？', opts:['甜甜的糖果','淡淡的白水','青青的蔬菜'], a:0,
+      ok:'对啦！细菌最爱甜甜的食物渣！', no:'再想一想哦~' },
+    { q:'一天的什么时候要刷牙？', opts:['早上起床后','早上和晚上','晚上睡觉前'], a:1,
+      ok:'真棒！早上晚上各刷一次！', no:'再想一想哦~ 只刷一次可不够！' }
+  ];
+
+  /* ===== 音效（WebAudio 合成，免外部文件） ===== */
+  var AC = null, soundOn = true;
+  function ac(){
+    if(!AC){ try{ AC = new (window.AudioContext || window.webkitAudioContext)(); }catch(e){} }
+    if(AC && AC.state === 'suspended'){ AC.resume(); }
+    return AC;
+  }
+  document.addEventListener('pointerdown', function(){ ac(); });
+  function tone(f, dur, type, delay, vol){
+    var c = ac(); if(!c || !soundOn) return;
+    var o = c.createOscillator(), g = c.createGain(), t0 = c.currentTime + (delay || 0);
+    o.type = type || 'sine'; o.frequency.value = f;
+    g.gain.setValueAtTime(0.0001, t0);
+    g.gain.linearRampToValueAtTime(vol || .25, t0 + .02);
+    g.gain.exponentialRampToValueAtTime(.0001, t0 + dur);
+    o.connect(g); g.connect(c.destination);
+    o.start(t0); o.stop(t0 + dur + .05);
+  }
+  function sfxDing(){ tone(880,.22,'triangle',0,.3); tone(1318,.26,'triangle',.1,.22); }
+  function sfxBuzz(){ tone(150,.28,'sawtooth',0,.15); tone(115,.3,'sawtooth',.06,.12); }
+  function sfxBrush(){
+    var c = ac(); if(!c || !soundOn) return;
+    var len = Math.floor(c.sampleRate * .45);
+    var buf = c.createBuffer(1, len, c.sampleRate), d = buf.getChannelData(0);
+    for(var i=0;i<len;i++){ d[i] = (Math.random()*2-1) * Math.pow(1 - i/len, 1.2); }
+    var s = c.createBufferSource(); s.buffer = buf;
+    var f = c.createBiquadFilter(); f.type='bandpass'; f.frequency.value=1400; f.Q.value=.7;
+    var g = c.createGain(); g.gain.value=.6;
+    s.connect(f); f.connect(g); g.connect(c.destination); s.start();
+  }
+  function sfxCheer(){ [523,659,784,1047,784,1047].forEach(function(f,i){ tone(f,.3,'triangle',i*.11,.26); }); }
+
+/* ===== 朗读（微软 Edge TTS · 晓伊女声，适合二年级学生） ===== */
+  function stripTags(s){ return (s || '').replace(/<[^>]+>/g, ''); }
+  var XIAOYI = 'zh-CN-XiaoyiNeural';
+  var EDGE_TOKEN = '6A5AA1D4EAFF4E9FB37E23D68491D6F4';
+  var EDGE_WSS = 'wss://speech.platform.bing.com/consumer/speech/synthesize/readaloud/edge/v1?TrustedClientToken=';
+  var activeSpeakAudio = null, fallbackUtterance = null, speakGeneration = 0;
+
+  function uuid32(){
+    var c = new Uint8Array(16), i;
+    if(window.crypto && crypto.getRandomValues){ crypto.getRandomValues(c); }
+    else { for(i=0;i<16;i++){ c[i] = Math.floor(Math.random()*256); } }
+    return Array.prototype.map.call(c, function(b){ return b.toString(16).padStart(2,'0'); }).join('').toUpperCase();
+  }
+  function edgeGec(){
+    var ticks = BigInt(Math.floor(Date.now()/1000) + 11644473600) * 10000000n;
+    var rounded = ticks - (ticks % 3000000000n);
+    return crypto.subtle.digest('SHA-256', new TextEncoder().encode(rounded.toString() + EDGE_TOKEN))
+      .then(function(digest){ return Array.prototype.map.call(new Uint8Array(digest), function(b){ return b.toString(16).padStart(2,'0'); }).join('').toUpperCase(); });
+  }
+  function ssmlEsc(t){ return String(t).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/\"/g,'&quot;').replace(/'/g,'&apos;'); }
+
+  // 合成一段文字，返回 MP3 字节；网络失败时由上层切换系统女声
+  function edgeTTS(text, voice, rate, pitch, timeout){
+    voice = voice || XIAOYI; rate = rate || '-5%'; pitch = pitch || '+0Hz';
+    return new Promise(function(resolve, reject){
+      var ws = null, timer = null, chunks = [], settled = false;
+      function done(err, data){
+        if(settled) return;
+        settled = true;
+        if(timer) clearTimeout(timer);
+        try{ if(ws) ws.close(); }catch(e){}
+        if(err){ reject(err); } else { resolve(data); }
+      }
+      function connect(gec){
+        var url = EDGE_WSS + EDGE_TOKEN + '&Sec-MS-GEC=' + gec + '&Sec-MS-GEC-Version=1-143.0.3650.75&ConnectionId=' + uuid32();
+        ws = new WebSocket(url); ws.binaryType = 'arraybuffer';
+        timer = setTimeout(function(){ done(new Error('语音合成超时')); }, timeout || 20000);
+        ws.onopen = function(){
+          var ts = new Date().toString();
+          ws.send('X-Timestamp:' + ts + '\r\nContent-Type:application/json; charset=utf-8\r\nPath:speech.config\r\n\r\n{"context":{"synthesis":{"audio":{"metadataoptions":{"sentenceBoundaryEnabled":"false","wordBoundaryEnabled":"false"},"outputFormat":"audio-24khz-48kbitrate-mono-mp3"}}}}');
+          var ssml = '<speak version="1.0" xmlns="http://www.w3.org/2001/10/synthesis" xml:lang="zh-CN"><voice name="' + voice + '"><prosody pitch="' + pitch + '" rate="' + rate + '" volume="+0%">' + ssmlEsc(text) + '</prosody></voice></speak>';
+          ws.send('X-RequestId:' + uuid32() + '\r\nContent-Type:application/ssml+xml\r\nX-Timestamp:' + ts + '\r\nPath:ssml\r\n\r\n' + ssml);
+        };
+        ws.onmessage = function(ev){
+          if(typeof ev.data === 'string'){
+            if(ev.data.indexOf('Path:turn.end') !== -1){
+              var total = 0, k, out, off = 0;
+              for(k=0;k<chunks.length;k++) total += chunks[k].length;
+              if(!total){ done(new Error('服务未返回音频')); return; }
+              out = new Uint8Array(total);
+              for(k=0;k<chunks.length;k++){ out.set(chunks[k], off); off += chunks[k].length; }
+              done(null, out);
+            }
+            return;
+          }
+          var buf = new Uint8Array(ev.data);
+          if(buf.length < 2) return;
+          var hdrLen = (buf[0] << 8) | buf[1];
+          var hdr = new TextDecoder().decode(buf.slice(2, 2 + hdrLen));
+          if(hdr.indexOf('Path:audio') !== -1 && buf.length > 2 + hdrLen){ chunks.push(buf.slice(2 + hdrLen)); }
+        };
+        ws.onerror = function(){ done(new Error('语音服务连接失败')); };
+        ws.onclose = function(){ if(!settled && !chunks.length) done(new Error('语音服务断开了连接')); };
+      }
+      if(!window.WebSocket || !window.crypto || !window.crypto.subtle){ reject(new Error('当前浏览器不支持在线语音')); return; }
+      edgeGec().then(connect).catch(function(){ done(new Error('生成安全令牌失败')); });
+    });
+  }
+
+  function splitForTTS(text, maxLen){
+    maxLen = maxLen || 600;
+    var clean = text.replace(/\s+/g, ' ').trim();
+    if(!clean) return [];
+    var sentences = clean.match(/[^。！？!?；;]+[。！？!?；;]?\s*/g) || [clean];
+    var parts = [], buf = '', i, s;
+    for(i=0;i<sentences.length;i++){
+      s = sentences[i];
+      if(s.length > maxLen){
+        if(buf.trim()){ parts.push(buf.trim()); buf = ''; }
+        for(var j=0;j<s.length;j+=maxLen){ parts.push(s.slice(j,j+maxLen).trim()); }
+        continue;
+      }
+      if(buf.length + s.length > maxLen && buf.trim()){ parts.push(buf.trim()); buf = ''; }
+      buf += s;
+    }
+    if(buf.trim()) parts.push(buf.trim());
+    return parts.filter(function(p){ return p; });
+  }
+  function synthesizeXiaoyi(text, rate, pitch){
+    var parts = splitForTTS(text), all = [];
+    return parts.reduce(function(chain, part){
+      return chain.then(function(result){ return edgeTTS(part, XIAOYI, rate || '-5%', pitch || '+0Hz').then(function(buf){ result.push(buf); return result; }); });
+    }, Promise.resolve([])).then(function(result){ return new Blob(result, { type:'audio/mpeg' }); });
+  }
+
+  function playBlob(blob, generation){
+    return new Promise(function(resolve){
+      var a = new Audio(), finished = false;
+      function finish(){
+        if(finished) return;
+        finished = true;
+        try{ URL.revokeObjectURL(a.src); }catch(e){}
+        if(activeSpeakAudio === a) activeSpeakAudio = null;
+        resolve();
+      }
+      activeSpeakAudio = a;
+      window._edgeAudioRef = a;
+      a.src = URL.createObjectURL(blob);
+      a.onended = finish; a.onerror = finish;
+      if(generation !== speakGeneration){ finish(); return; }
+      a.play().catch(finish);
+    });
+  }
+  function speakFallback(text){
+    if(!window.speechSynthesis) return;
+    try{
+      window.speechSynthesis.cancel();
+      fallbackUtterance = new SpeechSynthesisUtterance(text);
+      fallbackUtterance.lang = 'zh-CN'; fallbackUtterance.rate = 0.95; fallbackUtterance.pitch = 1.08;
+      var voices = window.speechSynthesis.getVoices ? window.speechSynthesis.getVoices() : [];
+      for(var i=0;i<voices.length;i++){ if(/^zh(-|_)?CN/i.test(voices[i].lang) && /女|female|xiaoxiao|xiaoyi/i.test(voices[i].name || '')){ fallbackUtterance.voice = voices[i]; break; } }
+      window.speechSynthesis.speak(fallbackUtterance);
+    }catch(e){}
+  }
+  var speakQueue = [], speaking = false;
+  function edgeSpeakStop(){
+    speakGeneration++;
+    speakQueue = []; speaking = false;
+    if(activeSpeakAudio){ try{ activeSpeakAudio.pause(); activeSpeakAudio.src = ''; }catch(e){} activeSpeakAudio = null; }
+    window._edgeAudioRef = null;
+    if(window.speechSynthesis){ try{ window.speechSynthesis.cancel(); }catch(e){} }
+  }
+  function speak(text){
+    text = stripTags(text); if(!text || !soundOn || !_unlocked) return;
+    speakQueue.push(text);
+    if(speaking) return;
+    speaking = true;
+    var generation = speakGeneration;
+    (function pump(){
+      if(generation !== speakGeneration){ speaking = false; return; }
+      if(!speakQueue.length){ speaking = false; return; }
+      var t = speakQueue.shift(); speakQueue = [];
+      synthesizeXiaoyi(t, '-5%', '+0Hz').then(function(blob){
+        if(generation !== speakGeneration || !blob || !blob.size){ pump(); return; }
+        playBlob(blob, generation).then(pump);
+      }).catch(function(err){
+        if(generation === speakGeneration){
+          window.__edgeTTSLastError = err && err.message ? err.message : 'Edge TTS 合成失败';
+        }
+        speaking = false;
+      });
+    })();
+  }
+  function stopSpeak(){ edgeSpeakStop(); }
+  window.speakXiaoyi = speak; window.stopSpeakXiaoyi = stopSpeak;
+  var pendingWelcome = false, _unlocked = false;
+  function _doWelcome(){
+    if(_unlocked) return;
+    _unlocked = true; soundOn = true; ac();
+    if(startOverlay) startOverlay.classList.add('hidden');
+    if(startBtn) startBtn.blur();
+    playing = true;
+    if(pendingWelcome && soundOn){ pendingWelcome = false; speak('欢迎来到口腔健康小课堂'); }
+    schedule();
+  }
+  if(startBtn){ startBtn.addEventListener('click', function(e){ e.stopPropagation(); _doWelcome(); }); }
+  // 声音总开关（🔊 播放 / 🔇 静音，静音时同时停止朗读与音效）
+  document.getElementById('btnSound').onclick = function(){ this.blur(); soundOn = !soundOn; this.textContent = soundOn ? '🔊' : '🔇'; if(soundOn){ sfxDing(); }else{ stopSpeak(); } };
+
+  /* ===== 圆点与幕牌 ===== */
+  scenes.forEach(function(s, i){
+    var d = document.createElement('span');
+    d.title = '第' + (i+1) + '幕 · ' + NAMES[i];
+    d.onclick = function(){ goTo(i); };
+    dotsBox.appendChild(d);
+  });
+  function markDots(){ var ds = dotsBox.children; for(var i=0;i<ds.length;i++){ ds[i].className = i===cur ? 'on' : ''; } }
+  function clearTimer(){ if(timer){ clearTimeout(timer); timer = null; } if(effectTimer){ clearInterval(effectTimer); effectTimer = null; } sceneTimers.forEach(clearTimeout); sceneTimers = []; }
+  function later(fn, ms){ sceneTimers.push(setTimeout(fn, ms)); }
+
+  function setCaption(a, b){
+    lineEl.className = 'line'; subEl.className = 'sub';
+    lineEl.innerHTML = a || ''; subEl.innerHTML = b || '';
+    lineEl.style.display = a ? 'inline-block' : 'none';
+    subEl.style.display = b ? 'inline-block' : 'none';
+    later(function(){ if(a){ lineEl.className = 'line show'; } if(b){ subEl.className = 'sub show'; } }, 120);
+  }
+
+  /* ===== 第4幕：点牙齿刷牙（练习＋即时反馈） ===== */
+  var sc4teeth = document.querySelectorAll('#sc4 .tooth');
+  var brushDone = false;
+  function spawnFoams(r){
+    var stage = document.getElementById('stage');
+    for(var i=0;i<6;i++){
+      var f = document.createElement('div'); f.className = 'foam';
+      f.style.left = (r.left + 6 + Math.random() * Math.max(10, r.width - 30)) + 'px';
+      f.style.top  = (r.top  + 6 + Math.random() * Math.max(10, r.height - 30)) + 'px';
+      stage.appendChild(f); void f.offsetWidth; f.classList.add('go');
+      (function(el){ setTimeout(function(){ if(el.parentNode){ el.parentNode.removeChild(el); } }, 1500); })(f);
+    }
+  }
+  function showTag(r, text){
+    var t = document.createElement('div'); t.className = 'actionTag'; t.textContent = text;
+    t.style.left = (r.left + r.width / 2) + 'px';
+    t.style.top  = (r.top - 6) + 'px';
+    document.getElementById('stage').appendChild(t);
+    setTimeout(function(){ if(t.parentNode){ t.parentNode.removeChild(t); } }, 1600);
+  }
+  Array.prototype.forEach.call(sc4teeth, function(t){
+    t.onclick = function(){
+      if(cur !== 4 || brushDone) return;
+      if(!t.classList.contains('brushable') || t.classList.contains('done')) return;
+      t.classList.remove('brushable'); t.classList.add('done', 'wiggle');
+      var r = t.getBoundingClientRect();
+      spawnFoams(r);
+      showTag(r, t.getAttribute('data-act') || '刷刷刷');
+      sfxBrush();
+      if(document.querySelectorAll('#sc4 .tooth.done').length >= sc4teeth.length){ brushSuccess(); }
+    };
+  });
+  function brushSuccess(){
+    brushDone = true;
+    hintWrap.style.display = 'none';
+    var br = document.getElementById('sc4Brush'), sq = document.getElementById('sc4Squirt');
+    br.classList.remove('in'); if(sq){ sq.className = 'squirt'; }
+    medalWrap.style.display = 'flex';
+    medalWrap.classList.remove('pop-in'); void medalWrap.offsetWidth; medalWrap.classList.add('pop-in');
+    sfxCheer();
+    speak('哇！三颗牙齿都刷干净啦！细菌全部逃跑！');
+    later(function(){ document.querySelectorAll('#sc4 .bug').forEach(function(b){ b.className = 'bug flying'; }); }, 800);
+    setCaption(SCRIPTS[4].doneLine, SCRIPTS[4].doneSub);
+    if(playing){ timer = setTimeout(function(){ goTo(5); }, 4200); }
+  }
+
+  /* ===== 第5幕：护牙小挑战（回忆练习） ===== */
+  var qN = document.getElementById('quizN'), qQ = document.getElementById('quizQ'),
+      qOpts = document.getElementById('quizOpts'), qMsg = document.getElementById('quizMsg');
+  var qi = 0, qLock = false, qDone = false;
+  function openQuiz(){
+    qi = 0; qLock = false; qDone = false;
+    quizEl.classList.add('open');
+    document.getElementById('sc5').classList.add('quiz-on');
+    renderQuiz();
+    later(function(){ speak(qQ.textContent); }, 500);
+  }
+  function closeQuiz(){
+    quizEl.classList.remove('open');
+    document.getElementById('sc5').classList.remove('quiz-on');
+  }
+  function renderQuiz(){
+    var item = QUIZ[qi];
+    qN.textContent = '第 ' + (qi+1) + ' 题 · 共 ' + QUIZ.length + ' 题';
+    qQ.textContent = item.q;
+    qMsg.textContent = ''; qMsg.className = '';
+    qOpts.innerHTML = '';
+    item.opts.forEach(function(text, k){
+      var b = document.createElement('button'); b.textContent = text;
+      b.onclick = function(){ answerQuiz(b, k); };
+      qOpts.appendChild(b);
+    });
+  }
+  function answerQuiz(btn, k){
+    if(qLock || qDone) return;
+    var item = QUIZ[qi];
+    if(k === item.a){
+      qLock = true; btn.classList.add('good');
+      qMsg.textContent = item.ok; qMsg.className = 'ok';
+      sfxDing(); speak(item.ok);
+      later(function(){
+        qi++; qLock = false;
+        if(qi < QUIZ.length){ renderQuiz(); speak(qQ.textContent); }
+        else { quizFinish(); }
+      }, 1800);
+    }else{
+      btn.classList.add('shake'); sfxBuzz();
+      qMsg.textContent = item.no; qMsg.className = 'no';
+      setTimeout(function(){ btn.classList.remove('shake'); }, 500);
+    }
+  }
+  function quizFinish(){
+    qDone = true;
+    qN.textContent = '挑战完成！';
+    qQ.textContent = '🎉 全部答对！';
+    qOpts.innerHTML = '';
+    qMsg.textContent = '你就是今天的"金牌护牙小卫士"！'; qMsg.className = 'ok';
+    var m = document.querySelector('#sc5 .medal');
+    if(m){ m.style.animation = 'badgePulse .9s ease-in-out infinite'; }
+    sfxCheer(); confetti();
+    speak('恭喜你，全部答对！你就是金牌护牙小卫士！');
+  }
+  function confetti(){
+    var colors = ['#ff6b6b','#ffd23f','#63e6be','#74c0fc','#ffa94d','#f783ac','#a9e34b'];
+    var stage = document.getElementById('stage');
+    for(var i=0;i<48;i++){
+      var c = document.createElement('div'); c.className = 'confetti';
+      c.style.left = (Math.random()*100) + 'vw';
+      c.style.background = colors[Math.floor(Math.random()*colors.length)];
+      if(Math.random() < .4){ c.style.borderRadius = '50%'; }
+      c.style.animationDelay = (Math.random()*.9) + 's';
+      c.style.animationDuration = (1.8 + Math.random()*1.4) + 's';
+      stage.appendChild(c);
+      (function(el){ setTimeout(function(){ if(el.parentNode){ el.parentNode.removeChild(el); } }, 4000); })(c);
+    }
+  }
+
+  /* ===== 各幕演出编排 ===== */
+  function sceneEffect(n){
+    if(n === 4){
+      var tp = document.getElementById('sc4TP');
+      var sq = document.getElementById('sc4Squirt');
+      var br = document.getElementById('sc4Brush');
+      tp.style.opacity = '1'; tp.style.transform = 'rotate(-8deg)';
+      tp.style.right = '3%'; tp.style.bottom = '6%'; tp.style.left = 'auto'; tp.style.top = 'auto';
+      sq.className = 'squirt'; br.className = 'brush';
+      Array.prototype.forEach.call(sc4teeth, function(t){ t.className = 'tooth happy'; });
+      document.querySelectorAll('#sc4 .bug').forEach(function(b){ b.className = 'bug'; });
+      brushDone = false; hintWrap.style.display = 'none'; medalWrap.style.display = 'none';
+      later(function(){  // ① 牙膏移到牙齿上方，管口朝下
+        tp.style.right = 'auto'; tp.style.bottom = 'auto';
+        tp.style.left = '33%'; tp.style.top = '54%';
+        tp.style.transform = 'rotate(90deg)';
+      }, 300);
+      later(function(){ sq.className = 'squirt go'; }, 1500);   // ② 挤膏体
+      later(function(){                                          // ③ 牙膏归位
+        tp.style.opacity = '0'; tp.style.left = 'auto'; tp.style.top = 'auto';
+        tp.style.right = '3%'; tp.style.bottom = '6%';
+      }, 2500);
+      later(function(){ br.classList.add('in'); }, 3200);        // ④ 牙刷登场摆动示范
+      later(function(){                                          // ⑤ 邀请孩子动手
+        if(brushDone) return;
+        Array.prototype.forEach.call(sc4teeth, function(t){
+          if(!t.classList.contains('done')){ t.classList.add('brushable'); }
+        });
+        hintWrap.style.display = 'flex';
+      }, 4200);
+    }
+    if(n === 5){
+      // 重进本场时复位：乳牙重新鞠躬、恒牙重新飞入
+      Array.prototype.forEach.call(document.querySelectorAll('#sc5 .tooth'), function(t){
+        if(t.classList.contains('fly-center')){
+          t.style.animation = 'none'; void t.offsetWidth; t.style.animation = '';
+        }else{
+          t.className = 'tooth bow';
+        }
+      });
+      var m5 = document.querySelector('#sc5 .medal');
+      if(m5){ m5.style.animation = 'floatY 2.8s ease-in-out infinite'; }
+      setTimeout(function(){ document.querySelectorAll('#sc5 .tooth.bow').forEach(function(t){ t.className = 'tooth shrink-away'; }); }, 1500);
+      later(function(){ openQuiz(); }, 4600);
+    }
+  }
+
+  /* ===== 翻页 ===== */
+  function goTo(n){
+    clearTimer();
+    stopSpeak();
+    if(n !== 5){ closeQuiz(); }
+    cur = n;
+    scenes.forEach(function(s, i){ s.className = i === n ? 'scene active' : 'scene'; });
+    var sc = SCRIPTS[n];
+    setCaption(sc.line, sc.sub);
+// 进入每幕自动朗读介绍（晓伊女声）：封面幕欢迎语由「首次点击」解锁播放（浏览器自动播放策略），其余幕照常朗读台词；静音时不读
+    if(soundOn && _unlocked){
+      if(n === 0){ pendingWelcome = true; }
+      else if(sc.line || sc.sub){ speak(sc.line + (sc.sub ? '。' + sc.sub : '')); }
+    } else if(n === 0){
+      pendingWelcome = true;
+    }
+    markDots();
+    if(badgeEl){ badgeEl.textContent = '第 ' + (n+1) + ' 幕 / ' + scenes.length + ' · ' + NAMES[n]; }
+    sceneEffect(n);
+    schedule();
+  }
+  function schedule(){
+    if(!playing) return;
+    var sc = SCRIPTS[cur];
+    if(!sc.sec || sc.sec <= 0) return;            // 互动幕：停留等待动手，不自动翻页
+    if(cur >= scenes.length - 1) return;          // 最后一幕：不再循环回封面
+    var next = function(){
+      if(!playing) return;
+      if(speaking){
+        timer = setTimeout(next, 300);            // 等晓伊语音自然播完，再切换下一幕
+      }else{
+        goTo(cur + 1);
+      }
+    };
+    timer = setTimeout(next, sc.sec * 1000);
+  }
+  function goNext(){ if(cur < scenes.length - 1){ goTo(cur + 1); } }
+  function goPrev(){ if(cur > 0){ goTo(cur - 1); } }
+  document.getElementById('btnPrev').onclick = goPrev;
+  document.getElementById('btnNext').onclick = goNext;
+  document.getElementById('btnPrevBig').onclick = goPrev;
+  document.getElementById('btnNextBig').onclick = goNext;
+  document.getElementById('btnPlay').onclick = function(){
+    playing = !playing;
+    this.textContent = playing ? '⏸' : '▶';
+    if(playing){
+      if(cur === 4 && brushDone){ timer = setTimeout(function(){ goTo(5); }, 1500); }
+      else { schedule(); }
+    }else{
+      if(timer){ clearTimeout(timer); timer = null; }
+    }
+  };
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'ArrowRight'){ goNext(); }
+    if(e.key === 'ArrowLeft'){ goPrev(); }
+    if(e.key === ' '){ document.getElementById('btnPlay').click(); e.preventDefault(); }
+  });
+  if(startOverlay){ startOverlay.classList.remove('hidden'); }
+  goTo(0);
+})();
+</script>
+
+</body>
+</html>
