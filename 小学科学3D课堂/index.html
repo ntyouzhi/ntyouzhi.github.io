@@ -17,6 +17,7 @@
         <button class="active" data-domain="life"><b>生命世界</b><small>人体 · 生物 · 细胞</small></button>
         <button data-domain="earth"><b>地球宇宙</b><small>地貌 · 地球 · 天体</small></button>
         <button data-domain="matter"><b>物质世界</b><small>物质 · 运动 · 微观</small></button>
+        <button data-domain="tech"><b>技术工程</b><small>结构 · 系统 · 设计</small></button>
       </nav>
       <label class="search"><span>⌕</span><input id="search" placeholder="搜索观察内容…"></label>
       <button class="classroom" data-action="fullscreen">⛶ 全屏课堂</button>
@@ -45,6 +46,23 @@
         </section>
       </div>
       <footer><span>小学科学3D课堂框架版 · 2026</span><span>地球宇宙 · 独立3D互动课件｜内容仅用于教学研究。</span></footer>
+    </section>
+
+    <section id="tech-classroom" class="earth-classroom tech-classroom" hidden>
+      <div class="earth-workspace">
+        <aside class="earth-library" id="tech-library">
+          <header><div><em>观察库</em><h2>技术工程 · 互动作品</h2></div><button id="tech-close-library">×</button></header>
+          <div class="geo-groups" id="tech-groups" role="list" aria-label="技术工程作品列表"></div>
+          <blockquote class="earth-quote"><b>从结构出发，</b><br>理解系统如何工作。</blockquote>
+        </aside>
+        <section class="geo-panel" aria-label="技术工程互动作品观察">
+          <div class="geo-panel-stage" id="tech-panel-stage">
+            <div class="geo-lab-loading" id="tech-panel-loading"><span></span><b>正在载入作品…</b></div>
+            <iframe id="tech-frame" title="技术工程互动作品" allow="fullscreen"></iframe>
+          </div>
+        </section>
+      </div>
+      <footer><span>小学科学3D课堂框架版 · 2026</span><span>技术工程 · 结构与系统｜内容仅用于教学研究。</span></footer>
     </section>
 
     <div id="life-classroom" class="life-classroom">
@@ -93,6 +111,6 @@
 <script src="assets/app.js"></script>
   <script src="assets/fish-swim.js"></script>
   <script src="assets/domains.js"></script>
-  <script src="assets/earth-universe.js"></script>
+  <script src="assets/earth-universe.js"></script>  <script src="assets/tech-engineering.js"></script>
 </body>
 </html>
