@@ -504,7 +504,9 @@ body{height:100dvh;overflow:hidden;padding-top:env(safe-area-inset-top,0px);padd
 .header-tool span{font-size:12px}.header-tool .icon{width:21px;height:21px}
 .brand-copy{min-width:0}.brand-copy h1{font-size:22px;letter-spacing:.3px}.brand-copy h1 span{font-size:16px;margin-left:9px}
 .site-context{font-size:12px;letter-spacing:.5px}.header-actions{gap:5px;min-width:0}
-.coding-credit{color:#8963a4;font-size:12px;white-space:nowrap;border:1px solid #dfcfe8;border-radius:18px;padding:7px 10px;margin-right:5px}
+.coding-credit{display:inline-flex;order:0;flex:0 0 auto;align-items:center;color:#8963a4;font-size:12px;white-space:nowrap;border:1px solid #dfcfe8;border-radius:18px;padding:7px 10px;margin-right:5px}
+.header-actions .header-tool{order:1;flex:0 0 auto}
+.stage-credit{order:1;flex:0 0 auto}
 .workspace{--left:204px;--right:274px;height:calc(100dvh - var(--header-height) - env(safe-area-inset-top,0px) - env(safe-area-inset-bottom,0px));min-height:0;min-width:0;grid-template-rows:minmax(0,1fr)}
 .library-collapsed .workspace{--left:0px}.details-collapsed .workspace{--right:0px}
 .stage{min-height:0}
@@ -570,7 +572,7 @@ body.embedded{--header-height:54px}.embedded .workspace{min-height:0}
   .mode-tabs button{min-height:49px;min-width:91px}.view-caption strong{font-size:17px}
   .view-button,.tool-icon,.view-toolbar .view-button{min-width:49px;min-height:54px;font-size:14px}.drag-modes button{min-width:74px;min-height:51px;font-size:14px}
 }
-@media(max-width:1200px){.header-divider,.lesson-chip,.coding-credit{display:none}.header{gap:10px}}
+@media(max-width:1200px){.header-divider,.lesson-chip{display:none}.header{gap:10px}}
 @media(max-width:1050px){
   :root{--header-height:56px}
   .header{padding:0 10px}.brand-copy h1{font-size:20px}.brand-copy h1 span{font-size:15px}.site-context{display:none}
@@ -626,7 +628,7 @@ body.embedded{--header-height:54px}.embedded .workspace{min-height:0}
     <button id="sidebar-toggle-btn" class="header-tool" aria-controls="parts-panel" aria-expanded="true" title="收起或展开左侧目录"><i data-icon="sidebar"></i><span id="sidebar-toggle-label">收起目录</span></button>
     <div class="brand-copy"><p class="site-context">小学科学3D课堂 <span>✦</span></p><h1>自行车<span>结构探索</span></h1></div>
     <div class="header-divider"></div><div class="lesson-chip"><b>物质世界</b><span>力与运动 · 教材 P43–45</span></div>
-    <div class="header-actions"><span class="coding-credit">王陈宇coding</span><button id="details-toggle-btn" class="header-tool" aria-controls="detail-panel" aria-expanded="true" title="展开或收起系统与部件说明"><i data-icon="gear"></i><span>系统说明</span></button><button id="help-btn" class="header-tool" title="操作指南"><i data-icon="help"></i><span>操作指南</span></button><button id="fullscreen-btn" class="header-tool"><i data-icon="expand"></i><span>全屏演示</span></button></div>
+    <div class="header-actions"><button id="details-toggle-btn" class="header-tool" aria-controls="detail-panel" aria-expanded="true" title="展开或收起系统与部件说明"><i data-icon="gear"></i><span>系统说明</span></button><button id="help-btn" class="header-tool" title="操作指南"><i data-icon="help"></i><span>操作指南</span></button><button id="fullscreen-btn" class="header-tool"><i data-icon="expand"></i><span>全屏演示</span></button></div>
   </header>
   <main class="workspace">
     <button id="panel-backdrop" class="panel-backdrop" hidden tabindex="-1" aria-label="关闭展开的面板"></button>
@@ -638,7 +640,7 @@ body.embedded{--header-height:54px}.embedded .workspace{min-height:0}
     </aside>
     <section id="stage" class="stage" aria-label="自行车三维模型交互区">
       <div class="stage-top">
-        <div class="scene-header"><div class="view-caption"><span class="eyebrow">互动观察区</span><strong id="scene-caption">整车观察</strong></div><button id="labels-btn" class="name-toggle" role="switch" aria-checked="true" aria-label="显示模型上的零部件名称" aria-controls="annotation-layer isolated-name" title="名称、引线和定位点开关 · L"><span class="name-full">部件名称</span><span class="name-compact" aria-hidden="true">名称</span><span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span><span id="labels-state" class="switch-state" aria-hidden="true">显示</span></button></div>
+        <div class="scene-header"><div class="view-caption"><span class="eyebrow">互动观察区</span><strong id="scene-caption">整车观察</strong></div><span class="coding-credit stage-credit">王陈宇coding</span><button id="labels-btn" class="name-toggle" role="switch" aria-checked="true" aria-label="显示模型上的零部件名称" aria-controls="annotation-layer isolated-name" title="名称、引线和定位点开关 · L"><span class="name-full">部件名称</span><span class="name-compact" aria-hidden="true">名称</span><span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span><span id="labels-state" class="switch-state" aria-hidden="true">显示</span></button></div>
         <div class="observation-controls">
           <div class="mode-tabs" role="group" aria-label="观察模式"><button id="assembled-btn" class="active" aria-pressed="true"><i data-icon="cube"></i><span>整车观察</span></button><button id="exploded-btn" aria-pressed="false"><i data-icon="explode"></i><span>拆分结构</span></button></div>
           <div id="explosion-panel" class="explosion-panel" hidden><div><label for="explode-range">拆分程度</label><output id="explode-value">100%</output></div><input id="explode-range" type="range" min="0" max="100" value="100" aria-label="拆分程度"><div class="range-labels"><span>合拢</span><span>展开</span></div></div>
