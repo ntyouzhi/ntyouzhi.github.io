@@ -49,4 +49,9 @@
 @media(max-width:560px){
   .geo-panel-bar{padding:8px 12px;gap:8px}
   .geo-panel-title h2{font-size:14px}
-}
+}.tech-classroom{--earth:#b06f3c}
+.tech-classroom .geo-entry i{background:linear-gradient(150deg,#c58a58,#9a5a2e)}
+.tech-classroom .geo-entry.active i{background:linear-gradient(150deg,#d29b68,#a66338)}
+.tech-classroom .geo-panel-stage{background:#17120f}
+.tech-classroom .geo-lab-loading{background:#17120f;color:#ecdacb}
+.tech-classroom .geo-lab-loading span{border-color:#4d3425;border-top-color:#d49561}

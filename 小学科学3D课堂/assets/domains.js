@@ -38,11 +38,25 @@
         ["分子运动", "待添加", "扩散、热运动与状态变化", "future"],
         ["力与运动", "待添加", "运动、力、简单机械与能量", "future"]
       ]
+    },
+    tech: {
+      label: "技术工程",
+      icon: "⚙",
+      eyebrow: "TECHNOLOGY & ENGINEERING · 技术工程",
+      title: "从结构与系统，理解设计如何改变生活",
+      intro: "当前已开放自行车结构探索，通过整车拆分、部件标注和系统演示，观察简单机械怎样协同工作。",
+      color: "#b06f3c",
+      topics: [
+        ["自行车结构探索", "已开放", "首个技术工程互动作品：从部件到系统观察力与运动", "open"],
+        ["简单机械", "待添加", "杠杆、轮轴、滑轮与斜面等结构模型", "future"],
+        ["工程设计", "待添加", "从需求、结构到测试改进的设计实践", "future"]
+      ]
     }
   };
 
   const lifeClassroom = document.querySelector("#life-classroom");
   const earthClassroom = document.querySelector("#earth-classroom");
+  const techClassroom = document.querySelector("#tech-classroom");
   const placeholder = document.querySelector("#domain-placeholder");
   const search = document.querySelector(".topbar .search");
   const scienceMap = { hidden: true };
@@ -66,7 +80,7 @@
 
   function selectDomain(id, options = {}) {
     const domain = domains[id] || domains.life;
-    const isLife = id === "life", isEarth = id === "earth";
+    const isLife = id === "life", isEarth = id === "earth", isTech = id === "tech";
     currentDomain = id;
     document.body.dataset.domain = id;
     document.querySelectorAll("[data-domain]").forEach((button) => button.classList.toggle("active", button.dataset.domain === id));
@@ -74,14 +88,17 @@
     document.querySelector("#quiz-panel")?.setAttribute("hidden", "");
     document.querySelector("#library")?.classList.remove("open");
     document.querySelector("#earth-library")?.classList.remove("open");
+    document.querySelector("#tech-library")?.classList.remove("open");
     scienceMap.hidden = true;
     lifeClassroom.hidden = !isLife;
     earthClassroom.hidden = !isEarth;
-    placeholder.hidden = isLife || isEarth;
+    techClassroom.hidden = !isTech;
+    placeholder.hidden = isLife || isEarth || isTech;
     search.hidden = !isLife;
     if (isEarth) window.EarthUniverse?.activate(); else window.EarthUniverse?.deactivate();
-    if (!isLife && !isEarth) renderPlaceholder(domain);
-    const destination = isLife ? lifeClassroom : isEarth ? earthClassroom : placeholder;
+    if (isTech) window.TechEngineering?.activate(); else window.TechEngineering?.deactivate();
+    if (!isLife && !isEarth && !isTech) renderPlaceholder(domain);
+    const destination = isLife ? lifeClassroom : isEarth ? earthClassroom : isTech ? techClassroom : placeholder;
     if (options.scroll !== false) destination.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
@@ -95,6 +112,7 @@
   }, true);
   document.querySelector("#mobile-library")?.addEventListener("click", () => {
     if (currentDomain === "earth") window.EarthUniverse?.openLibrary();
+    else if (currentDomain === "tech") window.TechEngineering?.openLibrary();
     else if (currentDomain === "life") document.querySelector("#library")?.classList.add("open");
   });
   selectDomain("life", { scroll: false });
