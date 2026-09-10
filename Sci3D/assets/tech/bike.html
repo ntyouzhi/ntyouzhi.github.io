@@ -621,6 +621,10 @@ body.embedded{--header-height:54px}.embedded .workspace{min-height:0}
   .view-button .icon,.tool-icon .icon{width:18px;height:18px}.view-toolbar .toolbar-divider{display:none}
   .selection-hint button{min-height:30px}.selection-hint,.system-demo-banner,.isolated-name{font-size:13px;line-height:1.4}.system-demo-banner{min-height:22px}
 }
+
+  .stage-credit{position:absolute;top:12px;right:14px;z-index:8;display:inline-flex;align-items:center;padding:4px 8px;border:1px solid #dfd2c3b8;border-radius:7px;background:#fffaf5c7;color:#9b8877;font-size:10px;letter-spacing:.35px;line-height:1.4;white-space:nowrap;pointer-events:none;box-shadow:0 2px 8px #5e42300b;backdrop-filter:blur(4px)}
+  .panel-credit,.footer-credit{display:none!important}
+  @media(max-width:520px){.stage-credit{top:8px;right:9px;font-size:9px;padding:3px 6px}}
 </style>
 </head>
 <body>
@@ -640,7 +644,10 @@ body.embedded{--header-height:54px}.embedded .workspace{min-height:0}
     </aside>
     <section id="stage" class="stage" aria-label="自行车三维模型交互区">
       <div class="stage-top">
-        <div class="scene-header"><div class="view-caption"><span class="eyebrow">互动观察区</span><strong id="scene-caption">整车观察</strong></div><span class="coding-credit stage-credit">王陈宇coding</span><button id="labels-btn" class="name-toggle" role="switch" aria-checked="true" aria-label="显示模型上的零部件名称" aria-controls="annotation-layer isolated-name" title="名称、引线和定位点开关 · L"><span class="name-full">部件名称</span><span class="name-compact" aria-hidden="true">名称</span><span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span><span id="labels-state" class="switch-state" aria-hidden="true">显示</span></button></div>
+        <div class="scene-header">
+          <div class="view-caption"><span class="eyebrow">互动观察区</span><strong id="scene-caption">整车观察</strong></div>
+          <button id="labels-btn" class="name-toggle" role="switch" aria-checked="true" aria-label="显示模型上的零部件名称" aria-controls="annotation-layer isolated-name" title="名称、引线和定位点开关 · L"><span class="name-full">部件名称</span><span class="name-compact" aria-hidden="true">名称</span><span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span><span id="labels-state" class="switch-state" aria-hidden="true">显示</span></button>
+        </div>
         <div class="observation-controls">
           <div class="mode-tabs" role="group" aria-label="观察模式"><button id="assembled-btn" class="active" aria-pressed="true"><i data-icon="cube"></i><span>整车观察</span></button><button id="exploded-btn" aria-pressed="false"><i data-icon="explode"></i><span>拆分结构</span></button></div>
           <div id="explosion-panel" class="explosion-panel" hidden><div><label for="explode-range">拆分程度</label><output id="explode-value">100%</output></div><input id="explode-range" type="range" min="0" max="100" value="100" aria-label="拆分程度"><div class="range-labels"><span>合拢</span><span>展开</span></div></div>
@@ -648,7 +655,7 @@ body.embedded{--header-height:54px}.embedded .workspace{min-height:0}
           <button id="quick-demo-toggle" class="name-toggle quick-demo-toggle" role="switch" aria-checked="false" aria-label="运行当前系统的演示" hidden><span>运行演示</span><span class="switch-track" aria-hidden="true"><span class="switch-thumb"></span></span></button>
         </div>
       </div>
-      <div id="model-viewport" class="model-viewport" aria-label="模型展示区域">
+      <div id="model-viewport" class="model-viewport" aria-label="模型展示区域"><span class="coding-credit stage-credit" aria-label="作品署名">王陈宇coding</span>
         <div id="canvas-wrap" class="canvas-wrap"></div>
         <div id="annotation-layer" class="annotation-layer"><svg id="label-lines" class="label-lines" aria-hidden="true"></svg><div id="labels" class="labels"></div></div>
         <div id="loading" class="loading-state"><span class="loader"></span><strong>正在准备三维模型</strong><p>即将进入结构探索</p></div>
