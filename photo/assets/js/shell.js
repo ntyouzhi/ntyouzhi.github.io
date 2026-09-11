@@ -15,6 +15,23 @@ function toast(message, error = false) {
   toastTimer = setTimeout(() => el.classList.remove('show'), 2800);
 }
 
+async function waitForBridge(view, method, timeoutMs = 6000) {
+  const frame = frames[view];
+  const started = Date.now();
+  while (Date.now() - started < timeoutMs) {
+    try {
+      const bridge = frame.contentWindow?.IDPHOTO_BRIDGE;
+      if (bridge && typeof bridge[method] === 'function') return bridge;
+      frame.contentWindow?.postMessage({ type: 'workspace-bridge-ping', view }, '*');
+    } catch (error) {
+      console.warn('工作台桥接检查失败', error);
+    }
+    await new Promise(resolve => setTimeout(resolve, 100));
+  }
+  return null;
+}
+
+
 function setView(view) {
   active = view;
   tabs.forEach(tab => {
@@ -50,8 +67,8 @@ sendToId.addEventListener('click', async () => {
   try {
     const item = frames.cutout.contentWindow.CUTOUT_DEBUG?.current();
     if (!item?.resultBlob) throw new Error('请先完成一张抠图');
-    const bridge = frames.idphoto.contentWindow.IDPHOTO_BRIDGE;
-    if (!bridge?.loadFile) throw new Error('证件照工作台尚未就绪');
+    const bridge = await waitForBridge('idphoto', 'loadFile');
+    if (!bridge) throw new Error('证件照工作台尚未就绪，请稍候再试');
     const file = new File([item.resultBlob], `${item.name.replace(/\.[^.]+$/, '')}_抠图.png`, { type: 'image/png' });
     const loaded = await bridge.loadFile(file, { asCutout: true });
     if (!loaded) throw new Error('抠图结果载入失败');
@@ -62,8 +79,8 @@ sendToId.addEventListener('click', async () => {
 
 sendToCutout.addEventListener('click', async () => {
   try {
-    const bridge = frames.idphoto.contentWindow.IDPHOTO_BRIDGE;
-    if (!bridge?.exportCurrentFile) throw new Error('证件照工作台尚未就绪');
+    const bridge = await waitForBridge('idphoto', 'exportCurrentFile');
+    if (!bridge) throw new Error('证件照工作台尚未就绪，请稍候再试');
     const file = await bridge.exportCurrentFile();
     if (!file) throw new Error('请先生成一张证件照');
     const cutout = frames.cutout.contentWindow.CUTOUT_DEBUG;
