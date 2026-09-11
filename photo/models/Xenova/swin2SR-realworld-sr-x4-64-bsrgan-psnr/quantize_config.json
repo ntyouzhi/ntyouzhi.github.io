@@ -1,0 +1,48 @@
+{
+    "per_channel": true,
+    "reduce_range": true,
+    "per_model_config": {
+        "model": {
+            "op_types": [
+                "Slice",
+                "Exp",
+                "Unsqueeze",
+                "Add",
+                "LeakyRelu",
+                "Equal",
+                "Concat",
+                "Constant",
+                "Where",
+                "MatMul",
+                "Shape",
+                "Conv",
+                "Clip",
+                "Relu",
+                "Sqrt",
+                "Range",
+                "Not",
+                "ScatterND",
+                "Abs",
+                "Mod",
+                "Pad",
+                "Pow",
+                "Mul",
+                "ReduceMean",
+                "Reshape",
+                "Expand",
+                "ConstantOfShape",
+                "Sub",
+                "ReduceSum",
+                "Div",
+                "Resize",
+                "Transpose",
+                "Erf",
+                "Softmax",
+                "Gather",
+                "Cast",
+                "Sigmoid"
+            ],
+            "weight_type": "QUInt8"
+        }
+    }
+}
