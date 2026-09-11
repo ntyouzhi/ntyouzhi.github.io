@@ -1,0 +1,137 @@
+{
+  "created": "2026-09-10",
+  "files": [
+    {
+      "path": "vendor/transformers/transformers.min.js",
+      "bytes": 888173,
+      "sha256": "aa5002b70e789798da263f5f99c62bd3e8fcd0c119258a493c40c180648365fa",
+      "source": "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1/dist/transformers.min.js"
+    },
+    {
+      "path": "vendor/transformers/ort-wasm-simd-threaded.jsep.mjs",
+      "bytes": 44484,
+      "sha256": "08fb86ec433c78bfb032c5d84a68b8e8e5a8d81268fa39e24314179a5767a5b9",
+      "source": "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1/dist/ort-wasm-simd-threaded.jsep.mjs"
+    },
+    {
+      "path": "vendor/transformers/ort-wasm-simd-threaded.jsep.wasm",
+      "bytes": 21596019,
+      "sha256": "c46655e8a94afc45338d4cb2b840475f88e5012d524509916e505079c00bfa39",
+      "source": "https://cdn.jsdelivr.net/npm/@huggingface/transformers@3.8.1/dist/ort-wasm-simd-threaded.jsep.wasm"
+    },
+    {
+      "path": "vendor/face-api/face-api.min.js",
+      "bytes": 663829,
+      "sha256": "5d66ec95338d7fcc365ce15481b8599baf4b6e22c9a624b76d4ca821a669a659",
+      "source": "https://cdn.jsdelivr.net/npm/face-api.js@0.22.2/dist/face-api.min.js"
+    },
+    {
+      "path": "vendor/jszip/jszip.min.js",
+      "bytes": 97630,
+      "sha256": "acc7e41455a80765b5fd9c7ee1b8078a6d160bbbca455aeae854de65c947d59e",
+      "source": "https://cdn.jsdelivr.net/npm/jszip@3.10.1/dist/jszip.min.js"
+    },
+    {
+      "path": "models/face-api/tiny_face_detector_model-weights_manifest.json",
+      "bytes": 2953,
+      "sha256": "14c60659a31b6b7b1320077171b8f8adcb24ef0e62dde62ce603bcb49a1b49b5",
+      "source": "https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights/tiny_face_detector_model-weights_manifest.json"
+    },
+    {
+      "path": "models/face-api/tiny_face_detector_model-shard1",
+      "bytes": 193321,
+      "sha256": "b7503ce7df31039b1c43316a9b865cab6a70dd748cc602d3fa28b551503c3871",
+      "source": "https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights/tiny_face_detector_model-shard1"
+    },
+    {
+      "path": "models/face-api/face_landmark_68_model-weights_manifest.json",
+      "bytes": 7889,
+      "sha256": "d30f6cc341009ea4f8223876959289b96576fc54a2615f92da9741ab9c5f0bbc",
+      "source": "https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights/face_landmark_68_model-weights_manifest.json"
+    },
+    {
+      "path": "models/face-api/face_landmark_68_model-shard1",
+      "bytes": 356840,
+      "sha256": "4611ef65c87d836d03d684b30eec4d195d8b219fa1dd58fc58945831c6b9299b",
+      "source": "https://raw.githubusercontent.com/justadudewhohacks/face-api.js/master/weights/face_landmark_68_model-shard1"
+    },
+    {
+      "path": "models/briaai/RMBG-1.4/config.json",
+      "bytes": 548,
+      "sha256": "d774e7d35151efb2479a83f132a57048334adf722e6e354309e30c56e3b35fbe",
+      "source": "https://huggingface.co/briaai/RMBG-1.4/resolve/2ceba5a5efaec153162aedea169f76caf9b46cf8/config.json"
+    },
+    {
+      "path": "models/briaai/RMBG-1.4/preprocessor_config.json",
+      "bytes": 345,
+      "sha256": "6f9c2cfdb87edd9b83c1314629657d5b320a6a89f8481c872a36253132e33afa",
+      "source": "https://huggingface.co/briaai/RMBG-1.4/resolve/2ceba5a5efaec153162aedea169f76caf9b46cf8/preprocessor_config.json"
+    },
+    {
+      "path": "models/briaai/RMBG-1.4/onnx/model_quantized.onnx",
+      "bytes": 44403226,
+      "sha256": "a6648479275dfd0ede0f3a8abc20aa5c437b394681b05e5af6d268250aaf40f3",
+      "source": "https://huggingface.co/briaai/RMBG-1.4/resolve/2ceba5a5efaec153162aedea169f76caf9b46cf8/onnx/model_quantized.onnx"
+    },
+    {
+      "path": "models/briaai/RMBG-1.4/onnx/quantize_config.json",
+      "bytes": 527,
+      "sha256": "ef73b4d68d23d1f1c3e02bf3b69a956f0370f7acd12430250f8c465880577a8d",
+      "source": "https://huggingface.co/briaai/RMBG-1.4/resolve/2ceba5a5efaec153162aedea169f76caf9b46cf8/onnx/quantize_config.json"
+    },
+    {
+      "path": "models/Xenova/slimsam-77-uniform/config.json",
+      "bytes": 379,
+      "sha256": "6339884f168658d3ca6473b486973913fb33e84e625e06ae2dd7b4a808187419",
+      "source": "https://huggingface.co/Xenova/slimsam-77-uniform/resolve/5850ab45f587c112167512ffef949107115e26a0/config.json"
+    },
+    {
+      "path": "models/Xenova/slimsam-77-uniform/preprocessor_config.json",
+      "bytes": 466,
+      "sha256": "225545a743c654e3c495ec6f545a0eaba57c8ba3fbbd8483b3cb1c0fc58db517",
+      "source": "https://huggingface.co/Xenova/slimsam-77-uniform/resolve/5850ab45f587c112167512ffef949107115e26a0/preprocessor_config.json"
+    },
+    {
+      "path": "models/Xenova/slimsam-77-uniform/quantize_config.json",
+      "bytes": 2017,
+      "sha256": "2a1e2927485ff8675da940616e77578321e2083477d3fb22d2cfc53c604fb8ff",
+      "source": "https://huggingface.co/Xenova/slimsam-77-uniform/resolve/5850ab45f587c112167512ffef949107115e26a0/quantize_config.json"
+    },
+    {
+      "path": "models/Xenova/slimsam-77-uniform/onnx/vision_encoder_quantized.onnx",
+      "bytes": 8882165,
+      "sha256": "cce23c7b2e5d4f330932738fb67ba518e04b0d99ccdd1cccd22a7da4e01f2971",
+      "source": "https://huggingface.co/Xenova/slimsam-77-uniform/resolve/5850ab45f587c112167512ffef949107115e26a0/onnx/vision_encoder_quantized.onnx"
+    },
+    {
+      "path": "models/Xenova/slimsam-77-uniform/onnx/prompt_encoder_mask_decoder.onnx",
+      "bytes": 16557892,
+      "sha256": "f4514391764fbd56e08e119060d874ecd7d52994bfb1968af159e12d4943b5bb",
+      "source": "https://huggingface.co/Xenova/slimsam-77-uniform/resolve/5850ab45f587c112167512ffef949107115e26a0/onnx/prompt_encoder_mask_decoder.onnx"
+    },
+    {
+      "path": "models/Xenova/swin2SR-realworld-sr-x4-64-bsrgan-psnr/config.json",
+      "bytes": 837,
+      "sha256": "96dd766fe3e4139fc1b5cc3eb940e940bd97ad28072168bd015f05cafd818994",
+      "source": "https://huggingface.co/Xenova/swin2SR-realworld-sr-x4-64-bsrgan-psnr/resolve/d0e9926970c93e472ce2392373d72597fc849027/config.json"
+    },
+    {
+      "path": "models/Xenova/swin2SR-realworld-sr-x4-64-bsrgan-psnr/preprocessor_config.json",
+      "bytes": 152,
+      "sha256": "cbc36266fcc93d5bc1e9ca69bcc648ae9d268918ad14cd3507216740f129cc4d",
+      "source": "https://huggingface.co/Xenova/swin2SR-realworld-sr-x4-64-bsrgan-psnr/resolve/d0e9926970c93e472ce2392373d72597fc849027/preprocessor_config.json"
+    },
+    {
+      "path": "models/Xenova/swin2SR-realworld-sr-x4-64-bsrgan-psnr/quantize_config.json",
+      "bytes": 1138,
+      "sha256": "98b82eb2ee37ab72eda96f9c31a1098573395005d935b2f49c12cd2b656e9eb4",
+      "source": "https://huggingface.co/Xenova/swin2SR-realworld-sr-x4-64-bsrgan-psnr/resolve/d0e9926970c93e472ce2392373d72597fc849027/quantize_config.json"
+    },
+    {
+      "path": "models/Xenova/swin2SR-realworld-sr-x4-64-bsrgan-psnr/onnx/model_quantized.onnx",
+      "bytes": 21438622,
+      "sha256": "9e9bae06e1c280a1f2f5ab093312ee1ec39186afc8912259bb9e3de838f85fb8",
+      "source": "https://huggingface.co/Xenova/swin2SR-realworld-sr-x4-64-bsrgan-psnr/resolve/d0e9926970c93e472ce2392373d72597fc849027/onnx/model_quantized.onnx"
+    }
+  ]
+}
