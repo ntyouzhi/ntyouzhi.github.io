@@ -981,6 +981,7 @@ function sharpenPx(px, rw, rh) {
 
 const LOCAL_TRANSFORMERS_URL = new URL('../vendor/transformers/transformers.min.js', location.href).href;
 const LOCAL_ORT_DIR = new URL('../vendor/transformers/', location.href).href;
+const LOCAL_MODELS_URL = new URL('../models/', location.href).href;
 function configureLocalOrtRuntime(runtime) {
   const ort = runtime?.env?.backends?.onnx;
   if (ort) {
