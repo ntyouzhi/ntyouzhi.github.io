@@ -17,3 +17,17 @@ button{font:inherit}
 .toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,20px);padding:11px 18px;border-radius:999px;background:#174866;color:white;font-size:12px;box-shadow:0 12px 30px rgba(0,0,0,.2);opacity:0;pointer-events:none;transition:.25s;z-index:20}.toast.show{opacity:1;transform:translate(-50%,0)}
 @media(max-width:980px){.topbar{grid-template-columns:1fr auto}.brand{display:none}.workspace-tab{min-width:145px}.top-actions{justify-self:end}}
 @media(max-width:690px){.app-shell{padding:7px;gap:7px}.topbar{min-height:62px;padding:7px;grid-template-columns:1fr auto;border-radius:14px}.workspace-tabs{width:100%}.workspace-tab{min-width:0;flex:1;display:block;text-align:center;padding:9px}.workspace-tab>span,.workspace-tab small{display:none}.top-actions .action{font-size:0;width:42px;height:42px;padding:0}.top-actions .action::after{content:"⇄";font-size:18px}.workspace{border-radius:14px}.icon-btn{display:none}}
+/* 移动端：统一入口保留固定工作区，工具内部自行滚动 */
+@media (max-width:690px){
+  html,body{min-height:100%;overflow:hidden}
+  .app-shell{height:100dvh;min-height:100svh;padding:max(7px,env(safe-area-inset-top)) max(7px,env(safe-area-inset-right)) max(7px,env(safe-area-inset-bottom)) max(7px,env(safe-area-inset-left));}
+  .topbar{flex:none;min-height:58px;grid-template-columns:minmax(0,1fr) auto;gap:7px;padding:6px;background:rgba(255,255,255,.96)}
+  .workspace-tabs{min-width:0;gap:4px;padding:3px}
+  .workspace-tab{min-height:44px;min-width:0;padding:8px 5px;font-size:13px}
+  .workspace-tab strong{font-size:13px;white-space:nowrap}
+  .top-actions{min-width:44px}
+  .top-actions .action{min-height:44px;width:44px;height:44px}
+  .workspace{min-height:0;overflow:hidden}
+  .toast{bottom:max(18px,env(safe-area-inset-bottom));max-width:calc(100vw - 28px);text-align:center}
+}
+@media (prefers-reduced-motion:reduce){.tool-frame,.toast,.action,.icon-btn{transition:none}}

@@ -154,6 +154,60 @@
   .ai-sticky-bar button { width: auto; padding: 8px 16px; font-size: 13px; flex-shrink: 0; }
   .ai-sticky-status { flex: 1; font-size: 12px; color: #6f6b8c; line-height: 1.4; }
 </style>
+<style>
+  /* 手机端：控制区与预览区改为单列，适合单手滚动和触控 */
+  @media (max-width: 680px) {
+    html { overflow: hidden; }
+    body { min-height: 100dvh; padding: 8px; overflow: hidden; }
+    header { padding: 8px 2px 10px; gap: 9px; }
+    header .logo { width: 36px; height: 36px; border-radius: 10px; font-size: 18px; }
+    header h1 { font-size: 17px; }
+    header p { display: none; }
+    .model-deployment { font-size: 10px; line-height: 1.4; max-width: 70vw; }
+    .container { display: flex; flex-direction: column; gap: 10px; padding: 0 0 20px; height: calc(100dvh - 58px); overflow-y: auto; overflow-x: hidden; -webkit-overflow-scrolling: touch; }
+    .panel { border-radius: 14px; padding: 13px; }
+    .controls { width: auto; max-height: none; overflow: visible; order: 1; }
+    .preview { order: 2; min-height: 0; }
+    .step { padding: 12px; margin-bottom: 10px; }
+    .dropzone { min-height: 132px; padding: 24px 10px; display: flex; flex-direction: column; justify-content: center; touch-action: manipulation; }
+    .dropzone .dz-main { font-size: 13px; }
+    .dropzone .dz-sub { line-height: 1.5; }
+    .spec-grid { max-height: 245px; grid-template-columns: 1fr 1fr; }
+    .spec-card { min-height: 62px; padding: 9px; }
+    .swatches { gap: 12px; }
+    .swatch { width: 40px; height: 40px; }
+    button, select, input[type="number"], input[type="text"] { min-height: 42px; }
+    .row { gap: 7px; flex-wrap: wrap; }
+    .row label { min-width: 52px; }
+    .tabs { width: 100%; gap: 6px; margin-bottom: 10px; }
+    .tab { flex: 1; min-height: 44px; padding: 9px 8px; }
+    .tab-body { border-radius: 14px; padding: 13px; min-height: 300px; }
+    .canvas-holder { max-width: 100%; }
+    canvas { max-height: 56vh; }
+    .print-controls { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; align-items: end; }
+    .print-controls .field { min-width: 0; }
+    .print-controls select { width: 100%; min-width: 0; }
+    .print-controls button { width: 100%; min-height: 44px; }
+    .print-info { font-size: 12px; line-height: 1.55; }
+    .ai-sticky-bar { margin: -13px -13px 10px; padding: 10px 12px; }
+    .ai-sticky-bar button { min-height: 42px; padding: 8px 10px; }
+    .quick-row { gap: 6px; }
+    .quick-btn { min-height: 44px; padding: 8px 4px; }
+    .batch-chips { gap: 8px; }
+    .chip { min-height: 36px; display: inline-flex; align-items: center; }
+  }
+  @media (max-width: 380px) {
+    body { padding: 6px; }
+    .container { height: calc(100dvh - 52px); }
+    header h1 { font-size: 16px; }
+    .model-deployment { max-width: 62vw; }
+    .step, .panel, .tab-body { padding: 10px; }
+    .spec-grid { grid-template-columns: 1fr; max-height: 220px; }
+    .print-controls { grid-template-columns: 1fr; }
+  }
+  @media (prefers-reduced-motion: reduce) { *, *::before, *::after { transition-duration: 0.01ms !important; animation-duration: 0.01ms !important; } }
+
+</style>
 </head>
 <body>
 <header>
@@ -181,7 +235,7 @@
         <div class="dz-main">点击或拖拽照片到这里</div>
         <div class="dz-sub" id="dzSub">支持 JPG / PNG / WEBP ｜ 建议相对正面照，手机自拍即可</div>
       </div>
-      <input type="file" id="fileInput" accept="image/*" capture="user" class="hidden">
+      <input type="file" id="fileInput" accept="image/*" class="hidden">
     </div>
 
     <div class="step" id="quickStep" style="display:none;">
@@ -587,6 +641,7 @@ dropzone.ondrop = e => {
 };
 $("fileInput").onchange = e => {
   const file = e.target.files[0];
+  e.target.value = "";
   if (file) loadPhotoFile(file);
 };
 function loadPhotoFile(file, options = {}) {
