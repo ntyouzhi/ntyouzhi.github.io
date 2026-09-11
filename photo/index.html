@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' 'wasm-unsafe-eval' blob:; worker-src 'self' blob:; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; connect-src 'self'; font-src 'self' data:; frame-src 'self';">
+  <meta name="description" content="智能抠图、证件照制作与相纸排版一体化工具">
+  <title>像素工坊 · 智能抠图与证件照</title>
+  <link rel="stylesheet" href="assets/css/shell.css">
+</head>
+<body>
+  <main class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <span class="brand-mark" aria-hidden="true">像</span>
+        <div><h1>像素工坊</h1><p>智能抠图 · 证件照 · 相纸排版</p></div>
+      </div>
+      <nav class="workspace-tabs" aria-label="工作模式">
+        <button class="workspace-tab active" data-view="cutout" aria-selected="true">
+          <span>01</span><strong>智能抠图</strong><small>去背景与精细修补</small>
+        </button>
+        <button class="workspace-tab" data-view="idphoto" aria-selected="false">
+          <span>02</span><strong>证件照</strong><small>规格、换底与打印</small>
+        </button>
+      </nav>
+      <div class="top-actions">
+        <button id="sendToId" class="action primary" title="把当前抠图结果送入证件照工作台">送到证件照 →</button>
+        <button id="sendToCutout" class="action" hidden title="把当前证件照成品送回智能抠图">← 送到抠图</button>
+      </div>
+    </header>
+
+    <section class="workspace" aria-live="polite">
+      <iframe id="cutoutFrame" class="tool-frame active" src="apps/cutout.html?v=26091104" title="智能抠图工作台"></iframe>
+      <iframe id="idphotoFrame" class="tool-frame" src="apps/idphoto.html?v=26091104" title="证件照工作台"></iframe>
+    </section>
+
+    <div id="toast" class="toast" role="status"></div>
+
+
+
+  </main>
+  <script type="module" src="assets/js/shell.js?v=26091104"></script>
+</body>
+</html>
