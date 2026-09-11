@@ -517,6 +517,9 @@ input[type=range]{padding:0;height:6px;cursor:pointer;accent-color:var(--purple)
 <script type="module">
 // 整合版只加载本站目录中的固定资源，不改写 fetch，也不访问第三方模型站点。
 const $ = id => document.getElementById(id);
+// transformers.js 也必须从发布包内加载。旧代码引用了不存在的 CDN 变量，
+// 在 GitHub Pages 上会在模型部署开始前直接触发 ReferenceError。
+const LOCAL_TRANSFORMERS_URL = new URL('../vendor/transformers/transformers.min.js', location.href).href;
 const LOCAL_ORT_DIR = new URL('../vendor/transformers/', location.href).href;
 function configureLocalOrtRuntime(runtime) {
   const ort = runtime?.env?.backends?.onnx;
@@ -979,8 +982,9 @@ async function ensureRmbg() {
   if (state.sam.rmbgLoading) return state.sam.rmbgLoading;
   state.sam.rmbgLoading = (async () => {
     setModelState('loading', '本地模型部署中…');
-    hf = hf || await import(CDN_HF);
+    hf = hf || await import(LOCAL_TRANSFORMERS_URL);
     configureLocalOrtRuntime(hf);
+    hf.env.allowLocalModels = true;
     hf.env.allowRemoteModels = false;
     hf.env.localModelPath = new URL('../models/', location.href).href;
     // 模型仅从整合包的本地目录读取，首次打开时会自动进入浏览器缓存
@@ -1871,7 +1875,7 @@ $('btnZip').onclick = async () => {
 })();
 
 // 版本标识：用于确认是否加载了最新版本
-const VERSION = 'v2.0.0-integrated'; // 新增高清版 RMBG-1.4 自动模型（44MB，复杂图主体完整度显著更好）
+const VERSION = 'v2.0.1-integrated'; // 修复本地 transformers.js 运行库引用
 window.CUTOUT_VERSION = VERSION;
 window.CUTOUT_DEBUG = { state, addFiles, removeItem, current }; // 供自动化测试用
 console.log('%c本地抠图工具 ' + VERSION, 'color:#8B5CF6;font-size:16px;font-weight:bold');
