@@ -982,6 +982,17 @@ function sharpenPx(px, rw, rh) {
 const LOCAL_TRANSFORMERS_URL = new URL('../vendor/transformers/transformers.min.js', location.href).href;
 const LOCAL_ORT_DIR = new URL('../vendor/transformers/', location.href).href;
 const LOCAL_MODELS_URL = new URL('../models/', location.href).href;
+function dataUrlToBlob(dataURL) {
+  if (dataURL instanceof Blob) return dataURL;
+  const [header, body = ''] = String(dataURL).split(',', 2);
+  const mime = header.match(/^data:([^;]+)/i)?.[1] || 'image/png';
+  const binary = atob(body);
+  const bytes = new Uint8Array(binary.length);
+  for (let i = 0; i < binary.length; i++) bytes[i] = binary.charCodeAt(i);
+  return new Blob([bytes], { type: mime });
+}
+
+
 function configureLocalOrtRuntime(runtime) {
   const ort = runtime?.env?.backends?.onnx;
   if (ort) {
@@ -1067,7 +1078,8 @@ self.onmessage = async e => {
     const pipe = await getPipe(m.kind === "preload" ? "segment" : m.kind, m.id);
     if (m.kind === "preload") { self.postMessage({ id: m.id, ok: true, preload: true }); return; }
     self.postMessage({ id: m.id, progress: { status: "__infer" } });
-    const out = await pipe(m.dataURL);
+    const input = m.data || m.dataURL;
+    const out = await pipe(input);
     const im = Array.isArray(out) ? out[0] : out; // image-to-image 返回单个 RawImage，background-removal 返回数组
     if (!im || !im.width) throw new Error("模型未返回有效图像");
     const src = im.data instanceof Uint8ClampedArray ? im.data : new Uint8ClampedArray(im.data);
@@ -1159,7 +1171,8 @@ function aiRunWorker(kind, dataURL, onProg, timeoutMs) {
       reject: e => { if (t) clearTimeout(t); reject(e); },
       onProg
     };
-    __aiWorker.postMessage({ id, kind, dataURL });
+    const input = dataUrlToBlob(dataURL);
+    __aiWorker.postMessage({ id, kind, data: input });
   });
 }
 function aiPreloadWorker(onProg, timeoutMs = 300000) {
@@ -1210,7 +1223,8 @@ async function aiRunLocal(kind, dataURL, onProg) {
     if (kind === "segment") __segPipe = pipe; else __srPipe = pipe;
   }
   if (onProg) onProg({ status: "__infer" });
-  const out = await pipe(dataURL);
+  const input = dataUrlToBlob(dataURL);
+  const out = await pipe(input);
   const im = Array.isArray(out) ? out[0] : out;
   if (!im || !im.width) throw new Error("模型未返回有效图像");
   const data = im.data instanceof Uint8ClampedArray ? im.data : new Uint8ClampedArray(im.data);
@@ -1461,11 +1475,10 @@ async function runAI() {
   } catch (e) {
     console.error(e);
     const msg = (e && e.message) || String(e);
-    const isNet = /fetch|network|网络/i.test(msg);
-    setStatus("AI 处理失败：" + msg + (isNet
-      ? "\n这是网络问题：AI 模型需要从网上下载。请确认已联网，建议用 Edge/Chrome 直接打开本文件（不要在微信里直接打开），公司/校园网可能拦截了模型下载，可换手机热点重试。"
-      : ""), true);
-    $("btnAI").disabled = false;
+    const hint = /fetch|network|网络/i.test(msg)
+      ? "\n模型资源本身已改为本地目录读取；当前错误更可能是浏览器/安全软件拦截了图片输入读取。请强制刷新后重试，并使用普通 Edge/Chrome 的 HTTP/HTTPS 页面。若仍失败，请暂时关闭网页防护或换一个浏览器测试。"
+      : "";
+    setStatus("AI 处理失败：" + msg + hint, true);
     $("btnStickyAI").disabled = false;
   }
 };
@@ -2124,6 +2137,14 @@ window.IDPHOTO_BRIDGE = {
     return new File([blob], `证件照_${s.name}_${s.w}x${s.h}.${ext}`, { type: blob.type });
   }
 };
+window.addEventListener('message', e => {
+  if (e.source === window.parent && e.data?.type === 'workspace-bridge-ping' && e.data.view === 'idphoto') {
+    e.source.postMessage({ type: 'workspace-bridge-ready', view: 'idphoto' }, '*');
+  }
+});
+if (window.parent !== window) {
+  window.parent.postMessage({ type: 'workspace-bridge-ready', view: 'idphoto' }, '*');
+}
 </script>
 
 
