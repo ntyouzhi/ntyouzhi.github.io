@@ -1034,7 +1034,7 @@ async function preloadRmbg() {
 async function runRmbgInfer(it) {
   const rb = await ensureRmbg();
   setStatus(`[${it.name}] 推理计算（高清版 RMBG）${rb.device === 'wasm' ? '（CPU 推理较慢，请稍候）' : ''}`);
-  const image = await hf.RawImage.read(it.url);
+  const image = await hf.RawImage.read(it.file);
   const { pixel_values } = await rb.processor(image);
   const { output } = await rb.model({ input: pixel_values });
   const mask = await hf.RawImage.fromTensor(output[0].mul(255).to('uint8')).resize(it.width, it.height);
@@ -1101,7 +1101,7 @@ async function ensureEncoded(it) {
   setStatus(`[${it.name}] 编码图像中（仅首次需要）…`);
   setModelState('loading', '编码中...');
   const t0 = performance.now();
-  const image = await hf.RawImage.read(it.url);
+  const image = await hf.RawImage.read(it.file);
   const imageInputs = await state.sam.processor(image);
   const embeddings = await state.sam.model.get_image_embeddings(imageInputs);
   state.sam.cache = { itemId: it.id, imageInputs, embeddings };
