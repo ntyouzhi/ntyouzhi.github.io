@@ -7,6 +7,13 @@
       icon: "车",
       src: "assets/tech/bike.html?embed=1",
       name: "自行车结构探索"
+    },
+    {
+      title: "联合收割机结构探索",
+      sub: "五个系统 · 四步收获 · 协同工作",
+      icon: "收",
+      src: "assets/tech/harvester.html?embed=1",
+      name: "联合收割机结构探索"
     }
   ];
   const library = document.getElementById("tech-library");

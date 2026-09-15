@@ -1,19 +1,21 @@
-/* 地球宇宙 · 统一iframe观察库：左侧列表常驻 + 右侧iframe载入独立3D网页，头部三领域导航永远呈现 */
+
+
 .earth-classroom{--earth:#4677a9}
-.earth-workspace{display:grid;grid-template-columns:260px minmax(0,1fr);min-height:calc(100vh - 76px)}
+.earth-workspace{display:grid;grid-template-columns:245px minmax(0,1fr);min-height:calc(100vh - 76px)}
 .earth-library{background:#fffaf4c9;border-right:1px solid var(--line);padding:22px 16px;overflow:auto;display:flex;flex-direction:column}
-.earth-library>header{display:flex;justify-content:space-between;padding:0 8px 15px}
+.earth-library>header{display:flex;justify-content:space-between;padding:0 8px 10px}
 .earth-library>header em,.geo-panel-title em{font-style:normal;font-size:10px;letter-spacing:2px;color:var(--earth)}
-.earth-library>header h2{margin:5px 0 0;font:700 20px Georgia,"Microsoft YaHei",serif}
+.earth-library>header>div{min-width:0}
+.earth-library>header h2{margin:3px 0 0;font:700 16px/1.2 Georgia,"Microsoft YaHei",serif;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
 .earth-library>header button{display:none;border:0;background:none;font-size:22px}
 
-/* 左侧：主题分组列表 */
-.geo-groups{display:grid;gap:14px;margin:2px 4px 18px}
-.geo-group-title{display:flex;justify-content:space-between;align-items:baseline;padding:0 6px 6px;border-bottom:1px solid #e3d9cc}
+/* 左侧：主题分组列表。间距保持紧凑，便于后续继续增加栏目 */
+.geo-groups{display:grid;gap:10px;margin:2px 4px 14px}
+.geo-group-title{display:flex;justify-content:space-between;align-items:baseline;padding:0 6px 5px;border-bottom:1px solid #e3d9cc}
 .geo-group-title span{font-size:12px;font-weight:700;letter-spacing:1px;color:#5b6f7e}
 .geo-group-title small{font-size:9px;color:var(--muted)}
-.geo-group-items{display:grid;gap:3px;padding-top:4px}
-.geo-entry{width:100%;display:grid;grid-template-columns:30px 1fr 10px;align-items:center;gap:9px;border:1px solid transparent;background:transparent;border-radius:12px;padding:6px;text-align:left;cursor:pointer}
+.geo-group-items{display:grid;gap:2px;padding-top:3px}
+.geo-entry{width:100%;display:grid;grid-template-columns:30px 1fr 10px;align-items:center;gap:8px;border:1px solid transparent;background:transparent;border-radius:12px;padding:5px 6px;text-align:left;cursor:pointer}
 .geo-entry:hover{background:#eef3f7;border-color:#d3dfe8}
 .geo-entry.active{background:white;border-color:#bcd0de;box-shadow:0 4px 16px #375a7414}
 .geo-entry i{width:26px;height:26px;border-radius:9px;background:linear-gradient(150deg,#4f86ad,#35607f);color:#fff;font-style:normal;font-size:11px;font-weight:700;display:grid;place-items:center}
@@ -36,6 +38,12 @@
 .geo-lab-loading.hide{opacity:0;visibility:hidden;pointer-events:none}
 .geo-lab-loading span{width:36px;height:36px;border:3px solid #2a4356;border-top-color:#7fb3d9;border-radius:50%;animation:geo-spin .8s linear infinite}
 @keyframes geo-spin{to{transform:rotate(360deg)}}
+
+@media(max-width:1180px) and (min-width:901px){
+  .earth-workspace{grid-template-columns:210px minmax(0,1fr)}
+  .earth-library{padding-left:12px;padding-right:12px}
+  .earth-library>header h2{font-size:15px}
+}
 
 /* 移动端：左侧列表收为抽屉 */
 @media(max-width:900px){
