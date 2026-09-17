@@ -110,7 +110,15 @@
   #routePanel .rp-custom{align-items:center}
   #routePanel .rp-count{margin-left:auto;align-self:center;font-size:13px;font-weight:700;color:#0b7a6e}
   #routePanel .route-btn{border:1px solid rgba(14,156,139,.45);border-radius:8px;background:#fff;color:#0b7a6e;padding:5px 9px;font-size:13px;cursor:pointer}
-  #routePanel .route-btn.primary{background:#0e9c8b;color:#fff;border-color:#0e9c8b}
+  #routePanel .route-btn.primary{background:#0e9c8b;color:#fff;border-color:#0e9c8b}  #routePanel .route-btn.record{border-color:#e05656;color:#c64141}
+  #routePanel .route-btn.record.primary{background:#e05656;color:#fff;border-color:#e05656}
+  #routePanel .route-btn.recording{animation:recordPulse 1.2s ease-in-out infinite}
+  #routePanel .route-btn:disabled{opacity:.45;cursor:not-allowed}
+  #routePanel .record-state{display:none;align-items:center;gap:5px;margin:7px 0 0;color:#c64141;font-size:12.5px;font-weight:700}
+  #routePanel .record-state.show{display:flex}
+  #routePanel .record-dot{width:8px;height:8px;border-radius:50%;background:#e05656;box-shadow:0 0 0 3px rgba(224,86,86,.15)}
+  @keyframes recordPulse{50%{box-shadow:0 0 0 4px rgba(224,86,86,.18)}}
+
   @media(max-width:800px){#routePanel{right:12px;top:70px;max-width:calc(100vw - 24px);width:360px}}
 
   /* 图例 */
@@ -215,10 +223,12 @@
       <button class="route-btn" id="routeClear">✕ 清空</button>
       <span id="routeCount" class="rp-count"></span>
     </div>
+    <div class="record-state" id="recordState"><span class="record-dot"></span><span id="recordStateText">正在录制推进过程 · 00:00</span></div>
     <div class="rp-actions">
       <button class="route-btn" id="routePrev">上一站</button>
       <button class="route-btn primary" id="routeFollow">▶ 开始跟随</button>
       <button class="route-btn" id="routeNext">下一站</button>
+      <button class="route-btn record" id="routeRecord">⏺ 录制推进</button>
       <button class="route-btn" id="routeClose">退出线路</button>
     </div>
   </div>
@@ -15217,6 +15227,55 @@ const WATER_RC = {
   let routeActive=false, routePlaying=false, routeProgress=0, routeStopIndex=0, routeLastTime=0;
   let routeStops=DEMO_ROUTES[0].stops;   // 当前生效站点（预置或自定义）
   let customMode=false; const customStops=[];
+  let routeRecorder=null, routeRecordChunks=[], routeRecording=false, routeRecordStartedAt=0, routeRecordTimer=null;
+  function recordFileName(){
+    const d=new Date(), pad=n=>String(n).padStart(2,'0');
+    const stamp=String(d.getFullYear()).slice(-2)+pad(d.getMonth()+1)+pad(d.getDate());
+    return `${stamp}01_中国地形_自定义路径推进.webm`;
+  }
+  function updateRecordState(){
+    const b=document.getElementById('routeRecord'), state=document.getElementById('recordState'), txt=document.getElementById('recordStateText');
+    if(b){
+      b.classList.toggle('recording',routeRecording); b.classList.toggle('primary',routeRecording);
+      b.textContent=routeRecording?'⏹ 停止并保存':'⏺ 录制推进';
+      b.disabled=routeStops.length<2 || !routeCurve;
+      b.title=routeStops.length<2?'请先自定义至少 2 个点':'录制当前线路的相机推进过程（WebM）';
+    }
+    if(state) state.classList.toggle('show',routeRecording);
+    if(txt && routeRecording){
+      const sec=Math.max(0,Math.floor((performance.now()-routeRecordStartedAt)/1000));
+      txt.textContent=`正在录制推进过程 · ${String(Math.floor(sec/60)).padStart(2,'0')}:${String(sec%60).padStart(2,'0')}`;
+    }
+  }
+  function startRouteRecording(){
+    if(routeRecording) return;
+    if(routeStops.length<2 || !routeCurve){ updateRoutePanel(); return; }
+    const canvas=renderer&&renderer.domElement;
+    if(!canvas || !canvas.captureStream || !window.MediaRecorder){ alert('当前浏览器不支持网页录制，请使用最新版 Chrome 或 Edge。'); return; }
+    const types=['video/webm;codecs=vp9','video/webm;codecs=vp8','video/webm'];
+    const mime=types.find(x=>MediaRecorder.isTypeSupported(x))||'';
+    try{
+      const stream=canvas.captureStream(30);
+      routeRecorder=new MediaRecorder(stream,{...(mime?{mimeType:mime}:{}),videoBitsPerSecond:2200000});
+      routeRecordChunks=[]; routeRecording=true; routeRecordStartedAt=performance.now();
+      routeRecorder.ondataavailable=e=>{if(e.data&&e.data.size) routeRecordChunks.push(e.data);};
+      routeRecorder.onstop=()=>{
+        const blob=new Blob(routeRecordChunks,{type:mime||'video/webm'});
+        stream.getTracks().forEach(t=>t.stop()); routeRecorder=null; routeRecordChunks=[]; routeRecording=false;
+        if(routeRecordTimer){clearInterval(routeRecordTimer);routeRecordTimer=null;}
+        updateRecordState();
+        if(blob.size){
+          const url=URL.createObjectURL(blob), a=document.createElement('a');
+          a.href=url; a.download=recordFileName(); a.click();
+          setTimeout(()=>URL.revokeObjectURL(url),1500);
+          const mt=document.getElementById('routeMeta');
+          if(mt){mt.textContent=`小视频已保存：${a.download}（${(blob.size/1024/1024).toFixed(1)} MB）`;setTimeout(updateRoutePanel,4200);}
+        }
+      };
+      routeRecorder.start(250); routeRecordTimer=setInterval(updateRecordState,250); updateRecordState(); startRouteFollow();
+    }catch(err){ routeRecorder=null; routeRecording=false; updateRecordState(); alert('当前浏览器无法启动录制，请改用最新版 Chrome 或 Edge。'); }
+  }
+  function stopRouteRecording(){ if(routeRecorder&&routeRecorder.state!=='inactive') routeRecorder.stop(); }
   function buildRouteExperience(){
     if(routeGroup){ scene.remove(routeGroup); routeGroup.traverse(o=>{if(o.geometry)o.geometry.dispose();if(o.material)o.material.dispose();}); }
     const stops=routeStops, group=new THREE.Group(); group.name='demoRoute';
@@ -15277,7 +15336,7 @@ const WATER_RC = {
     camera.position.lerp(desired,.085);controls.target.lerp(ahead,.12);
     const n=routeStops.length; const idx=Math.min(n-1,Math.floor(routeProgress*(n-1)+.5));
     if(idx!==routeStopIndex){routeStopIndex=idx;updateRoutePanel();}
-    if(routeProgress>=1){stopRouteFollow();focusRouteStop(routeStopIndex);}
+    if(routeProgress>=1){stopRouteFollow();focusRouteStop(routeStopIndex);if(routeRecording)stopRouteRecording();}
   }
   function onRouteClick(e){
     if(!routeActive||!routeStopMeshes.length)return;
@@ -16662,7 +16721,7 @@ let provBorderGroup;
     customMode=!customMode; this.classList.toggle('active',customMode);
     hideInfoCard();
     if(customMode){
-      routeStops=customStops; stopRouteFollow();
+      if(routeRecording)stopRouteRecording(); routeStops=customStops; stopRouteFollow();
       if(!routeActive){ routeActive=true; document.getElementById('routePanel').classList.add('show'); document.getElementById('btnRoute').classList.add('active'); }
       buildRouteExperience(); routeStopIndex=Math.min(routeStopIndex,Math.max(0,customStops.length-1)); updateRoutePanel();
     } else {
@@ -16670,12 +16729,13 @@ let provBorderGroup;
       if(routeActive){ buildRouteExperience(); routeStopIndex=0; focusRouteStop(0); } else updateRoutePanel();
     }
   };
-  document.getElementById('routeFollow').onclick=function(){ if(routePlaying){ stopRouteFollow(); } else { startRouteFollow(); } updateRoutePanel(); };
-  document.getElementById('routePrev').onclick=function(){ stopRouteFollow(); focusRouteStop(routeStopIndex-1); };
-  document.getElementById('routeNext').onclick=function(){ stopRouteFollow(); focusRouteStop(routeStopIndex+1); };
-  document.getElementById('routeUndo').onclick=function(){ if(!customStops.length) return; customStops.pop(); routeStops=customStops; stopRouteFollow(); buildRouteExperience(); routeStopIndex=Math.min(routeStopIndex,Math.max(0,customStops.length-1)); updateRoutePanel(); };
-  document.getElementById('routeClear').onclick=function(){ if(!customStops.length){ updateRoutePanel(); return; } customStops.length=0; routeStops=customStops; stopRouteFollow(); buildRouteExperience(); routeStopIndex=0; updateRoutePanel(); };
-  document.getElementById('routeClose').onclick=function(){ setRouteActive(false); };
+  document.getElementById('routeFollow').onclick=function(){ if(routeRecording){ stopRouteRecording(); stopRouteFollow(); } else if(routePlaying){ stopRouteFollow(); } else { startRouteFollow(); } updateRoutePanel(); };
+  document.getElementById('routePrev').onclick=function(){ if(routeRecording)stopRouteRecording(); stopRouteFollow(); focusRouteStop(routeStopIndex-1); };
+  document.getElementById('routeNext').onclick=function(){ if(routeRecording)stopRouteRecording(); stopRouteFollow(); focusRouteStop(routeStopIndex+1); };
+  document.getElementById('routeUndo').onclick=function(){ if(!customStops.length) return; if(routeRecording)stopRouteRecording(); customStops.pop(); routeStops=customStops; stopRouteFollow(); buildRouteExperience(); routeStopIndex=Math.min(routeStopIndex,Math.max(0,customStops.length-1)); updateRoutePanel(); };
+  document.getElementById('routeClear').onclick=function(){ if(!customStops.length){ updateRoutePanel(); return; } if(routeRecording)stopRouteRecording(); customStops.length=0; routeStops=customStops; stopRouteFollow(); buildRouteExperience(); routeStopIndex=0; updateRoutePanel(); };
+  document.getElementById('routeRecord').onclick=function(){ if(routeRecording){ stopRouteRecording(); stopRouteFollow(); } else startRouteRecording(); };
+  document.getElementById('routeClose').onclick=function(){ if(routeRecording)stopRouteRecording(); setRouteActive(false); };
   document.getElementById('btnMove').onclick=function(){
     moveMode=!moveMode;
     controls.mouseButtons.LEFT = moveMode ? THREE.MOUSE.PAN : THREE.MOUSE.ROTATE;
