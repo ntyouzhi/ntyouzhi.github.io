@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<meta name="theme-color" content="#f3f0e8">
+<title>南通 → 泾县 · 3天2晚亲子自驾（2026国庆）</title>
+<style>
+:root{
+  --ink:#151c1a; --ink-2:#3c4744;
+  --paper:#f3f0e8; --paper-2:#e7e2d4; --paper-3:#dcd6c5;
+  --water:#1e5f5a; --water-d:#14463f;
+  --bamboo:#6b8a55; --cinnabar:#ae362b;
+  --muted:#868c85; --line:#ccc6b6;
+  --serif:"Songti SC","STSong","Noto Serif SC",SimSun,serif;
+  --sans:-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei","Hiragino Sans GB",sans-serif;
+  --pad:22px;
+}
+*{box-sizing:border-box}
+html,body{margin:0;padding:0}
+body{
+  background:var(--paper);color:var(--ink);font-family:var(--sans);
+  font-size:15px;line-height:1.62;-webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+body::before{
+  content:"";position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:repeating-linear-gradient(0deg,rgba(120,108,84,.035) 0 1px,transparent 1px 4px);
+}
+.num{font-variant-numeric:tabular-nums;font-family:"Times New Roman",Georgia,var(--serif)}
+
+/* ---------- 容器：手机一屏一页，上下滑动翻页 ---------- */
+html{scroll-snap-type:y proximity;scroll-behavior:smooth}
+.deck{position:relative;z-index:1}
+.page{
+  min-height:100vh;min-height:100svh;min-height:100dvh;scroll-snap-align:start;scroll-snap-stop:always;
+  display:flex;flex-direction:column;justify-content:center;
+  padding:calc(46px + env(safe-area-inset-top)) var(--pad) calc(44px + env(safe-area-inset-bottom));
+  max-width:560px;margin:0 auto;
+}
+.page--cover{justify-content:space-between}
+@media (min-width:760px){
+  html{scroll-snap-type:none}
+  body{background:#e4ded0}
+  .deck{display:flex;flex-direction:column;align-items:center}
+  .page{width:560px;margin:24px auto;background:var(--paper);border:1px solid var(--line);
+    box-shadow:0 18px 40px -28px rgba(40,35,20,.5);border-radius:3px}
+}
+
+/* ---------- 顶部进度：三段代表三天 ---------- */
+.topbar{position:fixed;top:0;left:0;right:0;z-index:9;height:38px;
+  display:flex;align-items:center;gap:10px;padding:0 14px;
+  background:linear-gradient(180deg,rgba(243,240,232,.96),rgba(243,240,232,.72) 70%,rgba(243,240,232,0));
+  backdrop-filter:blur(3px)}
+.topbar__t{font-family:var(--serif);font-size:12.5px;letter-spacing:.02em;color:var(--ink-2)}
+.topbar__c{margin-left:auto;font-size:12px;color:var(--muted)}
+.topbar__track{position:absolute;left:0;right:0;bottom:6px;height:2px;background:var(--paper-3)}
+.topbar__track i{display:block;height:2px;width:9%;background:var(--water);transition:width .25s ease}
+
+/* ---------- 右侧页点 ---------- */
+.dots{position:fixed;right:9px;top:50%;transform:translateY(-50%);z-index:9;
+  display:flex;flex-direction:column;gap:7px;align-items:center}
+.dots button{width:4px;height:12px;padding:0;border:0;border-radius:2px;background:var(--paper-3);cursor:pointer;transition:height .2s,background .2s}
+.dots button[aria-current="true"]{height:24px;background:var(--water)}
+.dots button:focus-visible{outline:2px solid var(--water);outline-offset:2px}
+
+/* ---------- 排版 ---------- */
+h1,h2,h3{font-family:var(--serif);font-weight:400;margin:0;letter-spacing:.01em}
+h1{font-size:clamp(34px,11vw,46px);line-height:1.14}
+h2{font-size:27px;line-height:1.24}
+h3{font-size:17px}
+p{margin:0}
+.lead{margin-top:8px;font-size:14.5px;color:var(--ink-2)}
+.eyebrow{font-family:var(--serif);font-size:13px;color:var(--water);letter-spacing:.06em}
+.kicker{margin-top:2px;font-size:12.5px;color:var(--muted)}
+strong{font-weight:600}
+
+/* ---------- 封面 ---------- */
+.cover__top{display:flex;flex-direction:column;gap:14px}
+.stamp{width:56px;height:56px;border:1.5px solid var(--cinnabar);border-radius:4px;color:var(--cinnabar);
+  display:flex;align-items:center;justify-content:center;text-align:center;
+  font-family:var(--serif);font-size:13px;line-height:1.15;letter-spacing:.02em;padding:4px}
+.cover__sub{font-family:var(--serif);font-size:15px;color:var(--water);letter-spacing:.04em}
+.cover__mountain{display:block;width:100%;height:auto;margin:6px 0 0}
+.strip{display:grid;grid-template-columns:auto 1fr;gap:7px 14px;margin-top:14px;
+  padding-top:14px;border-top:1px solid var(--line);font-size:13.5px}
+.strip b{font-family:var(--serif);font-weight:400;color:var(--water)}
+.strip span{color:var(--ink-2)}
+.hint{font-size:12px;color:var(--muted);letter-spacing:.04em}
+
+/* ---------- 数据条 ---------- */
+.figrow{display:flex;gap:22px;margin:16px 0 2px;flex-wrap:wrap}
+.fig{display:flex;flex-direction:column;gap:1px}
+.fig b{font-family:"Times New Roman",Georgia,var(--serif);font-size:26px;font-weight:400;color:var(--water);font-variant-numeric:tabular-nums}
+.fig span{font-size:12px;color:var(--muted)}
+
+/* ---------- 时间轴 ---------- */
+.tl{list-style:none;margin:16px 0 0;padding:0}
+.tl li{display:grid;grid-template-columns:52px 1fr;gap:12px}
+.tl time{font-family:"Times New Roman",Georgia,var(--serif);font-size:14.5px;color:var(--water);
+  font-variant-numeric:tabular-nums;padding-top:1px;text-align:right}
+.tl .body{position:relative;padding:0 0 15px 14px;border-left:1px solid var(--line)}
+.tl li:last-child .body{border-left-color:transparent}
+.tl .body::before{content:"";position:absolute;left:-3.5px;top:7px;width:6px;height:6px;border-radius:50%;
+  background:var(--paper);border:1.5px solid var(--water)}
+.tl b{display:block;font-weight:600;font-size:14.5px;line-height:1.45}
+.tl small{display:block;font-size:12.5px;color:var(--ink-2);line-height:1.5;margin-top:2px}
+.tl li.flag .body{border-left-color:var(--cinnabar)}
+.tl li.flag .body::before{border-color:var(--cinnabar)}
+.tl li.flag b{color:var(--cinnabar)}
+
+/* ---------- 功能块：吃 / 住 / 注意 ---------- */
+.blocks{display:flex;flex-direction:column;gap:9px;margin-top:6px}
+.blk{display:grid;grid-template-columns:40px 1fr;gap:11px;padding:10px 12px 10px 8px;
+  background:var(--paper-2);border-left:3px solid var(--water)}
+.blk--stay{border-left-color:var(--bamboo)}
+.blk--warn{border-left-color:var(--cinnabar);background:#f0e5df}
+.blk i{font-style:normal;font-family:var(--serif);font-size:14px;color:var(--water);text-align:center;padding-top:1px}
+.blk--stay i{color:var(--bamboo)}
+.blk--warn i{color:var(--cinnabar)}
+.blk p{font-size:13.5px;line-height:1.58;color:var(--ink-2)}
+.blk b{color:var(--ink)}
+
+/* ---------- 两列信息行 ---------- */
+.rows{list-style:none;margin:14px 0 0;padding:0}
+.rows li{display:grid;grid-template-columns:92px 1fr;gap:10px;padding:8px 0;border-bottom:1px dashed var(--line);align-items:baseline}
+.rows li:last-child{border-bottom:0}
+.rows .k{font-family:var(--serif);font-size:13.5px;color:var(--water)}
+.rows .v{font-size:13.5px;color:var(--ink-2)}
+.rows .v em{font-style:normal;color:var(--cinnabar)}
+
+/* ---------- 提示条 ---------- */
+.callout{margin-top:14px;padding:12px 14px;border:1px solid var(--line);border-left:3px solid var(--cinnabar);background:#f6f0e5}
+.callout p{font-size:13px;color:var(--ink-2)}
+.callout b{color:var(--cinnabar);font-weight:600}
+.footnote{margin-top:12px;font-size:11.5px;color:var(--muted);line-height:1.5}
+@media (prefers-reduced-motion:reduce){*{transition:none!important;scroll-behavior:auto!important}}
+</style>
+</head>
+
+<body>
+<header class="topbar">
+  <span class="topbar__t">南通 → 泾县 · 3 天 2 晚</span>
+  <span class="topbar__c"><b class="num" id="cur">1</b> / <span class="num" id="tot">11</span></span>
+  <div class="topbar__track"><i id="bar"></i></div>
+</header>
+
+<main class="deck" id="deck">
+
+<!-- 1 封面 -->
+<section class="page page--cover" aria-label="封面">
+  <div class="cover__top">
+    <div class="stamp">泾县<br>纪行</div>
+    <h1>南通<br>→ 泾县</h1>
+    <p class="cover__sub">沿青弋江，走一段皖南川藏线</p>
+    <p class="lead">2026 年国庆假期　10 月 1 日—3 日</p>
+    <p class="kicker">一家三口自驾，南通崇川区出发</p>
+  </div>
+  <div>
+    <svg class="cover__mountain" viewBox="0 0 320 118" role="img" aria-label="皖南山水示意">
+      <path d="M0 92 L44 58 L70 76 L110 34 L152 72 L188 48 L226 78 L266 56 L320 92 L320 118 L0 118 Z" fill="#e8e3d4"/>
+      <path d="M0 92 L44 58 L70 76 L110 34 L152 72 L188 48 L226 78 L266 56 L320 92" fill="none" stroke="#1e5f5a" stroke-width="1.1" opacity=".5"/>
+      <path d="M0 92 L44 58 L70 76 L110 34 L152 72 L188 48 L226 78 L266 56 L320 92 L320 118 L0 118 Z" fill="#e8e3d4"/>
+      <path d="M0 100 Q70 94 140 100 T320 98" fill="none" stroke="#1e5f5a" stroke-width=".9" opacity=".45"/>
+      <path d="M196 96 q9 -3 18 0 q-9 3 -18 0 Z" fill="#1e5f5a" opacity=".55"/>
+      <path d="M204 92 v4" stroke="#1e5f5a" stroke-width=".8" opacity=".55"/>
+    </svg>
+    <div class="strip">
+      <b>里程</b><span>约 839 公里，其中高速约 700 公里</span>
+      <b>节奏</b><span>D1 月亮湾漂流　D2 水墨汀溪与查济　D3 桃花潭后返程</span>
+      <b>住宿</b><span>1 晚月亮湾，1 晚查济古村</span>
+      <b>预算</b><span>约 2600—4200 元，过路费 0 元</span>
+    </div>
+    <p class="hint" style="margin-top:16px">上下滑动翻页，共 11 页</p>
+  </div>
+</section>
+
+<!-- 2 总览 -->
+<section class="page" aria-label="行程总览">
+  <p class="eyebrow">行程总览</p>
+  <h2>三天走四个地方</h2>
+  <p class="kicker">玩水的排在前头，逛古村的放在后头</p>
+  <div class="blocks" style="margin-top:18px">
+    <div class="blk">
+      <i>D1</i>
+      <p><b>南通 → 蔡村镇月亮湾</b><br>350 公里，约 3 小时 55 分（不含休息）<br>竹筏漂流、溪边散步，宿月亮湾</p>
+    </div>
+    <div class="blk">
+      <i>D2</i>
+      <p><b>月亮湾 → 水墨汀溪 → 查济</b><br>15.5 公里山路，再走 81.8 公里高速<br>溪谷玩水、查济古村，宿查济</p>
+    </div>
+    <div class="blk blk--stay">
+      <i>D3</i>
+      <p><b>查济 → 桃花潭 → 南通</b><br>21.9 公里，再返程 370 公里<br>乘渡船看潭，午饭后出发</p>
+    </div>
+  </div>
+  <div class="callout">
+    <p><b>过路费 0 元</b>：10 月 1 日 0:00 至 10 月 7 日 24:00，7 座及以下小客车免费通行，<b>以驶离出口收费车道的时间为准</b>。去返程都在免费期内。</p>
+  </div>
+  <p class="footnote">车程为高德地图实查数据（2026-09-29），不含服务区休息与堵车时间。</p>
+</section>
+
+<!-- 3 出发前必做 -->
+<section class="page" aria-label="出发前必做">
+  <p class="eyebrow">出发前</p>
+  <h2>这四件事先办</h2>
+  <p class="kicker">办完再收拾行李，路上最省心</p>
+  <ul class="rows" style="margin-top:18px">
+    <li><span class="k">订民宿</span><span class="v">月亮湾、查济各一晚。国庆房源紧，越早越便宜。只订 1 晚查济即可，不必两晚都住古村</span></li>
+    <li><span class="k">买门票</span><span class="v">水墨汀溪<b>须实名分时预约</b>；月亮湾漂流提前 1—3 天约；查济、桃花潭在线买更便宜</span></li>
+    <li><span class="k">错峰出发</span><span class="v">10 月 1 日 7:00—12:00 是出程高峰，过江通道与常州—溧阳—宣城段最堵。<em>尽量 7:00 前上路</em></span></li>
+    <li><span class="k">确认天气</span><span class="v">出门前打一次景区电话问是否开漂；顺路查泾县交警有没有发皖南川藏线管制通告</span></li>
+  </ul>
+  <div class="callout">
+    <p><b>一个硬提醒</b>：汛期山里说下就下，漂流项目遇中到大雨或上游来水会临时停运。当天上午打一次电话（月亮湾 0563-5430808），比提前一周买好票更管用。</p>
+  </div>
+</section>
+
+<!-- 4 D1 -->
+<section class="page" aria-label="第一天 月亮湾">
+  <p class="eyebrow">第一天　10 月 1 日　周四</p>
+  <h2>南通 → 月亮湾</h2>
+  <p class="kicker">350 公里 · 宿蔡村镇月亮湾 · 白天最适合漂流</p>
+  <ol class="tl">
+    <li><time>05:30</time><div class="body"><b>起床、装车、吃早饭</b><small>儿童用品头一晚先装车，早上不慌</small></div></li>
+    <li class="flag"><time>07:00</time><div class="body"><b>出发</b><small>首日高峰 7:00—12:00，早走一小时省两小时。走 G40 沪陕 → 常泰长江大桥 → G4221 沪武 → S35 阜溧 → G4012 溧宁 → G50 沪渝 → S36 宣东高速，中途在溧阳或宣城段服务区休息一次</small></div></li>
+    <li><time>13:00</time><div class="body"><b>到月亮湾，吃午饭</b><small>民宿农家菜：土鸡汤、小河鱼、笋干烧肉</small></div></li>
+    <li class="flag"><time>14:30</time><div class="body"><b>漂流</b><small>竹筏约 6 公里 50—60 分钟，平缓适合带娃；皮划艇约 9 公里 1.5 小时。景区 16:30 停止售票</small></div></li>
+    <li><time>16:30</time><div class="body"><b>溪边散步</b><small>沿岸浅溪踩水，给孩子穿防滑凉鞋；水色变浑、水位上涨立马上岸</small></div></li>
+    <li><time>18:00</time><div class="body"><b>民宿晚饭，早点休息</b><small>第二天要赶山路，别熬夜</small></div></li>
+  </ol>
+  <div class="blocks" style="margin-top:16px">
+    <div class="blk"><i>吃</i><p>午饭宿处农家菜，晚饭回民宿吃不折腾</p></div>
+    <div class="blk--stay blk"><i>住</i><p>选<b>临溪、能停车</b>的民宿，蔡村镇节假日很堵，到了就别再挪车</p></div>
+    <div class="blk--warn blk"><i>注意</i><p>若当天停漂：溪边散步 + 民宿泡茶，把漂流顺延到第二天上午，<b>别再往汀溪挪</b></p></div>
+  </div>
+</section>
+
+<!-- 5 D2 -->
+<section class="page" aria-label="第二天 水墨汀溪与查济">
+  <p class="eyebrow">第二天　10 月 2 日　周五</p>
+  <h2>月亮湾 → 汀溪 → 查济</h2>
+  <p class="kicker">15.5 公里山路 + 81.8 公里高速 · 宿查济古村</p>
+  <ol class="tl">
+    <li><time>06:30</time><div class="body"><b>早饭、退房</b><small>行李装车，山路不带箱子下车</small></div></li>
+    <li class="flag"><time>07:30</time><div class="body"><b>出发走山路（经爱民）</b><small>弯多路窄、会车点少。导航给 36 分钟，雨天会车留足 1 小时；弯道鸣笛、靠右慢行、不停车拍照</small></div></li>
+    <li><time>08:30</time><div class="body"><b>水墨汀溪</b><small>官方 8:00—17:00，<b>须实名分时预约</b>。溪谷栈道、浅滩玩水；停车场免费但只有约 200 位，早到是关键</small></div></li>
+    <li><time>11:30</time><div class="body"><b>汀溪乡午饭</b><small>汀溪兰香鸡、溪鱼、笋干烧肉。11:30 前落座能少等一小时</small></div></li>
+    <li><time>12:30</time><div class="body"><b>转场查济，81.8 公里</b><small>回泾县方向上 S36 宣东高速，经青弋江特大桥，从桃花潭方向出口下——全天最稳的一段路</small></div></li>
+    <li><time>14:00</time><div class="body"><b>到查济，办入住、歇一会儿</b><small>古村石板路禁止机动车驶入，车停村外停车场，行李请客栈帮忙</small></div></li>
+    <li class="flag"><time>15:00</time><div class="body"><b>逛查济古村</b><small>网络票取票 16:30 截止，务必 16:00 前取票入园。沿许溪走：红楼桥、二甲祠、宝公祠</small></div></li>
+    <li><time>18:30</time><div class="body"><b>村内晚饭</b><small>臭鳜鱼、毛豆腐、笋干烧肉、清明挞粿，人均 50—70 元</small></div></li>
+  </ol>
+  <div class="blocks" style="margin-top:16px">
+    <div class="blk--warn blk"><i>注意</i><p>今天是三天里雨最大的（中雨）。玩水玩不成，就把时间给古村；雨雾里的汀溪反而最好看</p></div>
+    <div class="blk--warn blk"><i>备选</i><p>山上雨大路滑没把握时，直接改走 S36 高速直达查济（约 60 公里），<b>安全优先于看风景</b></p></div>
+  </div>
+</section>
+
+<!-- 6 D3 -->
+<section class="page" aria-label="第三天 桃花潭与返程">
+  <p class="eyebrow">第三天　10 月 3 日　周六</p>
+  <h2>桃花潭 → 南通</h2>
+  <p class="kicker">21.9 公里 + 返程 370 公里 · 午饭后出发</p>
+  <ol class="tl">
+    <li><time>07:00</time><div class="body"><b>早饭、退房</b><small>清晨的古村最好拍，起得来就绕村口走一圈</small></div></li>
+    <li><time>08:00</time><div class="body"><b>去桃花潭，21.9 公里</b><small>064 县道转 468 省道，柏油路好走，约 31 分钟</small></div></li>
+    <li><time>08:40</time><div class="body"><b>桃花潭</b><small>8:00—17:00，门票含往返渡船。踏歌古岸、万家酒店旧址、中华第一祠；深水区只看不下水</small></div></li>
+    <li><time>11:30</time><div class="body"><b>镇上吃午饭</b><small>桃花潭鱼头、老码头船夫鱼头、香飘鹅颈</small></div></li>
+    <li><time>12:30</time><div class="body"><b>返程出发</b><small>S36 宣东高速 → G50 沪渝 → G4012 溧宁 → S35 阜溧 → G4221 沪武 → S19 通锡（沪苏通大桥过江）</small></div></li>
+    <li><time>17:20</time><div class="body"><b>到家</b><small>370 公里，含两次休息约 4 小时 45 分</small></div></li>
+  </ol>
+  <div class="blocks" style="margin-top:16px">
+    <div class="blk"><i>吃</i><p>午饭就在桃花潭镇解决，吃完直接上高速，别拖到 13:30 之后</p></div>
+    <div class="blk--warn blk"><i>注意</i><p>若今天已到 10 月 7 日：返程高峰 13:00—20:00，<em>10:00 前出发、16:00 前过江</em>；免费时段到 24:00 结束</p></div>
+  </div>
+</section>
+
+<!-- 7 吃什么 -->
+<section class="page" aria-label="吃什么">
+  <p class="eyebrow">吃</p>
+  <h2>照这份清单点菜</h2>
+  <p class="kicker">泾县官方评的「十二道泾味」</p>
+  <ul class="rows" style="margin-top:18px">
+    <li><span class="k">招牌</span><span class="v">茂林蹄髈、云岭酱香黑猪肉、茂林糊粉、香飘鹅颈、汀溪兰香鸡、琴鱼蒸蛋、老码头船夫鱼头、泾川肉焖面、皖南粉蒸肉、泾品豆腐、南瓜圆子、农家三鲜煲</span></li>
+    <li><span class="k">月亮湾</span><span class="v">民宿农家菜：土鸡汤、小河鱼、笋干烧肉</span></li>
+    <li><span class="k">汀溪</span><span class="v">汀溪兰香鸡、溪鱼、时令山野菜</span></li>
+    <li><span class="k">查济</span><span class="v">臭鳜鱼、毛豆腐、火腿炖土鸡、清明挞粿，人均 50—70 元</span></li>
+    <li><span class="k">桃花潭</span><span class="v">桃花潭鱼头、老码头船夫鱼头、章渡酱菜</span></li>
+  </ul>
+  <div class="callout">
+    <p><b>带娃提醒</b>：徽菜偏咸偏油，笋类纤维粗。<b>给孩子点清蒸鱼、鸡汤、蒸蛋更稳</b>。山区馆子上菜慢，11:30 前落座能少等一小时。</p>
+  </div>
+</section>
+
+<!-- 8 住哪里 -->
+<section class="page" aria-label="住哪里">
+  <p class="eyebrow">住</p>
+  <h2>两晚，两处</h2>
+  <p class="kicker">一处听水，一处住古宅</p>
+  <ul class="rows" style="margin-top:18px">
+    <li><span class="k">月亮湾　首选</span><span class="v">狮子山民宿（近漂流点，出入方便）</span></li>
+    <li><span class="k">月亮湾　备选</span><span class="v">云隐里（有泳池、停车宽敞）、月下枕溪（依山傍溪）、星空房车营地（孩子喜欢）</span></li>
+    <li><span class="k">查济　首选</span><span class="v">查济人家（村内老牌，吃住一起）</span></li>
+    <li><span class="k">查济　备选</span><span class="v">云舍山房（庭院式）、竹里晓山（徽派精品）、红楼桥客栈（位置好）</span></li>
+  </ul>
+  <div class="callout">
+    <p><b>订房五连问</b>：门口能不能停车？离景区入口步行多远？是否临溪、有没有围挡？含不含早餐、几点开？国庆价格与免费取消政策？</p>
+  </div>
+  <p class="footnote">民宿名称来自公开平台口碑，房态与价格请以平台实时信息为准。古村内车辆不能进，订房时问清行李怎么运。</p>
+</section>
+
+<!-- 9 门票与预约 -->
+<section class="page" aria-label="门票与预约">
+  <p class="eyebrow">行前确认</p>
+  <h2>门票与预约</h2>
+  <p class="kicker">三家要买票，一家是开放溪谷</p>
+  <ul class="rows" style="margin-top:18px">
+    <li><span class="k">月亮湾</span><span class="v">开放溪谷，多说不收大门票；竹筏漂流约 90—128 元，皮划艇约 110 元。<em>需提前 1—3 天约</em>　0563-5430808</span></li>
+    <li><span class="k">水墨汀溪</span><span class="v">门票约 50 元，含栈道套票约 88 元，畅玩套餐约 119.9 元。<em>须实名分时预约</em>　0563-5481777</span></li>
+    <li><span class="k">查济</span><span class="v">旺季约 65 元、线上约 63 元，优待票约 32 元；取票 8:00—16:30　0563-5995299</span></li>
+    <li><span class="k">桃花潭</span><span class="v">现场约 65 元（含渡船）、线上约 60 元；查济 + 桃花潭联票约 126 元　0563-5870418</span></li>
+    <li><span class="k">免票</span><span class="v">6 周岁以下或 1.2 米以下儿童多数免票；65 周岁以上老人免票。带好孩子的户口本或身份证</span></li>
+  </ul>
+  <p class="footnote">价格为公开平台与政府公开信息整理，国庆可能浮动；打※的项目尚未取得官方原文确认，请以景区电话与公众号为准。</p>
+</section>
+
+<!-- 10 注意事项 -->
+<section class="page" aria-label="注意事项">
+  <p class="eyebrow">注意事项</p>
+  <h2>雨天与山路</h2>
+  <p class="kicker">前两天下雨，这几条照着做</p>
+  <ul class="rows" style="margin-top:16px">
+    <li><span class="k">天气</span><span class="v">10/1 小雨约 4mm，10/2 中雨约 21mm，10/3 阴雨约 9mm；10/5 起转晴，早晚降到 10℃ 上下</span></li>
+    <li><span class="k">山路</span><span class="v">降速、靠右、弯道鸣笛；不空挡滑行、不急打方向；雨雾开雾灯与示廓灯</span></li>
+    <li><span class="k">会车</span><span class="v">主动靠宽处让行，不抢弯；<em>绝不弯道停车拍照</em></span></li>
+    <li><span class="k">落石</span><span class="v">连续降雨后注意落石、小型塌方、路面积水；前方排队别贴太近</span></li>
+    <li><span class="k">野猴</span><span class="v">桃岭一带有野猴出没，不停车投喂、不摇窗递食物</span></li>
+    <li><span class="k">停漂</span><span class="v">D1 停漂 → 顺延到 D2 上午或改溪边散步；D2 停漂 → 看栈道云雾，提前转查济；D3 停渡 → 走西岸万村老街</span></li>
+  </ul>
+  <p class="footnote">管制提示：国庆期间泾县交警可能对皖南川藏线泾县段采取分流劝返（往年对 7 座及以上、车宽超 2 米车辆禁行），5 座小客车一般不受限但会被分流。</p>
+</section>
+
+<!-- 11 应急与清单 -->
+<section class="page" aria-label="应急与随车清单">
+  <p class="eyebrow">应急</p>
+  <h2>电话与随车清单</h2>
+  <p class="kicker">出发前存进手机通讯录</p>
+  <ul class="rows" style="margin-top:16px">
+    <li><span class="k">急救报警</span><span class="v">120　110　交通事故 122　高速救援 12122</span></li>
+    <li><span class="k">泾县医院</span><span class="v">三级综合，泾川镇桃花潭西路 489 号，急诊 0563-5033120</span></li>
+    <li><span class="k">景区电话</span><span class="v">月亮湾 0563-5430808　汀溪 0563-5481777　查济 0563-5995299　桃花潭 0563-5870418</span></li>
+    <li><span class="k">文旅投诉</span><span class="v">0563-5093220　全国服务热线 12345</span></li>
+  </ul>
+  <div class="callout">
+    <p><b>随车必带</b>：防滑溯溪鞋（别穿拖鞋）、孩子替换衣物两套、大浴巾、雨衣、驱蚊液、晕车贴、退烧药、保温壶、垃圾袋、现金 200—500 元。</p>
+    <p style="margin-top:8px"><b>提前下载离线地图</b>：山里信号弱，出发前把高德的"宣城 泾县"离线包下好。</p>
+  </div>
+  <p class="footnote">山区距泾县城区约 30—40 公里：轻症就近找乡镇卫生院，急重症直接打 120 送泾县医院总院。</p>
+</section>
+
+</main>
+
+<nav class="dots" id="dots" aria-label="页面导航"></nav>
+
+<script>
+(function(){
+  var pages = Array.prototype.slice.call(document.querySelectorAll('.page'));
+  var dots = document.getElementById('dots');
+  var cur = document.getElementById('cur');
+  var tot = document.getElementById('tot');
+  var bar = document.getElementById('bar');
+  var current = 0;
+  if('scrollRestoration' in history){ history.scrollRestoration = 'manual'; window.scrollTo(0, 0); }
+  tot.textContent = pages.length;
+  pages.forEach(function(p, i){
+    var b = document.createElement('button');
+    b.type = 'button';
+    b.setAttribute('aria-label', '第 ' + (i + 1) + ' 页');
+    b.addEventListener('click', function(){ p.scrollIntoView({behavior:'smooth', block:'start'}); });
+    dots.appendChild(b);
+  });
+  var btns = Array.prototype.slice.call(dots.children);
+  function setActive(i){
+    current = i;
+    btns.forEach(function(b, k){ b.setAttribute('aria-current', k === i ? 'true' : 'false'); });
+    cur.textContent = i + 1;
+    bar.style.width = ((i + 1) / pages.length * 100) + '%';
+  }
+  function computeCurrent(){
+    var best = 0, bestD = Infinity;
+    pages.forEach(function(p, i){
+      var d = Math.abs(p.getBoundingClientRect().top);
+      if(d < bestD){ bestD = d; best = i; }
+    });
+    setActive(best);
+  }
+  computeCurrent();
+  var ticking = false;
+  window.addEventListener('scroll', function(){
+    if(ticking){ return; }
+    ticking = true;
+    requestAnimationFrame(function(){ computeCurrent(); ticking = false; });
+  }, {passive:true});
+  window.addEventListener('resize', computeCurrent);
+  document.addEventListener('keydown', function(e){
+    var next = null;
+    if(e.key === 'ArrowDown' || e.key === 'PageDown' || e.key === 'ArrowRight' || e.key === ' '){ next = Math.min(current + 1, pages.length - 1); }
+    else if(e.key === 'ArrowUp' || e.key === 'PageUp' || e.key === 'ArrowLeft'){ next = Math.max(current - 1, 0); }
+    else if(e.key === 'Home'){ next = 0; }
+    else if(e.key === 'End'){ next = pages.length - 1; }
+    if(next !== null){ e.preventDefault(); pages[next].scrollIntoView({behavior:'smooth', block:'start'}); }
+  }, {passive:false});
+})();
+</script>
+</body>
+</html>
