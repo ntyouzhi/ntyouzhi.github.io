@@ -20,6 +20,37 @@
   loading.className = 'fish-stage-loading';
   loading.innerHTML = '<span></span><p>正在准备鲫鱼的水下世界…</p>';
   stage.appendChild(loading);
+  const controls = document.createElement('div');
+  controls.className = 'fish-controls';
+  controls.setAttribute('aria-label', '鲫鱼观察控制');
+  controls.innerHTML = [['pause','暂停'],['fast','加速'],['slow','慢速'],['labels','结构标注'],['pan','移动'],['reset','复位']].map(([id,label]) => `<button type="button" data-fish="${id}" ${id !== 'reset' ? 'aria-pressed="false"' : ''} disabled>${label}</button>`).join('');
+  stage.appendChild(controls);
+  let state = {paused:false,speed:1,labels:true,pan:false};
+  function syncControls() {
+    state = frame?.contentWindow?.fishState?.() || state;
+    for (const button of controls.querySelectorAll('button')) {
+      const action = button.dataset.fish;
+      button.disabled = !ready;
+      if (action !== 'reset') button.setAttribute('aria-pressed', String(action === 'pause' ? state.paused : action === 'fast' ? state.speed === 2 : action === 'slow' ? state.speed === .35 : state[action === 'pan' ? 'pan' : 'labels']));
+      if (action === 'pause') button.textContent = state.paused ? '继续' : '暂停';
+    }
+    if (frame) frame.style.cursor = state.pan ? 'grab' : 'default';
+    document.querySelector('.is-godot-fish .tip span')?.replaceChildren(document.createTextNode(state.pan ? '拖动平移　滚轮缩放' : '拖动旋转　滚轮缩放'));
+  }
+  controls.addEventListener('click', event => {
+    const action = event.target.closest('[data-fish]')?.dataset.fish;
+    if (!action || !ready) return;
+    syncControls();
+    const command = frame.contentWindow.fishCommand;
+    if (action === 'pause') command('pause', !state.paused);
+    if (action === 'fast' || action === 'slow') {
+      const speed = action === 'fast' ? 2 : .35;
+      command('speed', state.speed === speed ? 1 : speed);
+    }
+    if (action === 'labels' || action === 'pan') command(action, !state[action]);
+    if (action === 'reset') command('reset', true);
+    syncControls();
+  });
 
   function sendActive() {
     const active = selected && document.body.dataset.domain === 'life' && !document.hidden;
@@ -74,12 +105,13 @@
     }
     sendActive();
   }
-  function reset() { if (ready) frame.contentWindow?.fishReset?.(); }
+  function reset() { if (ready) { frame.contentWindow?.fishReset?.(); syncControls(); } }
   window.ScienceFishObservation = {select, reset, get ready(){ return ready; }};
   window.addEventListener('message', event => {
     if (event.source !== frame?.contentWindow || event.origin !== location.origin || event.data?.type !== 'science-fish-ready') return;
     ready = true;
     loading.hidden = true;
+    syncControls();
     resetButton.disabled = false;
     sendActive();
   });
