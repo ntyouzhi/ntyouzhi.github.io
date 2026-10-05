@@ -5,7 +5,13 @@
 .fish-stage-loading>span{width:34px;height:34px;border:2px solid #e1d6c7;border-top-color:#4d8c6b;border-radius:50%;animation:spin 1s linear infinite}
 .is-godot-fish:before{display:none}
 .is-godot-fish .tools .tool:not([data-action="reset"]){display:none}
-.is-godot-fish .tools{border-radius:16px;padding:4px}
+.is-godot-fish .tools{display:none}
+.fish-controls{position:absolute;bottom:22px;left:50%;transform:translateX(-50%);display:flex;gap:4px;padding:6px;border:1px solid #e0d2c4;border-radius:16px;background:#fffaf4;z-index:5;white-space:nowrap}
+.fish-controls button{border:0;background:transparent;color:#3f7459;border-radius:10px;padding:10px 12px;font:inherit;font-size:12px;cursor:pointer}
+.fish-controls button:hover,.fish-controls button[aria-pressed="true"]{background:#e7f0e9}
+.fish-controls button:disabled{opacity:.45;cursor:wait}
+.fish-controls button:focus-visible{outline:2px solid #4d8c6b;outline-offset:1px}
+@media(max-width:560px){.fish-controls{bottom:15px;gap:0;padding:4px;max-width:calc(100% - 16px)}.fish-controls button{font-size:11px;padding:10px 7px}}
 .is-godot-fish .tool[data-action="reset"]{color:#3f7459}
 .is-godot-fish .viewer-heading,.is-godot-fish .caption,.is-godot-fish .tip{pointer-events:none}
 .fish-structure-notes{margin:12px 0 18px;display:grid;gap:12px}
