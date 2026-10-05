@@ -14,5 +14,8 @@
 .fish-structure-notes dd{margin:5px 0 0;font-size:12px;line-height:1.7;color:#6a5a4e}
 .fish-question{background:#e7f0e9}.fish-evidence{background:#efe8cd}
 .fish-model-note{font-size:10px;line-height:1.6;color:var(--muted);margin-top:18px}
+.fish-exit-fullscreen{display:none}
+.is-godot-fish.viewer:fullscreen{width:100vw;height:100dvh;min-height:0;border:0;background:#edf0e8}
+.is-godot-fish.viewer:fullscreen .fish-exit-fullscreen{display:block;position:absolute;top:22px;right:24px;z-index:8;border:1px solid #d9cebf;border-radius:12px;padding:10px 16px;background:#fffaf4;color:#3f7459;font:inherit;font-size:13px;cursor:pointer}
 @media(max-width:560px){.is-godot-fish .tools{width:auto;justify-content:center;bottom:15px}.is-godot-fish .caption{right:14px;bottom:80px}.is-godot-fish .viewer-heading{left:16px}}
 @media(min-width:901px){body[data-observed-organ="crucian"] #life-classroom .workspace{height:calc(100dvh - 76px);min-height:620px}body[data-observed-organ="crucian"] #life-classroom .library,body[data-observed-organ="crucian"] #life-classroom .info-panel{min-height:0;overflow-y:auto}.is-godot-fish.viewer{min-height:0}}
