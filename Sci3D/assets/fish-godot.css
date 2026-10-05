@@ -1,0 +1,18 @@
+/* Reuse the classroom's paper palette and typography; scope to this observation. */
+.fish-classroom-stage{position:absolute;inset:0;z-index:3;background:#f3efe6}
+.fish-classroom-stage iframe{display:block;width:100%;height:100%;border:0;background:#f3efe6}
+.fish-stage-loading{position:absolute;inset:0;display:flex;flex-direction:column;justify-content:center;align-items:center;gap:14px;background:#f6f0e8;color:var(--muted);font-size:13px;text-align:center;line-height:1.9;padding:30px}
+.fish-stage-loading>span{width:34px;height:34px;border:2px solid #e1d6c7;border-top-color:#4d8c6b;border-radius:50%;animation:spin 1s linear infinite}
+.is-godot-fish:before{display:none}
+.is-godot-fish .tools .tool:not([data-action="reset"]){display:none}
+.is-godot-fish .tools{border-radius:16px;padding:4px}
+.is-godot-fish .tool[data-action="reset"]{color:#3f7459}
+.is-godot-fish .viewer-heading,.is-godot-fish .caption,.is-godot-fish .tip{pointer-events:none}
+.fish-structure-notes{margin:12px 0 18px;display:grid;gap:12px}
+.fish-structure-notes div{padding-bottom:12px;border-bottom:1px solid var(--line)}
+.fish-structure-notes dt{font-size:13px;font-weight:700;color:#3f7459}
+.fish-structure-notes dd{margin:5px 0 0;font-size:12px;line-height:1.7;color:#6a5a4e}
+.fish-question{background:#e7f0e9}.fish-evidence{background:#efe8cd}
+.fish-model-note{font-size:10px;line-height:1.6;color:var(--muted);margin-top:18px}
+@media(max-width:560px){.is-godot-fish .tools{width:auto;justify-content:center;bottom:15px}.is-godot-fish .caption{right:14px;bottom:80px}.is-godot-fish .viewer-heading{left:16px}}
+@media(min-width:901px){body[data-observed-organ="crucian"] #life-classroom .workspace{height:calc(100dvh - 76px);min-height:620px}body[data-observed-organ="crucian"] #life-classroom .library,body[data-observed-organ="crucian"] #life-classroom .info-panel{min-height:0;overflow-y:auto}.is-godot-fish.viewer{min-height:0}}
