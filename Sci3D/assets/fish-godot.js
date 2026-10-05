@@ -9,6 +9,12 @@
   stage.hidden = true;
   stage.setAttribute('aria-label', '鲫鱼水中观察：鳃盖与五种鱼鳍标注');
   viewer.appendChild(stage);
+  const exitFullscreenButton = document.createElement('button');
+  exitFullscreenButton.className = 'fish-exit-fullscreen';
+  exitFullscreenButton.type = 'button';
+  exitFullscreenButton.textContent = '⛶ 退出全屏';
+  exitFullscreenButton.addEventListener('click', () => document.exitFullscreen?.());
+  viewer.appendChild(exitFullscreenButton);
   let frame, ready = false, selected = false;
   const loading = document.createElement('div');
   loading.className = 'fish-stage-loading';
@@ -78,6 +84,13 @@
     sendActive();
   });
   document.addEventListener('click', event => {
+    if (selected && document.body.dataset.domain === 'life' && event.target.closest('[data-action="fullscreen"]')) {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+      const change = document.fullscreenElement ? document.exitFullscreen?.() : viewer.requestFullscreen?.();
+      change?.catch(error => console.warn('鲫鱼全屏未能打开:', error.name));
+      return;
+    }
     if (selected && event.target.closest('.tool[data-action="reset"]')) {
       event.stopImmediatePropagation();
       reset();
