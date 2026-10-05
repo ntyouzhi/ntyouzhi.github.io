@@ -1,0 +1,27 @@
+.respiratory-stage{position:absolute;inset:0;z-index:3;background:#f6f0e7}
+.respiratory-stage iframe{display:block;width:100%;height:100%;border:0;background:#f6f0e7}
+.respiratory-loading{position:absolute;inset:0;display:flex;flex-direction:column;align-items:center;justify-content:center;gap:14px;background:#f6f0e7;color:#75695f;text-align:center;padding:30px;font-size:13px;line-height:1.9}
+.respiratory-loading>span{width:34px;height:34px;border:2px solid #e1d6c7;border-top-color:#4d8c6b;border-radius:50%;animation:spin 1s linear infinite}
+.is-respiratory:before{display:none}.is-respiratory .tools{display:none}
+.is-respiratory .viewer-heading,.is-respiratory .caption,.is-respiratory .tip{pointer-events:none}
+.is-respiratory .caption{display:none}
+.respiratory-controls{display:flex;position:absolute;bottom:25px;left:50%;transform:translateX(-50%);z-index:7;gap:4px;padding:5px;border:1px solid #ded2c4;border-radius:14px;background:#fffaf4;white-space:nowrap}
+.respiratory-controls button,.respiratory-picks button{border:0;border-radius:9px;padding:9px 12px;color:#567263;background:transparent;font:inherit;font-size:12px;cursor:pointer}
+.respiratory-controls button[aria-pressed=true],.respiratory-picks button[aria-pressed=true]{background:#e2ece2;color:#356449}
+.respiratory-controls button:hover,.respiratory-picks button:hover{background:#eee7d9}
+.respiratory-controls button:disabled{opacity:.45;cursor:wait}
+.respiratory-controls button:focus-visible,.respiratory-picks button:focus-visible{outline:2px solid #4d8c6b;outline-offset:2px}
+.respiratory-controls[hidden],.respiratory-stage[hidden],.respiratory-loading[hidden]{display:none}
+.respiratory-exit{display:none}
+.is-respiratory.viewer:fullscreen{width:100vw;height:100dvh;min-height:0;border:0}
+.is-respiratory.viewer:fullscreen .respiratory-exit{display:block;position:absolute;right:22px;top:20px;z-index:8;border:1px solid #d9cebf;border-radius:12px;padding:10px 16px;background:#fffaf4;color:#3f7459;font:inherit;font-size:13px;cursor:pointer}
+.respiratory-path{display:flex;align-items:center;flex-wrap:wrap;gap:5px;padding:14px 0;color:#597d67;font-size:11px}
+.respiratory-path span{background:#e5ece1;border-radius:5px;padding:4px 7px}.respiratory-path i{font-style:normal;color:#aa9c87}
+.respiratory-picks{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:14px}.respiratory-picks button{border:1px solid #ded5c7;padding:6px 10px}
+.respiratory-detail{min-height:110px;background:#edf0e5}.respiratory-question{background:#e8eddf}
+.respiratory-notes{margin:12px 0 18px;display:grid;gap:12px}.respiratory-notes div{padding-bottom:12px;border-bottom:1px solid var(--line)}
+.respiratory-notes dt{font-size:13px;font-weight:700;color:#4d8064}.respiratory-notes dd{margin:5px 0 0;font-size:12px;line-height:1.7;color:#6a5a4e}
+.respiratory-model-note{font-size:10px;line-height:1.7;color:var(--muted);margin-top:16px}.respiratory-model-note a{color:#567b64}
+body[data-observed-organ="lungs"] #life-classroom .resources-wrap{display:none}
+@media(min-width:901px){body[data-observed-organ="lungs"] #life-classroom .workspace{height:calc(100dvh - 76px);min-height:680px}body[data-observed-organ="lungs"] #life-classroom .library,body[data-observed-organ="lungs"] #life-classroom .info-panel{min-height:0;overflow-y:auto}.is-respiratory.viewer{min-height:0}}
+@media(max-width:560px){.respiratory-controls{gap:0;width:max-content;max-width:calc(100% - 16px);flex-wrap:wrap;justify-content:center}.respiratory-controls button{padding:9px 6px;font-size:11px}.is-respiratory .viewer-heading{left:16px}.is-respiratory.viewer{min-height:720px}}
