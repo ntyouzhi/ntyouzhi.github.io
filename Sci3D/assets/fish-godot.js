@@ -18,7 +18,7 @@
   let frame, ready = false, selected = false;
   const loading = document.createElement('div');
   loading.className = 'fish-stage-loading';
-  loading.innerHTML = '<span></span><p>正在准备鲫鱼与莲池伙伴…</p>';
+  loading.innerHTML = '<div class="fish-loading-mark">鱼</div><p>正在下载水下场景</p><div class="fish-loading-track"><i></i></div><small>0%</small>';
   stage.appendChild(loading);
   const controls = document.createElement('div');
   controls.className = 'fish-controls';
@@ -108,9 +108,25 @@
   function reset() { if (ready) { frame.contentWindow?.fishReset?.(); syncControls(); } }
   window.ScienceFishObservation = {select, reset, get ready(){ return ready; }};
   window.addEventListener('message', event => {
-    if (event.source !== frame?.contentWindow || event.origin !== location.origin || event.data?.type !== 'science-fish-ready') return;
+    if (event.source !== frame?.contentWindow || event.origin !== location.origin) return;
+    if (event.data?.type === 'science-fish-load-progress') {
+      const progress = Math.max(0, Math.min(1, Number(event.data.progress) || 0));
+      loading.style.setProperty('--fish-load', `${Math.round(progress * 100)}%`);
+      loading.querySelector('p').textContent = event.data.label || '正在下载水下场景';
+      loading.querySelector('small').textContent = `${Math.round(progress * 100)}%`;
+      return;
+    }
+    if (event.data?.type === 'science-fish-load-stage') {
+      const progress = Math.max(0, Math.min(1, Number(event.data.progress) || 0));
+      loading.classList.add('is-progressive');
+      loading.style.setProperty('--fish-load', `${Math.round(progress * 100)}%`);
+      loading.querySelector('p').textContent = event.data.label || '正在布置莲池场景';
+      loading.querySelector('small').textContent = `${Math.round(progress * 100)}%`;
+      if (event.data.stage === 'complete') setTimeout(() => { loading.hidden = true; }, 240);
+      return;
+    }
+    if (event.data?.type !== 'science-fish-ready') return;
     ready = true;
-    loading.hidden = true;
     syncControls();
     resetButton.disabled = false;
     sendActive();
