@@ -7,7 +7,7 @@
   const stage = document.createElement('div');
   stage.className = 'fish-classroom-stage';
   stage.hidden = true;
-  stage.setAttribute('aria-label', '鲫鱼水中观察：鳃盖与五种鱼鳍标注');
+  stage.setAttribute('aria-label', '鲫鱼莲池观察：主鲫鱼、两条锦鲤、荷花与鱼鳍标注');
   viewer.appendChild(stage);
   const exitFullscreenButton = document.createElement('button');
   exitFullscreenButton.className = 'fish-exit-fullscreen';
@@ -18,7 +18,7 @@
   let frame, ready = false, selected = false;
   const loading = document.createElement('div');
   loading.className = 'fish-stage-loading';
-  loading.innerHTML = '<span></span><p>正在准备鲫鱼的水下世界…</p>';
+  loading.innerHTML = '<span></span><p>正在准备鲫鱼与莲池伙伴…</p>';
   stage.appendChild(loading);
   const controls = document.createElement('div');
   controls.className = 'fish-controls';
@@ -60,7 +60,7 @@
     panel.innerHTML = `
       <div class="kicker">生命世界 · 常见生物</div>
       <div class="title-row"><div><h1>鲫鱼</h1><em>Carassius auratus</em></div><div class="stamp"><img src="assets/images/crucian/thumb.webp" alt="鲫鱼"></div></div>
-      <p class="description">看身体和尾部怎样摆动，再留意各处鱼鳍与鳃盖的小动作。</p>
+      <p class="description">看身体和尾部怎样摆动，再留意各处鱼鳍与鳃盖的小动作。池中另有两条锦鲤与荷花，可转动视角比较观察。</p>
       <h2>从结构寻找证据</h2>
       <dl class="fish-structure-notes">
         <div><dt>躯干与尾鳍</dt><dd>左右摆动，与水相互作用，推动身体前进。</dd></div>
@@ -79,7 +79,7 @@
       return;
     }
     frame = document.createElement('iframe');
-    frame.title = '鲫鱼的水下世界：运动与外部结构观察';
+    frame.title = '鲫鱼与莲池伙伴：运动、外部结构和水生环境观察';
     frame.src = 'assets/godot-fish/index.html?embedded=1';
     frame.allow = 'fullscreen';
     stage.prepend(frame);
@@ -93,7 +93,7 @@
     if (window.__VISCERA_VIEWER__) window.__VISCERA_VIEWER__.isVisible = !selected;
     resetButton.disabled = selected && !ready;
     if (selected) {
-      document.querySelector('#viewer-title').textContent = '鲫鱼 · 水中观察';
+      document.querySelector('#viewer-title').textContent = '鲫鱼 · 莲池观察';
       document.querySelector('.caption > span').textContent = '生命的运动';
       document.querySelector('.tip span').textContent = '拖动改变角度　滚轮放大缩小';
       document.querySelector('#hotspot-callout').hidden = true;

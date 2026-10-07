@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<meta name="viewport" content="width=device-width, user-scalable=no, initial-scale=1.0">
-		<title>鲫鱼的水下世界 · 运动原型</title>
+		<title>鲫鱼与莲池伙伴 · 水下观察</title>
 		<style>
 html, body, #canvas {
 	margin: 0;
@@ -93,7 +93,10 @@ body {
 		<link id="-gd-engine-icon" rel="icon" type="image/png" href="index.icon.png" />
 <link rel="apple-touch-icon" href="index.apple-touch-icon.png"/>
 
-	</head>
+	<style id="science-fish-shell">html,body{background:#f3efe6;color:#30261f}#status{background:#f6f0e8}#status-notice{color:#75695f;border-color:#e5d8ca;background:#fffaf4;font-family:"Microsoft YaHei",sans-serif}canvas{touch-action:none}</style>
+<script>window.addEventListener('message',function(event){if(event.source!==parent||event.origin!==location.origin)return;if(event.data?.type==='science-fish-active'&&window.fishSetActive)window.fishSetActive(Boolean(event.data.active));if(event.data?.type==='science-fish-reset'&&window.fishReset)window.fishReset();});</script>
+<script id="science-fish-contextmenu">window.addEventListener("contextmenu",function(event){event.preventDefault();});</script>
+</head>
 	<body>
 		<canvas id="canvas">
 			Your browser does not support the canvas tag.
@@ -111,7 +114,7 @@ body {
 
 		<script src="index.js"></script>
 		<script>
-const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":3481800,"index.wasm":38057390},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
+const GODOT_CONFIG = {"args":[],"canvasResizePolicy":2,"emscriptenPoolSize":8,"ensureCrossOriginIsolationHeaders":true,"executable":"index","experimentalVK":false,"fileSizes":{"index.pck":6830608,"index.wasm":38057390},"focusCanvas":true,"gdextensionLibs":[],"godotPoolSize":4};
 const GODOT_THREADS_ENABLED = false;
 const engine = new Engine(GODOT_CONFIG);
 
