@@ -35,7 +35,7 @@ body{background:var(--cream);color:var(--text);overflow-x:hidden}.shell{width:mi
 .random-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));grid-template-rows:repeat(2,minmax(0,1fr));gap:18px}.carousel-slide img+.thumb-fallback,.discovery-thumb img+.thumb-fallback{display:none}.discovery-card{min-width:0;display:flex;flex-direction:column}.discovery-thumb{position:relative;overflow:hidden;flex:none;width:100%;aspect-ratio:16/9;border-radius:15px;background:var(--accent);box-shadow:0 7px 20px rgba(35,60,51,.08)}.discovery-thumb img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform .35s}.discovery-card:hover img{transform:scale(1.04)}.discovery-thumb:after{content:"";position:absolute;inset:auto 0 0;height:38%;background:linear-gradient(transparent,rgba(13,35,27,.35))}.discovery-thumb .thumb-fallback{font-size:40px}.discovery-title{display:flex;align-items:center;justify-content:space-between;gap:8px;padding:9px 2px 0}.discovery-title b{min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;font-size:13px}.discovery-title span{flex:0 0 auto;color:var(--forest-2);font-size:11px}
 .catalogue{margin-top:0}.catalogue-summary{margin:-10px 0 24px;color:var(--sub);font-size:12px}.catalogue .category-block{margin-bottom:54px}.catalogue .section-title{margin-bottom:20px}footer .visit-slot{padding:8px 13px;border:1px solid rgba(255,255,255,.16);border-radius:99px;background:rgba(255,255,255,.08);color:rgba(255,255,255,.72)!important}footer .visit-slot strong,footer #visitCount{color:#fff!important;font-size:13px}
 @media(max-width:1000px){.channel-header .shell,.channel-main .shell{width:calc(100% - 40px)}.channel-nav{grid-template-columns:auto 1fr}.channel-meta{display:none}.top-categories{grid-template-columns:repeat(3,1fr)}.recommendation-layout{grid-template-columns:1fr;height:auto}.carousel{height:420px}.random-grid{height:auto}}
-@media(max-width:700px){.channel-header .shell,.channel-main .shell{width:calc(100% - 26px)}.channel-nav{height:auto;grid-template-columns:1fr;padding:15px 0;gap:13px}.channel-nav .brand{justify-self:start}.channel-search{width:100%}.channel-search kbd{display:none}.top-categories{display:flex;overflow-x:auto;padding:12px 0 16px;scrollbar-width:none}.top-categories::-webkit-scrollbar{display:none}.top-categories a{flex:0 0 auto}.channel-main{padding-top:22px}.recommendation-head h1{font-size:24px}.recommendation-head p{display:none}.recommendation-layout{gap:22px}.carousel{height:300px}.carousel-copy{left:20px;right:20px;bottom:22px}.carousel-copy h2{font-size:23px}.carousel-copy p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.carousel-arrow{opacity:1}.random-grid{height:auto;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none}.discovery-card{height:auto}.discovery-thumb{min-height:0}.recommendation{margin-bottom:52px}.works-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:700px){.channel-header .shell,.channel-main .shell{width:calc(100% - 26px)}.channel-nav{height:auto;grid-template-columns:1fr;padding:15px 0;gap:13px}.channel-nav .brand{justify-self:start}.channel-search{width:100%}.channel-search kbd{display:none}.top-categories{display:flex;overflow-x:auto;padding:12px 0 16px;scrollbar-width:none}.top-categories::-webkit-scrollbar{display:none}.top-categories a{flex:0 0 auto}.channel-main{padding-top:22px}.recommendation-head h1{font-size:24px;white-space:nowrap}.recommendation-head .refresh{width:auto;flex:none}.recommendation-head p{display:none}.recommendation-layout{gap:22px}.carousel{height:300px}.carousel-copy{left:20px;right:20px;bottom:36px}.carousel-dots{bottom:14px}.carousel-copy h2{font-size:23px}.carousel-copy p{display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}.carousel-arrow{opacity:1}.random-grid{height:auto;grid-template-columns:repeat(2,minmax(0,1fr));grid-template-rows:none}.discovery-card{height:auto}.discovery-thumb{min-height:0}.recommendation{margin-bottom:52px}.works-grid{grid-template-columns:repeat(2,minmax(0,1fr))}}
 @media(max-width:480px){.random-grid{display:flex;overflow-x:auto;scroll-snap-type:x mandatory;padding-bottom:7px}.discovery-card{flex:0 0 58vw;scroll-snap-align:start}.works-grid{grid-template-columns:1fr}.work-card{display:grid;grid-template-columns:128px minmax(0,1fr)}}
 </style>
 </head>
@@ -46,33 +46,34 @@ body{background:var(--cream);color:var(--text);overflow-x:hidden}.shell{width:mi
 <footer><div class="shell"><span>© <span id="year"></span> 有志青年 · Vibe Coding · <a href="mailto:ntcyz@126.com">ntcyz@126.com</a></span><span class="visit-slot">累计访问 <strong id="visitCount" aria-live="polite">—</strong></span><span>每一次打开，都是一次相遇。</span></div></footer>
 <script>
 const FALLBACK_WORKS=[
-{file:'260723数独游戏网页.html',title:'数独游戏网页',credit:'有志制作',desc:'在推理与试错中训练专注力，支持生成、计时与截图保存。',tag:'数学 · 游戏',color:'#8b87ff'},
-{file:'260726挂谷问题演示.html',title:'挂谷问题演示',credit:'有志制作',desc:'用可视化方式探索一个迷人的数学问题与几何直觉。',tag:'数学 · 探究',color:'#efb65b'},
-{file:'260815班主任工作台.html',title:'班主任工作台',credit:'有志制作',desc:'面向班主任日常工作的 AI 综合工作空间。',tag:'AI · 教育',color:'#64c8c2'},
-{file:'260821四阶古文阅读.html',title:'四阶古文阅读',credit:'有志制作',desc:'以分层进阶的方式，支持学生深入阅读与理解古文。',tag:'语文 · 阅读',color:'#e98f8f'},
-{file:'260822音乐教师AI工作台.html',title:'音乐教师 AI 工作台',credit:'有志制作',desc:'为音乐课堂、备课与教研打造的智能辅助空间。',tag:'AI · 音乐',color:'#9a86d8'},
-{file:'260902音频转写工具.html',title:'音频转写工具',credit:'有志制作',desc:'将访谈、课堂录音与会议音频高效转化为文字。',tag:'工具 · AI',color:'#5aa7c7'},
-{file:'260904六年级分数口算练习.html',title:'六年级分数口算练习',credit:'有志制作',desc:'随机换题、同步答案，适合日常练习与浏览器打印。',tag:'数学 · 练习',color:'#e6a84f'},
-{file:'AI圆桌小课堂.html',title:'AI 圆桌小课堂',credit:'牛哥投稿',desc:'让不同视角围绕一个问题展开对话与思考。',tag:'AI · 课堂',color:'#6c9fe8'},
-{file:'拼豆图案生成器.html',title:'拼豆图案生成器',credit:'牛哥投稿',desc:'把灵感图像转换为可制作的拼豆图案。',tag:'创意 · 工具',color:'#e582a8'},
-{file:'tiyu260906/index.html',title:'体育互动作品',credit:'有志制作',desc:'面向体育学习与实践的互动网页作品。',tag:'体育 · 互动',color:'#63b18b'},
-{file:'拉丁方阵游戏.html',title:'拉丁方阵游戏',credit:'小聂投稿',desc:'在数字排列与逻辑推理中，探索拉丁方阵的规律与乐趣。',tag:'数学 · 游戏',color:'#d98b5f'},
-{file:'王老师校务工作台.html',title:'王老师校务工作台',credit:'王老师投稿',desc:'覆盖学生成绩、作业统计、工会事务与支部党务的教师一体化工作台。',tag:'校务 · 管理',color:'#3d7dd8'},
-{file:'口腔健康小课堂.html',title:'口腔健康小课堂',credit:'小果子投稿',desc:'用生动的卡通动画讲解乳牙健康与口腔护理知识。',tag:'科学 · 健康',color:'#f08a9b'},
-{file:'Sci3D/index.html',title:'小学科学3D课堂',credit:'有志整合',desc:'整合生命世界、地球宇宙与物质世界，以可旋转、可标注、可探究的三维资源服务小学科学课堂。',tag:'科学 · 3D课堂',color:'#55a98f'},
-{file:'photo/index.html',title:'证件照与智能抠图工具',credit:'有志制作',desc:'浏览器本地完成智能抠图、证件照制作与相纸排版，照片不上传服务器。',tag:'工具 · 图像',color:'#5576d6'},
-{file:'youzhi-class.html',title:'有志在线教室 · 教师操作指南',credit:'有志制作',desc:'26 页可翻页演示文稿，讲解创建教室、平板扫码、分发学件与作品展示的操作路线。',tag:'AI · 课堂',color:'#b8746f'},
-{file:'Sci3D/?observe=respiratory',title:'人的呼吸器官',credit:'有志制作',desc:'沿着鼻到双肺的通路，观察肺与胸廓、膈肌的协调运动，支持慢放与结构标注。',tag:'生命世界 · 3D',color:'#58ab8f'},
-{file:'Sci3D/?observe=digestive',title:'人的消化器官',credit:'有志制作',desc:'跟随食物在消化道中的旅程，观察各器官的位置、形态与分工。',tag:'生命世界 · 3D',color:'#6bb19a'},
-{file:'Sci3D/?observe=crucian',title:'鲫鱼运动观察',credit:'有志制作',desc:'水下场景中的鲫鱼持续游动，可缩放拖动，并标注鳃盖与五种鱼鳍。',tag:'生命世界 · 3D',color:'#4f9e86'},
-{file:'Sci3D/bird-observation/?bird=crane',title:'丹顶鹤',credit:'有志制作',desc:'在三维场景中自由旋转、缩放，观察丹顶鹤的体态与动作。',tag:'生命世界 · 观察',color:'#7ab86a'},
-{file:'Sci3D/bird-observation/?bird=mallard',title:'绿头鸭',credit:'有志制作',desc:'在三维场景中自由旋转、缩放，观察绿头鸭的体态与动作。',tag:'生命世界 · 观察',color:'#63ae7d'},
-{file:'Sci3D/bird-observation/?bird=eagle',title:'老鹰',credit:'有志制作',desc:'在三维场景中自由旋转、缩放，观察老鹰的体态与动作。',tag:'生命世界 · 观察',color:'#8fae5c'},
-{file:'Sci3D/assets/geo/china-terrain.html',title:'中国地形',credit:'有志制作',desc:'三维呈现中国三级阶梯地势与主要地貌，可自由旋转、缩放与线路演示。',tag:'地球宇宙 · 3D',color:'#4b83c9'},
-{file:'Sci3D/assets/tech/sharpener.html',title:'手摇卷笔刀',credit:'有志制作',desc:'拆解夹持推进、齿轮传动、滚刀切削与木屑收集，理解结构与功能。',tag:'技术工程 · 结构',color:'#c8873f'},
-{file:'Sci3D/assets/tech/bike.html',title:'自行车',credit:'王陈宇投稿',desc:'观察整机与五个子系统结构，支持拆分、零部件标注与运行演示。',tag:'技术工程 · 结构',color:'#b8783f'},
-{file:'Sci3D/assets/tech/harvester.html',title:'联合收割机',credit:'有志制作',desc:'以整机观察与结构拆分，认识联合收割机的组成与工作原理。',tag:'技术工程 · 结构',color:'#d09a4a'},
-{file:'Sci3D/insect-observation/?insect=ant',title:'昆虫观察',credit:'有志制作',desc:'观察蚂蚁、蜜蜂、蝴蝶与萤火虫的连续动作，比较七星瓢虫、家蝇、蟋蟀、蜻蜓和锹甲的身体结构。',tag:'生命世界 · 观察',color:'#75a96b'}
+{"file":"260723数独游戏网页.html","title":"数独游戏网页","credit":"有志制作","desc":"在推理与试错中训练专注力，支持生成、计时与截图保存。","tag":"数学 · 游戏","color":"#8b87ff"},
+{"file":"260726挂谷问题演示.html","title":"挂谷问题演示","credit":"有志制作","desc":"用可视化方式探索一个迷人的数学问题与几何直觉。","tag":"数学 · 探究","color":"#efb65b"},
+{"file":"260815班主任工作台.html","title":"班主任工作台","credit":"有志制作","desc":"面向班主任日常工作的 AI 综合工作空间。","tag":"AI · 教育","color":"#64c8c2"},
+{"file":"260821四阶古文阅读.html","title":"四阶古文阅读","credit":"有志制作","desc":"以分层进阶的方式，支持学生深入阅读与理解古文。","tag":"语文 · 阅读","color":"#e98f8f"},
+{"file":"260822音乐教师AI工作台.html","title":"音乐教师 AI 工作台","credit":"有志制作","desc":"为音乐课堂、备课与教研打造的智能辅助空间。","tag":"AI · 音乐","color":"#9a86d8"},
+{"file":"260902音频转写工具.html","title":"音频转写工具","credit":"有志制作","desc":"将访谈、课堂录音与会议音频高效转化为文字。","tag":"工具 · AI","color":"#5aa7c7"},
+{"file":"260904六年级分数口算练习.html","title":"六年级分数口算练习","credit":"有志制作","desc":"随机换题、同步答案，适合日常练习与浏览器打印。","tag":"数学 · 练习","color":"#e6a84f"},
+{"file":"AI圆桌小课堂.html","title":"AI 圆桌小课堂","credit":"牛哥投稿","desc":"让不同视角围绕一个问题展开对话与思考。","tag":"AI · 课堂","color":"#6c9fe8"},
+{"file":"拼豆图案生成器.html","title":"拼豆图案生成器","credit":"牛哥投稿","desc":"把灵感图像转换为可制作的拼豆图案。","tag":"创意 · 工具","color":"#e582a8"},
+{"file":"tiyu260906/index.html","title":"体育互动作品","credit":"有志制作","desc":"面向体育学习与实践的互动网页作品。","tag":"体育 · 互动","color":"#63b18b"},
+{"file":"拉丁方阵游戏.html","title":"拉丁方阵游戏","credit":"小聂投稿","desc":"在数字排列与逻辑推理中，探索拉丁方阵的规律与乐趣。","tag":"数学 · 游戏","color":"#d98b5f"},
+{"file":"王老师校务工作台.html","title":"王老师校务工作台","credit":"王老师投稿","desc":"覆盖学生成绩、作业统计、工会事务与支部党务的教师一体化工作台。","tag":"校务 · 管理","color":"#3d7dd8"},
+{"file":"口腔健康小课堂.html","title":"口腔健康小课堂","credit":"小果子投稿","desc":"用生动的卡通动画讲解乳牙健康与口腔护理知识。","tag":"科学 · 健康","color":"#f08a9b"},
+{"file":"Sci3D/index.html","title":"小学科学3D课堂","credit":"有志整合","desc":"整合生命世界、地球宇宙、物质世界与技术工程，新增翠鸟连续飞行观察，以三维互动资源支持课堂探究。","tag":"科学 · 3D课堂","color":"#55a98f"},
+{"file":"photo/index.html","title":"证件照与智能抠图工具","credit":"有志制作","desc":"浏览器本地完成智能抠图、证件照制作与相纸排版，照片不上传服务器。","tag":"工具 · 图像","color":"#5576d6"},
+{"file":"youzhi-class.html","title":"有志在线教室 · 教师操作指南","credit":"有志制作","desc":"26 页可翻页演示文稿，讲解创建教室、平板扫码、分发学件与作品展示的操作路线。","tag":"AI · 课堂","color":"#b8746f"},
+{"file":"Sci3D/?observe=respiratory","title":"人的呼吸器官","credit":"有志制作","desc":"沿着鼻到双肺的通路，观察肺与胸廓、膈肌的协调运动，支持慢放与结构标注。","tag":"生命世界 · 3D","color":"#58ab8f"},
+{"file":"Sci3D/?observe=digestive","title":"人的消化器官","credit":"有志制作","desc":"跟随食物在消化道中的旅程，观察各器官的位置、形态与分工。","tag":"生命世界 · 3D","color":"#6bb19a"},
+{"file":"Sci3D/?observe=crucian","title":"鲫鱼运动观察","credit":"有志制作","desc":"水下场景中的鲫鱼持续游动，可缩放拖动，并标注鳃盖与五种鱼鳍。","tag":"生命世界 · 3D","color":"#4f9e86"},
+{"file":"Sci3D/bird-observation/?bird=crane","title":"丹顶鹤","credit":"有志制作","desc":"在三维场景中自由旋转、缩放，观察丹顶鹤的体态与动作。","tag":"生命世界 · 观察","color":"#7ab86a"},
+{"file":"Sci3D/bird-observation/?bird=mallard","title":"绿头鸭","credit":"有志制作","desc":"在三维场景中自由旋转、缩放，观察绿头鸭的体态与动作。","tag":"生命世界 · 观察","color":"#63ae7d"},
+{"file":"Sci3D/bird-observation/?bird=eagle","title":"老鹰","credit":"有志制作","desc":"在三维场景中自由旋转、缩放，观察老鹰的体态与动作。","tag":"生命世界 · 观察","color":"#8fae5c"},
+{"file":"Sci3D/assets/geo/china-terrain.html","title":"中国地形","credit":"有志制作","desc":"三维呈现中国三级阶梯地势与主要地貌，可自由旋转、缩放与线路演示。","tag":"地球宇宙 · 3D","color":"#4b83c9"},
+{"file":"Sci3D/assets/tech/sharpener.html","title":"手摇卷笔刀","credit":"有志制作","desc":"拆解夹持推进、齿轮传动、滚刀切削与木屑收集，理解结构与功能。","tag":"技术工程 · 结构","color":"#c8873f"},
+{"file":"Sci3D/assets/tech/bike.html","title":"自行车","credit":"王陈宇投稿","desc":"观察整机与五个子系统结构，支持拆分、零部件标注与运行演示。","tag":"技术工程 · 结构","color":"#b8783f"},
+{"file":"Sci3D/assets/tech/harvester.html","title":"联合收割机","credit":"有志制作","desc":"以整机观察与结构拆分，认识联合收割机的组成与工作原理。","tag":"技术工程 · 结构","color":"#d09a4a"},
+{"file":"Sci3D/insect-observation/?insect=ant","title":"昆虫观察","credit":"有志制作","desc":"观察蚂蚁、蜜蜂、蝴蝶与萤火虫的连续动作，比较七星瓢虫、家蝇、蟋蟀、蜻蜓和锹甲的身体结构。","tag":"生命世界 · 观察","color":"#75a96b"},
+{"file":"Sci3D/bird-observation/?bird=kingfisher","title":"翠鸟","credit":"有志制作","desc":"观察翠鸟从站立、起飞、振翅飞行到降落站立的连续动作，支持慢放和多角度观察，欣赏蓝绿羽毛与橙色胸腹。","tag":"生命世界 · 观察","color":"#329aab"}
 ];
 const SITE_BASE='https://code.ntcyz.cn/';
 const searchInput=document.getElementById('searchInput'),heroCount=document.getElementById('heroCount'),statusText=document.getElementById('statusText'),emptyState=document.getElementById('emptyState'),topCategoryNav=document.getElementById('topCategoryNav'),categorySections=document.getElementById('categorySections'),recommendationSection=document.getElementById('recommendation'),carouselSlides=document.getElementById('carouselSlides'),carouselDots=document.getElementById('carouselDots'),randomGrid=document.getElementById('randomGrid'),catalogueSummary=document.getElementById('catalogueSummary');
@@ -89,12 +90,12 @@ const CATEGORY_RULES=[
  {name:'学科课堂',id:'classroom',icon:'▤',match:item=>/语文|体育/.test(item.tag)},
  {name:'校务管理',id:'school',icon:'▦',match:item=>/校务/.test(item.tag)}
 ];
-const RECOMMENDED=['小学科学3D课堂','AI 圆桌小课堂','有志在线教室 · 教师操作指南','证件照与智能抠图工具','数独游戏网页'];
+const RECOMMENDED=['翠鸟','小学科学3D课堂','AI 圆桌小课堂','有志在线教室 · 教师操作指南','证件照与智能抠图工具','数独游戏网页'];
 let carouselItems=[],carouselIndex=0,carouselTimer=0;
 function categoryFor(item){return CATEGORY_RULES.find(rule=>rule.match(item))||{name:'更多作品',id:'more',icon:'+'}}
 function workIndex(item){return Math.max(0,works.indexOf(item))}
 function thumbFor(item){return 'thumbnails/work-'+String(workIndex(item)+1).padStart(2,'0')+'.jpg'}
-function workIcon(item){const category=categoryFor(item);if(/呼吸/.test(item.title))return '🫁';if(/消化/.test(item.title))return '◎';if(/鲫鱼/.test(item.title))return '🐟';if(/丹顶鹤|绿头鸭|老鹰/.test(item.title))return '🪶';if(/中国地形/.test(item.title))return '⛰';if(/自行车/.test(item.title))return '🚲';return category.icon}
+function workIcon(item){const category=categoryFor(item);if(/呼吸/.test(item.title))return '🫁';if(/消化/.test(item.title))return '◎';if(/鲫鱼/.test(item.title))return '🐟';if(/丹顶鹤|绿头鸭|老鹰|翠鸟/.test(item.title))return '🪶';if(/中国地形/.test(item.title))return '⛰';if(/自行车/.test(item.title))return '🚲';return category.icon}
 function thumbMarkup(item){return '<img src="'+safeText(thumbFor(item))+'" alt="" loading="lazy" onerror="this.remove()"><span class="thumb-fallback">'+safeText(workIcon(item))+'</span>'}
 function featuredTemplate(item){const href=workHref(item.file),eventName='work-click/'+item.file;return '<a class="featured-card" style="--accent:'+safeText(item.color||'#567')+'" href="'+href+'" target="_blank" rel="noopener" data-goatcounter-click="'+safeText(eventName)+'" data-goatcounter-title="打开推荐：'+safeText(item.title)+'">'+thumbMarkup(item)+'<div class="featured-info"><span>'+safeText(item.tag)+'</span><h3>'+safeText(item.title)+'</h3><p>'+safeText(item.desc)+'</p></div></a>'}
 function carouselTemplate(item,index){const href=workHref(item.file),eventName='work-click/'+item.file;return '<a class="carousel-slide'+(index===carouselIndex?' active':'')+'" style="--accent:'+safeText(item.color||'#567')+'" href="'+href+'" target="_blank" rel="noopener" data-goatcounter-click="'+safeText(eventName)+'" data-goatcounter-title="打开轮播推荐：'+safeText(item.title)+'">'+thumbMarkup(item)+'<div class="carousel-copy"><span>'+safeText(item.tag)+'</span><h2>'+safeText(item.title)+'</h2><p>'+safeText(item.desc)+'</p></div></a>'}
