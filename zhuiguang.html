@@ -139,6 +139,17 @@
   }
   .sum b{color:var(--pri-d);font-size:15px}
 
+  /* 场景分组 */
+  .scenegrp{border:1px solid var(--line);border-radius:12px;margin-bottom:10px;overflow:hidden;background:#fff}
+  .sg-head{display:flex;align-items:center;gap:9px;padding:9px 13px;background:#f7f9fc;border-bottom:1px solid var(--line)}
+  .sg-no{font-size:11.5px;font-weight:700;color:#fff;background:var(--pri);padding:2px 8px;border-radius:5px;white-space:nowrap;flex:0 0 auto}
+  .sg-nm{font-weight:700;font-size:13.5px;flex:1;min-width:0}
+  .sg-state{margin-left:auto;font-size:12px;color:#93a1b3;white-space:nowrap;flex:0 0 auto}
+  .sg-state.on{color:var(--ok);font-weight:700}
+  .sg-body{padding:9px 12px 11px}
+  .sg-desc{font-size:11.5px;color:var(--sub);margin:0 0 9px;line-height:1.65}
+  .sg-other{border:1px dashed var(--line);border-radius:12px;padding:9px 12px;background:#fcfdff}
+
   /* 教师表 */
   .tblwrap{overflow-x:auto}
   table.teachers{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
@@ -161,6 +172,8 @@
   @media (max-width:820px){
     .g3,.g4{grid-template-columns:repeat(2,1fr)}
     .hero h1{font-size:20px}
+    .sg-head{flex-wrap:wrap;row-gap:3px}
+    .sg-state{flex:1 1 100%;margin-left:0;text-align:right;margin-top:2px}
     .hero .doctitle{font-size:15px;margin:3px 0 10px}
     .hero{margin:0 -12px 0}
     .wrap{padding:0 12px 60px}
@@ -374,20 +387,14 @@
     <!-- 四、拟开展场景 -->
     <section class="card" id="sec4">
       <h2><span class="no">四</span>拟开展场景<span class="req">*</span></h2>
-      <p class="sub">本项目重点验证课程在不同场景下的应用效果。<b>请勾选学校实际打算落地的场景</b>（可多选），并填写实施年级与进度安排。</p>
 
-      <div class="chips" style="margin-bottom:14px" data-group="scene">
-        <label class="chip"><input type="checkbox" name="scene" value="小学科学课（常规课堂教学）">小学科学课（常规课堂教学）</label>
-        <label class="chip"><input type="checkbox" name="scene" value="综合实践活动课">综合实践活动课</label>
-        <label class="chip"><input type="checkbox" name="scene" value="课后服务 / 社团活动">课后服务 / 社团活动</label>
-        <label class="chip"><input type="checkbox" name="scene" value="“做中学”项目（教育部领航行动）">“做中学”项目（教育部领航行动）</label>
-        <label class="chip"><input type="checkbox" name="scene" value="半天社会实践 / 研学活动">半天社会实践 / 研学活动</label>
-        <label class="chip"><input type="checkbox" name="scene" value="真实任务挑战 / 项目周">真实任务挑战 / 项目周</label>
-        <label class="chip"><input type="checkbox" name="scene" value="跨学科主题学习">跨学科主题学习</label>
-        <label class="chip"><input type="checkbox" name="scene" value="校本课程 / 拓展性课程">校本课程 / 拓展性课程</label>
-        <label class="chip"><input type="checkbox" name="scene" value="科技节 / 科普活动">科技节 / 科普活动</label>
-        <label class="chip"><input type="checkbox" name="scene" value="初、高中学段跨学科项目（学段延伸）">初、高中学段跨学科项目（学段延伸）</label>
-        <label class="chip"><input type="checkbox" name="scene" value="其他">其他</label>
+
+      <p class="sub" style="margin:0 0 12px 0">本项目按方案设定的<b>三类应用场景</b>推进，各校结合校情<b>选择其中一类或两类、三类同时开展</b>均可。请先看每类说明，再勾选该类下的具体开展形式；勾选任意一项即视为该校开展此类场景。</p>
+
+      <div id="sceneList"></div>
+
+      <div class="sg-other" style="margin-bottom:14px">
+        <label class="chip" style="background:#fff"><input type="checkbox" name="scene" value="其他" data-sg="-1">其他（不属于上述三类，请在下方说明）</label>
       </div>
 
       <div class="grid g2" style="margin-bottom:12px">
@@ -554,6 +561,43 @@ GROUPS.forEach((grp, gi) => {
   unitList.appendChild(box);
 });
 
+/* ========== 场景分组数据（对应执行方案三类场景） ========== */
+const SCENE_GROUPS = [
+  { no:'场景1', name:'学科课堂教学的常态化融合',
+    desc:'把追光课堂资源融入正常教学时段的学科课堂教学，探索与科学、综合实践等学科常态化教学有效融合的路径。',
+    items:['小学科学课（常规课堂教学）','综合实践活动课','信息科技等其他学科课堂'] },
+  { no:'场景2', name:'非学科课堂教学的专题化应用',
+    desc:'利用课后延时服务、社团、研学等特色活动时段，把追光课堂资源作为核心内容，系统性、专题性地开展。',
+    items:['课后延时服务','社团活动','校本课程 / 拓展性课程','半天社会实践 / 研学活动','科技节 / 科普活动'] },
+  { no:'场景3', name:'多学科、多时段整合的项目化实践',
+    desc:'以“做中学”理念为引领，整合各学科教学内容与课堂内外时间，以追光课堂资源为载体，开发项目式学习案例。',
+    items:['“做中学”项目（教育部领航行动）','跨学科主题学习','真实任务挑战 / 项目周','初、高中学段跨学科项目（学段延伸）'] }
+];
+
+/* ========== 渲染场景分组 ========== */
+const sceneList = document.getElementById('sceneList');
+SCENE_GROUPS.forEach((g, gi) => {
+  const box = document.createElement('div');
+  box.className = 'scenegrp';
+  box.innerHTML = `<div class="sg-head">
+      <span class="sg-no">${g.no}</span>
+      <span class="sg-nm">${g.name}</span>
+      <span class="sg-state" id="sgState${gi}">未选择</span>
+    </div>
+    <div class="sg-body">
+      <p class="sg-desc">${g.desc}</p>
+      <div class="chips"></div>
+    </div>`;
+  const chips = box.querySelector('.chips');
+  g.items.forEach(it => {
+    const lab = document.createElement('label');
+    lab.className = 'chip';
+    lab.innerHTML = `<input type="checkbox" name="scene" value="${it}" data-sg="${gi}">${it}`;
+    chips.appendChild(lab);
+  });
+  sceneList.appendChild(box);
+});
+
 /* ========== 教师名单 ========== */
 const tbody = document.getElementById('teacherBody');
 for (let i = 1; i <= 10; i++) {
@@ -578,6 +622,14 @@ function refreshChips(){
   document.querySelectorAll('.unit').forEach(l => {
     const inp = l.querySelector('input');
     if (inp && inp.checked) l.classList.add('on'); else l.classList.remove('on');
+  });
+  SCENE_GROUPS.forEach((g, gi) => {
+    const n = document.querySelectorAll('input[name="scene"][data-sg="' + gi + '"]:checked').length;
+    const el = document.getElementById('sgState' + gi);
+    if (el) {
+      el.textContent = n ? '已选 ' + n + ' 项 · 本类开展' : '未选择';
+      el.className = 'sg-state' + (n ? ' on' : '');
+    }
   });
   const sel = [...document.querySelectorAll('input[name="unit"]:checked')];
   document.getElementById('sumUnit').textContent = sel.length;
@@ -660,7 +712,9 @@ function collect(){
     fullTime: val('full_time'), partTime: val('part_time'), lab: radio('lab'), labNum: val('lab_num'),
     network: checks('network'), onlineUse: radio('online_use'), platforms: val('platforms'), features: val('features'),
     units, unitHours: units.reduce((a, u) => a + u.hour, 0), unitReason: val('unit_reason'),
-    scenes: checks('scene'), sceneOther: val('scene_other'), planGrade: val('plan_grade'),
+    scenes: checks('scene'),
+    sceneGroups: SCENE_GROUPS.map((g, gi) => ({ no: g.no, name: g.name, items: [...document.querySelectorAll('input[name="scene"][data-sg="' + gi + '"]:checked')].map(e => e.value) })),
+    sceneOther: val('scene_other'), planGrade: val('plan_grade'),
     planStart: val('plan_start'), planFreq: val('plan_freq'), planStudents: val('plan_students'), planDetail: val('plan_detail'),
     teaches, reason: val('reason'), goal: val('goal'), support: val('support')
   };
@@ -815,8 +869,22 @@ function buildDocx(o){
   boxed(o.unitReason, 600);
 
   h2('四、拟开展场景');
-  const scenesAll = ['小学科学课（常规课堂教学）','综合实践活动课','课后服务 / 社团活动','“做中学”项目（教育部领航行动）','半天社会实践 / 研学活动','真实任务挑战 / 项目周','跨学科主题学习','校本课程 / 拓展性课程','科技节 / 科普活动','初、高中学段跨学科项目（学段延伸）'];
-  boxed(box(o.scenes.filter(s => s !== '其他'), scenesAll) + (o.scenes.includes('其他') ? '　■ 其他：' + o.sceneOther : ''), 700);
+  const sgOn = o.sceneGroups.filter(g => g.items.length);
+  boxed('本校拟开展 ' + sgOn.length + ' 类场景（' + (sgOn.length ? sgOn.map(g => g.no).join('、') : '未选择') + '）' + (o.scenes.includes('其他') ? '　另含其他场景' : '') + '　　■ 表示学校勾选', 300);
+  body.push(dPara('', { line: 160 }));
+  const GSC = [3500, 4964, 1400];
+  const sgHead = ['场景类别', '具体开展形式（■ 为学校勾选）', '本校开展'].map((t, i) => ({ t: t, w: GSC[i], shd: true, align: 'center', b: true, sz: 19 }));
+  const sgRows = o.sceneGroups.map(g => ({ cells: [
+    { t: g.no + '　' + g.name, w: GSC[0], align: 'left', sz: 18 },
+    { t: g.items.length ? g.items.map(x => '■ ' + x).join('　') : '（未勾选，本校不开展该类）', w: GSC[1], align: 'left' },
+    { t: g.items.length ? '开展' : '—', w: GSC[2], align: 'center' }
+  ]}));
+  sgRows.push({ cells: [
+    { t: '其他', w: GSC[0], align: 'center', sz: 18 },
+    { t: o.scenes.includes('其他') ? (o.sceneOther || '（已勾选，说明待补）') : '（未勾选）', w: GSC[1], align: 'left' },
+    { t: o.scenes.includes('其他') ? '开展' : '—', w: GSC[2], align: 'center' }
+  ]});
+  body.push(dTable(GSC, [{ cells: sgHead }].concat(sgRows)));
   body.push(dPara('', { line: 160 }));
   body.push(dTable(G4, [
     { cells: [L('计划实施年级'), T(o.planGrade), L('计划启动时间'), T(o.planStart)] },
@@ -892,13 +960,16 @@ function buildCsv(o){
   const heads = ['学校全称','省份','城市','区县','学校类型','学校等级','所在区域','覆盖学段','班级数','学生数','教职工数','科学教师数',
     '校长','校长电话','项目负责人','职务','联系电话','电子邮箱','专职科学教师','兼职科学教师','实验室情况','实验室间数',
     '网络教学条件','线上资源使用','使用平台','科学教育特色或成果','拟选单元','单元数','合计课时','选择考虑',
-    '开展场景','其他场景说明','计划实施年级','计划启动时间','课时安排','预计参与学生数','具体安排',
+    '场景1 学科课堂教学（具体形式）','场景2 非学科课堂专题应用（具体形式）','场景3 项目化实践（具体形式）','开展场景类别数',
+    '其他场景说明','计划实施年级','计划启动时间','课时安排','预计参与学生数','具体安排',
     '参与教师数','教师名单（姓名/职称/学科/电话）','申报理由','预期目标','支持条件','填报时间'];
   const rows = [o.school, o.province, o.city, o.district, o.type, o.level, o.region, o.stages.join('、'), o.classes, o.students, o.teachers, o.sciTeachers,
     o.principal, o.principalTel, o.contact, o.contactPost, o.contactTel, o.email, o.fullTime, o.partTime, o.lab, o.labNum,
     o.network.join('；'), o.onlineUse, o.platforms, o.features,
     o.units.map(u => u.name).join('；'), o.units.length, o.unitHours, o.unitReason,
-    o.scenes.join('；'), o.sceneOther, o.planGrade, o.planStart, o.planFreq, o.planStudents, o.planDetail,
+    o.sceneGroups[0] ? o.sceneGroups[0].items.join('、') : '', o.sceneGroups[1] ? o.sceneGroups[1].items.join('、') : '',
+    o.sceneGroups[2] ? o.sceneGroups[2].items.join('、') : '', o.sceneGroups.filter(g => g.items.length).length,
+    o.sceneOther, o.planGrade, o.planStart, o.planFreq, o.planStudents, o.planDetail,
     o.teaches.length, o.teaches.map(t => [t.name, t.title, t.subject, t.tel].filter(Boolean).join('/')).join('；'),
     o.reason, o.goal, o.support, new Date().toLocaleString('zh-CN')];
   const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""').replace(/\r?\n/g, ' ') + '"';
@@ -990,7 +1061,7 @@ function fillDemo(){
   document.getElementById('u_4_0').checked = true;   // 会“呼吸”的建筑
   document.getElementById('u_6_1').checked = true;   // 如何在太阳系寻找生命
   set('unit_reason', '“会呼吸的建筑”与五年级科学“热传递”单元衔接，学校已有节能屋模型套件；发光单元适合社团开展。');
-  pick('scene', '小学科学课（常规课堂教学）'); pick('scene', '课后服务 / 社团活动'); pick('scene', '“做中学”项目（教育部领航行动）');
+  pick('scene', '小学科学课（常规课堂教学）'); pick('scene', '课后延时服务'); pick('scene', '“做中学”项目（教育部领航行动）');
   set('plan_grade', '四年级、五年级'); set('plan_start', '2027年春季学期');
   set('plan_freq', '每周 1 课时，一学期完成 1-2 个单元'); set('plan_students', '220');
   set('plan_detail', '科学课内完成“会呼吸的建筑”6 课时；课后服务“追光科学社”开展发光生物单元，学期末组织成果展。');
