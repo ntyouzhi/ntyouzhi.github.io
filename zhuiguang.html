@@ -1,0 +1,1025 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>腾讯追光课堂推广研究项目 · 学校报名表</title>
+<style>
+  :root{
+    --ink:#1b2431; --sub:#5c6b7e; --line:#dbe3ec; --bg:#eef2f8; --card:#fff;
+    --pri:#1f5cc4; --pri-d:#16408a; --pri-l:#eaf1fd;
+    --gold:#c88a1e; --gold-l:#fdf5e6; --ok:#1c7f55;
+    --sh:0 1px 2px rgba(21,42,74,.06),0 6px 18px rgba(21,42,74,.06);
+  }
+  *{box-sizing:border-box}
+  html,body{margin:0;padding:0}
+  body{
+    background:var(--bg); color:var(--ink);
+    font-family:"Microsoft YaHei","PingFang SC","Segoe UI",sans-serif;
+    font-size:14px; line-height:1.65; -webkit-font-smoothing:antialiased;
+  }
+  .wrap{max-width:1000px;margin:0 auto;padding:0 16px 80px}
+
+  /* 顶部 */
+  .hero{
+    background:linear-gradient(135deg,#16305c 0%,#1f5cc4 62%,#3f8ae0 100%);
+    color:#fff;border-radius:0 0 18px 18px;padding:26px 30px 24px;position:relative;overflow:hidden;
+    box-shadow:var(--sh);margin:0 -16px 0;
+  }
+  .hero:after{
+    content:"";position:absolute;right:-60px;top:-70px;width:260px;height:260px;border-radius:50%;
+    background:radial-gradient(circle,rgba(255,214,120,.34),rgba(255,214,120,0) 68%);
+  }
+  .hero .badge{
+    display:inline-block;font-size:12px;letter-spacing:.08em;padding:3px 10px;border-radius:999px;
+    background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.3);margin-bottom:10px;
+  }
+  .hero h1{margin:0 0 6px;font-size:26px;letter-spacing:.04em;font-weight:700}
+  .hero p{margin:0;font-size:13px;color:rgba(255,255,255,.88);max-width:720px}
+  .hero .meta{margin-top:12px;display:flex;gap:18px;flex-wrap:wrap;font-size:12.5px;color:rgba(255,255,255,.9)}
+  .hero .meta b{color:#ffd978;font-weight:700}
+  .hero .submit{
+    margin-top:14px;display:flex;gap:12px;align-items:flex-start;flex-wrap:wrap;max-width:770px;
+    background:rgba(255,255,255,.15);border-left:4px solid #ffd978;
+    padding:11px 15px;border-radius:2px 10px 10px 2px;
+  }
+  .hero .submit .k{
+    font-size:12px;letter-spacing:.06em;font-weight:700;color:#3a2a00;background:#ffd978;
+    padding:2px 9px;border-radius:5px;white-space:nowrap;flex:0 0 auto;
+  }
+  .hero .submit .v{font-size:13px;line-height:1.75;color:#fff;flex:1;min-width:240px}
+  .hero .submit .v b{color:#ffe9b0;font-weight:700}
+
+  /* 工具条 */
+  .toolbar{
+    position:sticky;top:0;z-index:50;display:flex;gap:10px;align-items:center;flex-wrap:wrap;
+    padding:10px 14px;margin:14px 0 16px;background:rgba(255,255,255,.94);
+    backdrop-filter:blur(8px);border:1px solid var(--line);border-radius:12px;box-shadow:var(--sh);
+  }
+  .toolbar .status{font-size:12.5px;color:var(--sub);margin-left:auto;display:flex;align-items:center;gap:6px}
+  .dot{width:7px;height:7px;border-radius:50%;background:var(--ok);display:inline-block}
+  button{font-family:inherit;font-size:13.5px;cursor:pointer;border-radius:9px;border:1px solid transparent;padding:8px 15px;transition:.16s}
+  button:active{transform:translateY(1px)}
+  .btn-pri{background:var(--pri);color:#fff;box-shadow:0 2px 8px rgba(31,92,196,.28)}
+  .btn-pri:hover{background:var(--pri-d)}
+  .btn-gold{background:#fff;color:var(--gold);border-color:#e8cfa2}
+  .btn-gold:hover{background:var(--gold-l)}
+  .btn-ghost{background:#fff;color:var(--sub);border-color:var(--line)}
+  .btn-ghost:hover{border-color:#b9c6d6;color:var(--ink)}
+  .btn-sm{padding:6px 11px;font-size:12.5px}
+
+  /* 卡片 */
+  .card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:20px 22px;margin:0 0 16px;box-shadow:var(--sh)}
+  .card > h2{
+    margin:0 0 4px;font-size:16px;display:flex;align-items:center;gap:9px;letter-spacing:.02em;
+  }
+  .card > h2 .no{
+    width:24px;height:24px;border-radius:7px;background:var(--pri-l);color:var(--pri);
+    font-size:13px;display:inline-flex;align-items:center;justify-content:center;font-weight:700;flex:0 0 auto;
+  }
+  .card > .sub{margin:0 0 16px 33px;font-size:12.5px;color:var(--sub)}
+  .req{color:#c0392b;margin-left:2px}
+
+  /* 表单栅格 */
+  .grid{display:grid;gap:12px 16px}
+  .g2{grid-template-columns:repeat(2,1fr)}
+  .g3{grid-template-columns:repeat(3,1fr)}
+  .g4{grid-template-columns:repeat(4,1fr)}
+  .field{display:flex;flex-direction:column;gap:5px;min-width:0}
+  .field > label{font-size:12.5px;color:var(--sub);font-weight:600;letter-spacing:.01em}
+  input[type=text],input[type=tel],input[type=email],input[type=number],select,textarea{
+    font-family:inherit;font-size:13.5px;color:var(--ink);background:#fbfcfe;
+    border:1px solid var(--line);border-radius:8px;padding:8px 10px;width:100%;transition:.16s;
+  }
+  input:focus,select:focus,textarea:focus{outline:none;border-color:var(--pri);background:#fff;box-shadow:0 0 0 3px rgba(31,92,196,.11)}
+  textarea{resize:vertical;min-height:64px;line-height:1.7}
+  input[type=number]{text-align:left}
+  .hint{font-size:11.5px;color:#93a1b3;margin-top:-1px}
+
+  /* 胶囊单选/复选 */
+  .chips{display:flex;flex-wrap:wrap;gap:8px}
+  .chip{
+    display:inline-flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--line);
+    border-radius:999px;background:#fbfcfe;font-size:13px;cursor:pointer;user-select:none;transition:.14s;
+  }
+  .chip:hover{border-color:#b3c5dd;background:#f6f9fe}
+  .chip input{accent-color:var(--pri);margin:0;width:14px;height:14px}
+  .chip.on{background:var(--pri-l);border-color:#a9c4ee;color:var(--pri-d);font-weight:600}
+  .chip.on input{accent-color:var(--pri-d)}
+
+  /* 单元卡 */
+  .unitgroup{border:1px solid var(--line);border-radius:12px;margin-bottom:12px;overflow:hidden;background:#fff}
+  .ug-head{display:flex;align-items:center;gap:10px;padding:10px 14px;background:#f7f9fc;border-bottom:1px solid var(--line);cursor:pointer}
+  .ug-head .tag{font-size:11.5px;padding:2px 8px;border-radius:5px;background:#fff;border:1px solid var(--line);color:var(--sub);white-space:nowrap}
+  .ug-head .tag.dom{background:var(--pri);border-color:var(--pri);color:#fff}
+  .ug-head .nm{font-weight:700;font-size:13.5px;flex:1;min-width:0}
+  .ug-head .cnt{font-size:12px;color:var(--sub);white-space:nowrap}
+  .ug-head .caret{color:#9aa8ba;font-size:12px;transition:.2s}
+  .unitgroup.closed .caret{transform:rotate(-90deg)}
+  .unitgroup.closed .ug-body{display:none}
+  .ug-body{padding:8px 10px}
+  .unit{
+    display:flex;align-items:flex-start;gap:9px;padding:7px 8px;border-radius:8px;cursor:pointer;transition:.12s;
+  }
+  .unit:hover{background:#f7fafd}
+  .unit input{accent-color:var(--pri);margin:3px 0 0;width:15px;height:15px;flex:0 0 auto}
+  .unit .u-name{font-size:13.5px;font-weight:600;letter-spacing:.01em}
+  .unit .u-meta{font-size:11.5px;color:var(--sub);margin-top:1px}
+  .unit.on{background:var(--pri-l)}
+  .unit.on .u-name{color:var(--pri-d)}
+
+  /* 汇总条 */
+  .sum{
+    display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:10px 14px;border-radius:10px;
+    background:linear-gradient(90deg,var(--pri-l),#f7fbff);border:1px dashed #b9cdea;font-size:13px;margin-bottom:12px;
+  }
+  .sum b{color:var(--pri-d);font-size:15px}
+
+  /* 教师表 */
+  .tblwrap{overflow-x:auto}
+  table.teachers{width:100%;border-collapse:collapse;font-size:13px;min-width:760px}
+  table.teachers th,table.teachers td{border:1px solid var(--line);padding:0;text-align:center}
+  table.teachers th{background:#f5f8fc;color:var(--sub);font-weight:600;font-size:12.5px;padding:7px 4px;white-space:nowrap}
+  table.teachers td.idx{background:#fafbfd;color:#9aa8ba;font-size:12px;width:42px}
+  table.teachers input{border:none;background:transparent;border-radius:0;padding:8px 6px;text-align:center;font-size:13px}
+  table.teachers input:focus{box-shadow:inset 0 0 0 2px rgba(31,92,196,.28);background:#fff}
+
+  /* 底部 */
+  .foot{text-align:center;color:#93a1b3;font-size:12px;margin-top:26px;line-height:1.9}
+  .toast{
+    position:fixed;left:50%;bottom:36px;transform:translate(-50%,20px);opacity:0;pointer-events:none;
+    background:#16305c;color:#fff;font-size:13.5px;padding:10px 20px;border-radius:10px;box-shadow:0 8px 26px rgba(16,32,60,.3);
+    transition:.28s;z-index:200;max-width:88vw;
+  }
+  .toast.show{opacity:1;transform:translate(-50%,0)}
+  .signbox{border:1px solid var(--line);border-radius:10px;padding:16px;background:#fcfdff;font-size:13px;color:var(--sub);min-height:88px}
+
+  @media (max-width:820px){
+    .g3,.g4{grid-template-columns:repeat(2,1fr)}
+    .hero h1{font-size:21px}
+    .wrap{padding:0 12px 60px}
+  }
+  @media (max-width:560px){
+    .g2,.g3,.g4{grid-template-columns:1fr}
+    .toolbar{padding:8px}
+    button{padding:7px 11px;font-size:12.5px}
+  }
+  @media print{
+    body{background:#fff}
+    .toolbar,.hero p,.hero .meta,.hero .submit,.hint,.foot{display:none!important}
+    .card,.hero{box-shadow:none;border-radius:0}
+    .hero{background:#fff!important;color:#000;border-bottom:2px solid #000}
+    .hero h1{color:#000}
+    .card{page-break-inside:avoid}
+  }
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <header class="hero">
+    <span class="badge">腾讯追光课堂 · 江浙试点</span>
+    <h1>腾讯追光课堂推广研究项目 · 学校报名表</h1>
+    <p>本表由意向学校填写。填写内容仅保存在本机浏览器，不会自动上传。填写完成后点击页面顶部"导出 Word"，即可生成本校专属的可打印报名表（Word 中可继续修改、打印并加盖公章）；点击"导出汇总数据"可生成一行 CSV，供区域汇总使用。</p>
+    <div class="submit">
+      <span class="k">提交要求</span>
+      <span class="v">每所学校最终需提交 <b>3 个文件</b>：① 点击"导出 Word 报名表"得到的 <b>Word 文件</b>；② 点击"导出汇总数据（CSV）"得到的 <b>CSV 文件</b>；③ 将 Word 打印、签字盖章后扫描成的 <b>PDF 文件</b>。三者齐全，方视为完成报名。</span>
+    </div>
+    <div class="meta">
+      <span>课程资源：<b>27</b> 个单元 · <b>112</b> 节课</span>
+      <span>覆盖：<b>4</b> 大学科领域 · <b>2</b> 个学段</span>
+      <span>填报时长约 <b>10</b> 分钟</span>
+    </div>
+  </header>
+
+  <div class="toolbar" id="toolbar">
+    <button class="btn-pri" id="btnWord">导出 Word 报名表</button>
+    <button class="btn-gold" id="btnCsv">导出汇总数据（CSV）</button>
+    <button class="btn-ghost btn-sm" id="btnDemo">填入示例</button>
+    <button class="btn-ghost btn-sm" id="btnClear">清空重填</button>
+    <span class="status"><span class="dot"></span><span id="saveState">草稿自动保存在本机浏览器</span></span>
+  </div>
+
+  <main>
+
+    <!-- 一、学校基本信息 -->
+    <section class="card" id="sec1">
+      <h2><span class="no">一</span>学校基本信息</h2>
+      <p class="sub">请填写学校全称（与公章一致），带 <span class="req">*</span> 为必填项。</p>
+
+      <div class="grid g2" style="margin-bottom:12px">
+        <div class="field">
+          <label>学校全称<span class="req">*</span></label>
+          <input type="text" name="school_name" placeholder="如：××市××区××小学">
+        </div>
+        <div class="field">
+          <label>详细地址<span class="req">*</span></label>
+          <input type="text" name="address" placeholder="省 / 市 / 区县 / 街道门牌号">
+        </div>
+      </div>
+
+      <div class="grid g3" style="margin-bottom:12px">
+        <div class="field">
+          <label>所在省份<span class="req">*</span></label>
+          <input type="text" name="province" list="provList" placeholder="江苏省 / 浙江省">
+          <datalist id="provList"><option value="江苏省"><option value="浙江省"><option value="其他"></datalist>
+        </div>
+        <div class="field">
+          <label>所在城市<span class="req">*</span></label>
+          <input type="text" name="city" placeholder="如：南通市">
+        </div>
+        <div class="field">
+          <label>所在区县</label>
+          <input type="text" name="district" placeholder="如：崇川区">
+        </div>
+      </div>
+
+      <div class="grid g2" style="margin-bottom:12px">
+        <div class="field">
+          <label>学校类型</label>
+          <div class="chips" data-radio="school_type">
+            <label class="chip"><input type="radio" name="school_type" value="公办">公办</label>
+            <label class="chip"><input type="radio" name="school_type" value="民办">民办</label>
+          </div>
+        </div>
+        <div class="field">
+          <label>学校等级</label>
+          <div class="chips" data-radio="school_level">
+            <label class="chip"><input type="radio" name="school_level" value="省级示范">省级示范</label>
+            <label class="chip"><input type="radio" name="school_level" value="市级示范">市级示范</label>
+            <label class="chip"><input type="radio" name="school_level" value="普通">普通</label>
+            <label class="chip"><input type="radio" name="school_level" value="其他">其他</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid g2" style="margin-bottom:12px">
+        <div class="field">
+          <label>学校所在区域<span class="req">*</span></label>
+          <div class="chips" data-radio="region_type">
+            <label class="chip"><input type="radio" name="region_type" value="城区">城区</label>
+            <label class="chip"><input type="radio" name="region_type" value="乡镇">乡镇</label>
+            <label class="chip"><input type="radio" name="region_type" value="农村">农村</label>
+          </div>
+          <span class="hint">项目鼓励不同基础条件的学校共同参与，本项用于分层匹配教研支持。</span>
+        </div>
+        <div class="field">
+          <label>覆盖学段（可多选）<span class="req">*</span></label>
+          <div class="chips" data-group="stage">
+            <label class="chip"><input type="checkbox" name="stage" value="小学3-4年级">小学3-4年级</label>
+            <label class="chip"><input type="checkbox" name="stage" value="小学5-6年级">小学5-6年级</label>
+            <label class="chip"><input type="checkbox" name="stage" value="初中">初中</label>
+            <label class="chip"><input type="checkbox" name="stage" value="高中">高中</label>
+          </div>
+        </div>
+      </div>
+
+      <div class="grid g4">
+        <div class="field"><label>班级数</label><input type="number" name="classes" min="0" placeholder="个"></div>
+        <div class="field"><label>学生数</label><input type="number" name="students" min="0" placeholder="人"></div>
+        <div class="field"><label>教职工数</label><input type="number" name="teachers" min="0" placeholder="人"></div>
+        <div class="field"><label>其中科学教师</label><input type="number" name="sci_teachers" min="0" placeholder="人"></div>
+      </div>
+
+      <div class="grid g4" style="margin-top:12px">
+        <div class="field"><label>校长姓名</label><input type="text" name="principal" placeholder="姓名"></div>
+        <div class="field"><label>校长电话</label><input type="tel" name="principal_tel" placeholder="手机号"></div>
+        <div class="field"><label>项目负责人<span class="req">*</span></label><input type="text" name="contact" placeholder="姓名"></div>
+        <div class="field"><label>职务</label><input type="text" name="contact_post" placeholder="如：副校长 / 教导主任"></div>
+      </div>
+
+      <div class="grid g2" style="margin-top:12px">
+        <div class="field"><label>负责人联系电话<span class="req">*</span></label><input type="tel" name="contact_tel" placeholder="手机号"></div>
+        <div class="field"><label>电子邮箱</label><input type="email" name="contact_email" placeholder="用于接收通知与证书"></div>
+      </div>
+    </section>
+
+    <!-- 二、科学教育现状 -->
+    <section class="card" id="sec2">
+      <h2><span class="no">二</span>学校科学教育现状</h2>
+      <p class="sub">用于了解学校基础，便于后续分层匹配教研支持与案例指导。</p>
+
+      <div class="grid g3" style="margin-bottom:12px">
+        <div class="field"><label>专职科学教师</label><input type="number" name="full_time" min="0" placeholder="人"></div>
+        <div class="field"><label>兼职科学教师</label><input type="number" name="part_time" min="0" placeholder="人"></div>
+        <div class="field"><label>专用实验室</label><input type="number" name="lab_num" min="0" placeholder="间（没有填 0）"></div>
+      </div>
+
+      <div class="field" style="margin-bottom:12px">
+        <label>科学实验室情况</label>
+        <div class="chips" data-radio="lab">
+          <label class="chip"><input type="radio" name="lab" value="有专用实验室">有专用实验室</label>
+          <label class="chip"><input type="radio" name="lab" value="与综合实践共用">与综合实践共用</label>
+          <label class="chip"><input type="radio" name="lab" value="无专用实验室">无专用实验室</label>
+        </div>
+      </div>
+
+      <div class="field" style="margin-bottom:12px">
+        <label>网络教学条件（可多选）</label>
+        <div class="chips" data-group="network">
+          <label class="chip"><input type="checkbox" name="network" value="教室配备多媒体投影/一体机">教室配备多媒体投影/一体机</label>
+          <label class="chip"><input type="checkbox" name="network" value="有录播教室">有录播教室</label>
+          <label class="chip"><input type="checkbox" name="network" value="教师配备办公电脑">教师配备办公电脑</label>
+          <label class="chip"><input type="checkbox" name="network" value="校园网络全覆盖">校园网络全覆盖</label>
+          <label class="chip"><input type="checkbox" name="network" value="学生机房/平板设备">学生机房/平板设备</label>
+        </div>
+      </div>
+
+      <div class="grid g2" style="margin-bottom:12px">
+        <div class="field">
+          <label>使用线上科学教育资源情况</label>
+          <div class="chips" data-radio="online_use">
+            <label class="chip"><input type="radio" name="online_use" value="经常使用">经常使用</label>
+            <label class="chip"><input type="radio" name="online_use" value="偶尔使用">偶尔使用</label>
+            <label class="chip"><input type="radio" name="online_use" value="从未使用">从未使用</label>
+          </div>
+        </div>
+        <div class="field"><label>使用过的平台或资源</label><input type="text" name="platforms" placeholder="如：国家中小学智慧教育平台、腾讯追光课堂等"></div>
+      </div>
+
+      <div class="field">
+        <label>科学教育特色或已有成果</label>
+        <textarea name="features" rows="3" placeholder="请简要说明学校在科学教育方面的特色做法、已有成果或获奖情况（可写校本课程、科技社团、竞赛获奖、课题研究等）"></textarea>
+      </div>
+    </section>
+
+    <!-- 三、拟选择课程单元 -->
+    <section class="card" id="sec3">
+      <h2><span class="no">三</span>拟选择的课程单元<span class="req">*</span></h2>
+      <p class="sub">追光课程共 <b>27 个单元 / 112 节课</b>，按 4 大学科领域 × 2 个学段组织为 8 个课程系列。学校不必全选，请结合本校学情与师资，勾选打算实际开展的单元（建议先选 1-3 个单元做扎实）。</p>
+
+      <div class="sum">
+        <span>已选单元：<b id="sumUnit">0</b> 个</span>
+        <span>合计课时：<b id="sumHour">0</b> 节</span>
+        <span style="color:var(--sub)">已选课时数量将自动带入 Word 报名表</span>
+      </div>
+
+      <div id="unitList"></div>
+
+      <div style="margin-top:14px">
+        <div class="field">
+          <label>选择这些单元的主要考虑</label>
+          <textarea name="unit_reason" rows="3" placeholder="如：与本校科学课教材某单元衔接、师资有相关背景、已有配套器材、学生兴趣点等"></textarea>
+        </div>
+      </div>
+    </section>
+
+    <!-- 四、拟开展场景 -->
+    <section class="card" id="sec4">
+      <h2><span class="no">四</span>拟开展场景<span class="req">*</span></h2>
+      <p class="sub">本项目重点验证课程在不同场景下的应用效果。<b>请勾选学校实际打算落地的场景</b>（可多选），并填写实施年级与进度安排。</p>
+
+      <div class="chips" style="margin-bottom:14px" data-group="scene">
+        <label class="chip"><input type="checkbox" name="scene" value="小学科学课（常规课堂教学）">小学科学课（常规课堂教学）</label>
+        <label class="chip"><input type="checkbox" name="scene" value="综合实践活动课">综合实践活动课</label>
+        <label class="chip"><input type="checkbox" name="scene" value="课后服务 / 社团活动">课后服务 / 社团活动</label>
+        <label class="chip"><input type="checkbox" name="scene" value="“做中学”项目（教育部领航行动）">“做中学”项目（教育部领航行动）</label>
+        <label class="chip"><input type="checkbox" name="scene" value="半天社会实践 / 研学活动">半天社会实践 / 研学活动</label>
+        <label class="chip"><input type="checkbox" name="scene" value="真实任务挑战 / 项目周">真实任务挑战 / 项目周</label>
+        <label class="chip"><input type="checkbox" name="scene" value="跨学科主题学习">跨学科主题学习</label>
+        <label class="chip"><input type="checkbox" name="scene" value="校本课程 / 拓展性课程">校本课程 / 拓展性课程</label>
+        <label class="chip"><input type="checkbox" name="scene" value="科技节 / 科普活动">科技节 / 科普活动</label>
+        <label class="chip"><input type="checkbox" name="scene" value="初、高中学段跨学科项目（学段延伸）">初、高中学段跨学科项目（学段延伸）</label>
+        <label class="chip"><input type="checkbox" name="scene" value="其他">其他</label>
+      </div>
+
+      <div class="grid g2" style="margin-bottom:12px">
+        <div class="field"><label>其他场景说明</label><input type="text" name="scene_other" placeholder="如：与社区共建的科普实践基地活动"></div>
+        <div class="field"><label>计划实施年级<span class="req">*</span></label><input type="text" name="plan_grade" placeholder="如：四年级、五年级（或初一）"></div>
+      </div>
+
+      <div class="grid g3">
+        <div class="field"><label>计划启动时间</label><input type="text" name="plan_start" placeholder="如：2026年12月 / 2027年春季学期"></div>
+        <div class="field"><label>课时安排</label><input type="text" name="plan_freq" placeholder="如：每周1课时，一学期完成1个单元"></div>
+        <div class="field"><label>预计参与学生数</label><input type="number" name="plan_students" min="0" placeholder="人"></div>
+      </div>
+
+      <div class="field" style="margin-top:12px">
+        <label>场景落地的具体安排（如时间、流程、与现有课程的衔接方式）</label>
+        <textarea name="plan_detail" rows="3" placeholder="如：利用每周三下午课后服务时间开设“追光科学社”，面向五年级学生，按单元推进 6 课时，学期末组织成果展示。"></textarea>
+      </div>
+    </section>
+
+    <!-- 五、教师名单 -->
+    <section class="card" id="sec5">
+      <h2><span class="no">五</span>拟参与项目教师名单</h2>
+      <p class="sub">建议 <b>至少 5 名</b>教师参与（含科学、综合实践、信息技术等学科），每位教师需参加线上培训与教研活动。可按实际人数填写，多余行留空即可。</p>
+      <div class="tblwrap">
+        <table class="teachers">
+          <thead>
+            <tr>
+              <th style="width:42px">序号</th><th>姓名</th><th style="width:62px">性别</th>
+              <th style="width:70px">教龄</th><th>职称</th><th>任教学段/学科</th>
+              <th style="width:132px">联系电话</th><th style="width:92px">是否班主任</th>
+            </tr>
+          </thead>
+          <tbody id="teacherBody"></tbody>
+        </table>
+      </div>
+    </section>
+
+    <!-- 六、申报理由与预期目标 -->
+    <section class="card" id="sec6">
+      <h2><span class="no">六</span>申报理由与预期目标</h2>
+      <p class="sub">请结合学校实际，简要说明参与动机、要解决的问题与期望达成的目标。</p>
+
+      <div class="field" style="margin-bottom:12px">
+        <label>申报理由<span class="req">*</span></label>
+        <textarea name="reason" rows="4" placeholder="请说明学校为什么要参与本项目、希望解决什么问题、已有哪些基础条件（如科学教育特色、师资、课程建设经验等）"></textarea>
+      </div>
+
+      <div class="field" style="margin-bottom:12px">
+        <label>预期目标<span class="req">*</span></label>
+        <textarea name="goal" rows="4" placeholder="请说明通过参与本项目，学校希望在科学教育方面达成哪些具体目标（如：形成 1 个可复用的跨学科课例、开发校本资源包、培养 3 名骨干教师、学生科学素养测评提升等）"></textarea>
+      </div>
+
+      <div class="field">
+        <label>学校可提供的支持条件</label>
+        <textarea name="support" rows="3" placeholder="如：保障参与教师时间、提供活动场地与器材、安排教研经费配套、组织校内展示交流、纳入学校年度工作计划等"></textarea>
+      </div>
+    </section>
+
+    <!-- 七、承诺与签字 -->
+    <section class="card" id="sec7">
+      <h2><span class="no">七</span>承诺与签字</h2>
+      <p class="sub">本栏在导出 Word 后打印，由学校负责人手写签字并加盖公章。</p>
+
+      <div class="signbox" style="margin-bottom:14px">
+        本单位自愿申报参与腾讯追光课堂推广研究项目，承诺：<br>
+        1. 如实填写本表全部信息，如有虚假愿承担相应责任；<br>
+        2. 按照项目要求组织教师参加培训、教研和案例开发等活动；<br>
+        3. 为项目开展提供必要的条件保障；<br>
+        4. 配合项目组完成前测、后测及成果收集工作。
+      </div>
+
+      <div class="grid g2">
+        <div class="field"><label>学校负责人签字</label><div class="signbox" style="min-height:56px">（打印后手写签字）</div></div>
+        <div class="field"><label>日期</label><div class="signbox" style="min-height:56px">　　　　年　　月　　日</div></div>
+      </div>
+
+    </section>
+
+    <p class="foot">
+      腾讯追光课堂推广研究项目 · 学校报名表　|　本表填写内容仅保存在本机浏览器，不会自动上传<br>
+      制作：陈有志　ntcyz@126.com
+    </p>
+  </main>
+</div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ========== 课程单元数据（27 个单元 / 112 节课） ========== */
+const GROUPS = [
+  { d:'生命科学', g:'3-4年级', s:'了不起的生命演化 · 探索地球生命如何演变', u:[
+    ['地球上为什么会有这么多形态各异的生物？',3,'是达尔文雀的嘴啄开了演化的门缝吗？'],
+    ['从鱼类、恐龙到人类的生命演化之旅！',4,'人类和鱼类有共同的祖先吗？'],
+    ['生物越复杂，就越厉害吗？',3,'海葵的选择：复制还是创新？'],
+    ['我们能战胜衰老或改变生命的演化规则吗？',2,'“生存法宝”为什么会失灵，甚至变成麻烦？']
+  ]},
+  { d:'生命科学', g:'5-6年级', s:'多样生命 · 当生命遇见科技与未来', u:[
+    ['机器人能否拥有像人一样的“真实触觉”？',4,'触觉对我们来说意味着什么？'],
+    ['微生物是我们的朋友还是敌人？',4,'看不见的生命，究竟是什么？'],
+    ['为什么萤火虫、水母会发光，而且代代相传？',4,'发光生物为什么要发光？']
+  ]},
+  { d:'物质科学', g:'3-4年级', s:'物质世界探秘 · 材料与结构的秘密', u:[
+    ['寻找衣物功能的材料密码',4,'衣服怎么穿不笨重还保暖？'],
+    ['“香蕉球”是怎么踢出来的？',4,'为什么一些球会“拐弯”？'],
+    ['热都去哪儿了？',4,'生活中的热都“藏”在哪里？']
+  ]},
+  { d:'物质科学', g:'5-6年级', s:'物质世界探秘 · 能量的奇妙旅行', u:[
+    ['夜明珠的光是从哪儿来的？',4,'夜明珠在黑暗中的光从哪儿来？'],
+    ['滚动的水滴可以发电吗？',4,'水滴生电的线索在哪里？'],
+    ['一束光的神奇之旅',4,'太阳光有什么作用？']
+  ]},
+  { d:'工程与技术', g:'3-4年级', s:'工程思维启蒙 · 从设计到制作', u:[
+    ['会“呼吸”的建筑：设计我的迷你节能屋',6,'什么样的房子住着舒服还节能？'],
+    ['神奇折纸：从传统艺术到工程科技',6,'纸的结构与百变妙用']
+  ]},
+  { d:'工程与技术', g:'5-6年级', s:'工程师在行动 · 真实问题解决', u:[
+    ['无处不在的智能决策：探索工程中的调度优化技术',6,'古人的智慧——如何通过调度实现资源最大化利用？'],
+    ['高铁工程：高铁如何实现又快又稳？',6,'车头为什么设计成尖的？'],
+    ['芯片探秘：“科技超级大脑”是怎么炼成的？',6,'小身材，大本领的“超级大脑”'],
+    ['火星能源先锋：智能光合战车工程实战',6,'火星上到底是什么样的世界？']
+  ]},
+  { d:'地球与宇宙科学', g:'3-4年级', s:'宇宙探秘 · 寻找另一个地球', u:[
+    ['地球上为什么会有生命？',2,'地球也有航天服吗？'],
+    ['如何在太阳系寻找生命？',4,'太阳是我们的朋友，它也会发脾气吗？'],
+    ['我们来自超新星？',3,'另一颗“太阳”有多远？'],
+    ['如何在银河系寻找另一个“地球”',2,'太阳系的“家”在哪里？'],
+    ['如何在浩瀚宇宙中寻找另一个“地球”',5,'星星是怎么发信息的？']
+  ]},
+  { d:'地球与宇宙科学', g:'5-6年级', s:'地球探秘 · 破解地球系统运行的圈层密码', u:[
+    ['探秘火山',4,'火山有哪些不同的“模样”？'],
+    ['水之两面：水资源与水灾害',4,'水资源为何分布不均？'],
+    ['塑料的前世今生',4,'塑料是什么样的材料？']
+  ]}
+];
+
+/* ========== 渲染单元列表 ========== */
+const unitList = document.getElementById('unitList');
+GROUPS.forEach((grp, gi) => {
+  const box = document.createElement('div');
+  box.className = 'unitgroup';
+  const hours = grp.u.reduce((a, x) => a + x[1], 0);
+  box.innerHTML = `
+    <div class="ug-head">
+      <span class="tag dom">${grp.d}</span>
+      <span class="tag">${grp.g}</span>
+      <span class="nm">${grp.s}</span>
+      <span class="cnt">${grp.u.length} 个单元 / ${hours} 课时</span>
+      <span class="caret">▼</span>
+    </div>
+    <div class="ug-body"></div>`;
+  const body = box.querySelector('.ug-body');
+  grp.u.forEach((u, ui) => {
+    const id = `u_${gi}_${ui}`;
+    const lab = document.createElement('label');
+    lab.className = 'unit';
+    lab.innerHTML = `
+      <input type="checkbox" name="unit" id="${id}" value="${u[0]}" data-dom="${grp.d}" data-grade="${grp.g}" data-hour="${u[1]}">
+      <span>
+        <span class="u-name">${u[0]}</span>
+        <span class="u-meta">${u[1]} 课时　·　起始课：${u[2]}</span>
+      </span>`;
+    body.appendChild(lab);
+  });
+  box.querySelector('.ug-head').addEventListener('click', () => box.classList.toggle('closed'));
+  unitList.appendChild(box);
+});
+
+/* ========== 教师名单 ========== */
+const tbody = document.getElementById('teacherBody');
+for (let i = 1; i <= 10; i++) {
+  const tr = document.createElement('tr');
+  tr.innerHTML = `<td class="idx">${i}</td>
+    <td><input type="text" data-t="name" placeholder=""></td>
+    <td><input type="text" data-t="sex" placeholder=""></td>
+    <td><input type="text" data-t="years" placeholder=""></td>
+    <td><input type="text" data-t="title" placeholder=""></td>
+    <td><input type="text" data-t="subject" placeholder=""></td>
+    <td><input type="tel" data-t="tel" placeholder=""></td>
+    <td><input type="text" data-t="head" placeholder=""></td>`;
+  tbody.appendChild(tr);
+}
+
+/* ========== 交互样式 ========== */
+function refreshChips(){
+  document.querySelectorAll('.chip').forEach(c => {
+    const inp = c.querySelector('input');
+    if (inp && inp.checked) c.classList.add('on'); else c.classList.remove('on');
+  });
+  document.querySelectorAll('.unit').forEach(l => {
+    const inp = l.querySelector('input');
+    if (inp && inp.checked) l.classList.add('on'); else l.classList.remove('on');
+  });
+  const sel = [...document.querySelectorAll('input[name="unit"]:checked')];
+  document.getElementById('sumUnit').textContent = sel.length;
+  document.getElementById('sumHour').textContent = sel.reduce((a, e) => a + (+e.dataset.hour), 0);
+}
+document.addEventListener('change', e => {
+  if (e.target.type === 'radio') {
+    const n = e.target.name;
+    document.querySelectorAll(`input[name="${n}"]`).forEach(i => { if (i !== e.target) i.checked = false; });
+  }
+  refreshChips(); saveDraft();
+});
+document.addEventListener('input', e => { if (e.target.tagName !== 'RADIO') saveDraft(); });
+
+/* ========== 草稿存取 ========== */
+const KEY = 'zhuiguang_signup_v1';
+let saveTimer = null;
+function saveDraft(){
+  clearTimeout(saveTimer);
+  saveTimer = setTimeout(() => {
+    const data = { fields:{}, units:[], teaches:[] };
+    document.querySelectorAll('input[type=text],input[type=tel],input[type=email],input[type=number],textarea').forEach(el => {
+      if (el.name) data.fields[el.name] = el.value;
+    });
+    document.querySelectorAll('input[type=radio]:checked').forEach(el => data.fields['R_' + el.name] = el.value);
+    document.querySelectorAll('input[name="network"]:checked').forEach(el => (data.fields['N_network'] ||= []).push(el.value));
+    document.querySelectorAll('input[name="stage"]:checked').forEach(el => (data.fields['N_stage'] ||= []).push(el.value));
+    document.querySelectorAll('input[name="scene"]:checked').forEach(el => (data.fields['N_scene'] ||= []).push(el.value));
+    document.querySelectorAll('input[name="unit"]:checked').forEach(el => data.units.push(el.id));
+    [...tbody.querySelectorAll('tr')].forEach(tr => {
+      const o = {}; tr.querySelectorAll('input').forEach(i => o[i.dataset.t] = i.value); data.teaches.push(o);
+    });
+    try {
+      localStorage.setItem(KEY, JSON.stringify(data));
+      document.getElementById('saveState').textContent = '草稿已保存 ' + new Date().toLocaleTimeString('zh-CN', {hour:'2-digit',minute:'2-digit'});
+    } catch(err){}
+  }, 350);
+}
+function loadDraft(){
+  let data;
+  try { data = JSON.parse(localStorage.getItem(KEY) || 'null'); } catch(e){ return; }
+  if (!data) return;
+  Object.entries(data.fields || {}).forEach(([k, v]) => {
+    if (k.startsWith('R_')) {
+      document.querySelectorAll(`input[name="${k.slice(2)}"]`).forEach(i => { if (i.value === v) i.checked = true; });
+    } else if (k.startsWith('N_')) {
+      const n = k.slice(2);
+      document.querySelectorAll(`input[name="${n}"]`).forEach(i => { if (v.includes(i.value)) i.checked = true; });
+    } else {
+      const el = document.querySelector(`[name="${k}"]`);
+      if (el) el.value = v;
+    }
+  });
+  (data.units || []).forEach(id => { const el = document.getElementById(id); if (el) el.checked = true; });
+  (data.teaches || []).forEach((o, i) => {
+    const tr = tbody.children[i]; if (!tr) return;
+    tr.querySelectorAll('input').forEach(inp => { if (o[inp.dataset.t] != null) inp.value = o[inp.dataset.t]; });
+  });
+  refreshChips();
+}
+
+/* ========== 数据收集 ========== */
+function val(n){ const el = document.querySelector(`[name="${n}"]`); return el ? el.value.trim() : ''; }
+function radio(n){ const el = document.querySelector(`input[name="${n}"]:checked`); return el ? el.value : ''; }
+function checks(n){ return [...document.querySelectorAll(`input[name="${n}"]:checked`)].map(e => e.value); }
+function collect(){
+  const units = [...document.querySelectorAll('input[name="unit"]:checked')].map(e => ({
+    name: e.value, dom: e.dataset.dom, grade: e.dataset.grade, hour: +e.dataset.hour
+  }));
+  const teaches = [...tbody.querySelectorAll('tr')].map(tr => {
+    const o = {}; tr.querySelectorAll('input').forEach(i => o[i.dataset.t] = i.value.trim()); return o;
+  }).filter(o => o.name);
+  return {
+    school: val('school_name'), province: val('province'), city: val('city'), district: val('district'),
+    type: radio('school_type'), level: radio('school_level'), region: radio('region_type'),
+    stages: checks('stage'), address: val('address'),
+    classes: val('classes'), students: val('students'), teachers: val('teachers'), sciTeachers: val('sci_teachers'),
+    principal: val('principal'), principalTel: val('principal_tel'),
+    contact: val('contact'), contactPost: val('contact_post'), contactTel: val('contact_tel'), email: val('contact_email'),
+    fullTime: val('full_time'), partTime: val('part_time'), lab: radio('lab'), labNum: val('lab_num'),
+    network: checks('network'), onlineUse: radio('online_use'), platforms: val('platforms'), features: val('features'),
+    units, unitHours: units.reduce((a, u) => a + u.hour, 0), unitReason: val('unit_reason'),
+    scenes: checks('scene'), sceneOther: val('scene_other'), planGrade: val('plan_grade'),
+    planStart: val('plan_start'), planFreq: val('plan_freq'), planStudents: val('plan_students'), planDetail: val('plan_detail'),
+    teaches, reason: val('reason'), goal: val('goal'), support: val('support')
+  };
+}
+
+/* ========== 工具 ========== */
+const d = v => (v == null || v === '') ? '　' : String(v);
+const esc = s => String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const nl = s => esc(s || '').replace(/\r?\n/g, '<br>');
+const box = (arr, all) => all.map(v => (arr.includes(v) ? '■ ' : '□ ') + v).join('　');
+function toast(msg){
+  const t = document.getElementById('toast');
+  t.textContent = msg; t.classList.add('show');
+  clearTimeout(t._t); t._t = setTimeout(() => t.classList.remove('show'), 2400);
+}
+
+/* ========== 生成 Word（.docx，真 OOXML） ========== */
+const X = s => String(s == null ? '' : s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;').replace(/"/g,'&quot;');
+
+function dRun(text, o){
+  o = o || {};
+  const east = o.east || '仿宋', sz = o.sz || 21, b = !!o.b;
+  const rPr = `<w:rPr><w:rFonts w:ascii="Times New Roman" w:eastAsia="${east}" w:hAnsi="Times New Roman" w:cs="Times New Roman"/>${b ? '<w:b/><w:bCs/>' : ''}<w:sz w:val="${sz}"/><w:szCs w:val="${sz}"/></w:rPr>`;
+  return String(text == null ? '' : text).split(/\r?\n/).map((ln, i) =>
+    `<w:r>${rPr}${i > 0 ? '<w:br/>' : ''}<w:t xml:space="preserve">${X(ln)}</w:t></w:r>`).join('');
+}
+function dPara(text, o){
+  o = o || {};
+  const pPr = `<w:pPr><w:spacing w:before="${o.before || 0}" w:after="${o.after || 0}" w:line="${o.line || 300}" w:lineRule="auto"/>`
+    + (o.ind ? `<w:ind w:firstLine="${o.ind}"/>` : '')
+    + `<w:jc w:val="${o.align || 'both'}"/></w:pPr>`;
+  return `<w:p>${pPr}${text === '' ? '' : dRun(text, o)}</w:p>`;
+}
+function dCell(c){
+  const span = c.span || 1;
+  const tcPr = `<w:tcPr><w:tcW w:w="${c.w || 1000}" w:type="dxa"/>${span > 1 ? `<w:gridSpan w:val="${span}"/>` : ''}`
+    + `${c.shd ? '<w:shd w:val="clear" w:color="auto" w:fill="F2F2F2"/>' : ''}<w:vAlign w:val="center"/></w:tcPr>`;
+  const pPr = `<w:pPr><w:spacing w:before="0" w:after="0" w:line="264" w:lineRule="auto"/><w:jc w:val="${c.align || 'left'}"/></w:pPr>`;
+  return `<w:tc>${tcPr}<w:p>${pPr}${dRun(c.t, { east: c.east || '仿宋', sz: c.sz || 20, b: c.b })}</w:p></w:tc>`;
+}
+function dTable(grid, rows){
+  const total = grid.reduce((a, x) => a + x, 0);
+  const B = ['top','left','bottom','right','insideH','insideV']
+    .map(k => `<w:${k} w:val="single" w:sz="4" w:space="0" w:color="000000"/>`).join('');
+  let s = `<w:tbl><w:tblPr><w:tblW w:w="${total}" w:type="dxa"/><w:tblBorders>${B}</w:tblBorders><w:tblLayout w:type="fixed"/></w:tblPr>`
+    + `<w:tblGrid>${grid.map(w => `<w:gridCol w:w="${w}"/>`).join('')}</w:tblGrid>`;
+  rows.forEach(r => {
+    s += `<w:tr><w:trPr><w:cantSplit/>${r.h ? `<w:trHeight w:val="${r.h}" w:hRule="atLeast"/>` : ''}</w:trPr>${r.cells.map(dCell).join('')}</w:tr>`;
+  });
+  return s + '</w:tbl>';
+}
+
+/* --- ZIP（stored，无压缩） --- */
+const CRC_T = (() => { const t = new Uint32Array(256); for (let n = 0; n < 256; n++) { let c = n; for (let k = 0; k < 8; k++) c = (c & 1) ? (0xEDB88320 ^ (c >>> 1)) : (c >>> 1); t[n] = c >>> 0; } return t; })();
+function crc32(u8){ let c = 0xFFFFFFFF; for (let i = 0; i < u8.length; i++) c = CRC_T[(c ^ u8[i]) & 0xFF] ^ (c >>> 8); return (c ^ 0xFFFFFFFF) >>> 0; }
+function zipStore(files){
+  const enc = new TextEncoder();
+  const parts = [], central = [];
+  let offset = 0;
+  files.forEach(f => {
+    const nameB = enc.encode(f.name);
+    const data = typeof f.data === 'string' ? enc.encode(f.data) : f.data;
+    const crc = crc32(data);
+    const lh = new Uint8Array(30 + nameB.length), dv = new DataView(lh.buffer);
+    dv.setUint32(0, 0x04034b50, true); dv.setUint16(4, 20, true); dv.setUint16(6, 0x0800, true);
+    dv.setUint16(8, 0, true); dv.setUint16(10, 0, true); dv.setUint16(12, 0x21, true);
+    dv.setUint32(14, crc, true); dv.setUint32(18, data.length, true); dv.setUint32(22, data.length, true);
+    dv.setUint16(26, nameB.length, true); dv.setUint16(28, 0, true);
+    lh.set(nameB, 30);
+    parts.push(lh, data);
+    const ch = new Uint8Array(46 + nameB.length), dv2 = new DataView(ch.buffer);
+    dv2.setUint32(0, 0x02014b50, true); dv2.setUint16(4, 20, true); dv2.setUint16(6, 20, true);
+    dv2.setUint16(8, 0x0800, true); dv2.setUint16(10, 0, true); dv2.setUint16(12, 0, true); dv2.setUint16(14, 0x21, true);
+    dv2.setUint32(16, crc, true); dv2.setUint32(20, data.length, true); dv2.setUint32(24, data.length, true);
+    dv2.setUint16(28, nameB.length, true); dv2.setUint16(30, 0, true); dv2.setUint16(32, 0, true);
+    dv2.setUint16(34, 0, true); dv2.setUint16(36, 0, true); dv2.setUint32(38, 0, true);
+    dv2.setUint32(42, offset, true);
+    ch.set(nameB, 46);
+    central.push(ch);
+    offset += lh.length + data.length;
+  });
+  const cdSize = central.reduce((a, c) => a + c.length, 0);
+  const eocd = new Uint8Array(22), dv3 = new DataView(eocd.buffer);
+  dv3.setUint32(0, 0x06054b50, true); dv3.setUint16(4, 0, true); dv3.setUint16(6, 0, true);
+  dv3.setUint16(8, files.length, true); dv3.setUint16(10, files.length, true);
+  dv3.setUint32(12, cdSize, true); dv3.setUint32(16, offset, true); dv3.setUint16(20, 0, true);
+  const all = parts.concat(central, [eocd]);
+  const totalLen = all.reduce((a, p) => a + p.length, 0);
+  const out = new Uint8Array(totalLen);
+  let pos = 0;
+  all.forEach(p => { out.set(p, pos); pos += p.length; });
+  return out;
+}
+
+/* --- 文档内容 --- */
+function buildDocx(o){
+  const G4 = [1700, 3232, 1700, 3232], G5 = [700, 1700, 1200, 5064, 1200], G8 = [600, 1200, 700, 700, 1400, 2200, 1864, 1200], G1 = [9864];
+  const L = t => ({ t: t, w: 1700, shd: true, align: 'center', b: true, sz: 20 });
+  const T = (t, w) => ({ t: t == null ? '' : t, w: w || 3232, align: 'left' });
+  const V3 = t => ({ t: t == null ? '' : t, w: 8164, span: 3, align: 'left' });
+  const body = [];
+  const h2 = t => body.push(dPara(t, { east: '黑体', sz: 24, b: true, before: 170, after: 60 }));
+  const pl = t => body.push(dPara(t, { east: '黑体', sz: 21, b: true, before: 110, after: 40 }));
+  const boxed = (t, h) => body.push(dTable(G1, [{ h: h || 0, cells: [{ t: t, w: 9864, align: 'left' }] }]));
+
+  body.push(dPara('腾讯追光课堂推广研究项目', { align: 'center', east: '黑体', sz: 36, b: true, after: 80 }));
+  body.push(dPara('学　校　报　名　表', { align: 'center', east: '黑体', sz: 28, b: true, after: 60 }));
+  body.push(dPara('（本表由申报学校填写，请确保信息真实、完整）', { align: 'center', sz: 19, after: 120 }));
+
+  h2('一、学校基本信息');
+  body.push(dTable(G4, [
+    { cells: [L('学校全称'), V3(o.school)] },
+    { cells: [L('所在省份'), T(o.province), L('所在城市'), T(o.city + (o.district ? '　' + o.district : ''))] },
+    { cells: [L('学校类型'), T(box(o.type ? [o.type] : [], ['公办','民办'])), L('学校等级'), T(box(o.level ? [o.level] : [], ['省级示范','市级示范','普通','其他']))] },
+    { cells: [L('所在区域'), T(box(o.region ? [o.region] : [], ['城区','乡镇','农村'])), L('覆盖学段'), T(o.stages.join('、'))] },
+    { cells: [L('详细地址'), V3(o.address)] },
+    { cells: [L('办学规模'), V3('班级数：' + d(o.classes) + ' 个　　学生数：' + d(o.students) + ' 人　　教职工数：' + d(o.teachers) + ' 人　　其中科学教师：' + d(o.sciTeachers) + ' 人')] },
+    { cells: [L('项目负责人'), T(o.contact + (o.contactPost ? '（' + o.contactPost + '）' : '')), L('联系电话'), T(o.contactTel)] },
+    { cells: [L('电子邮箱'), T(o.email), L('校长 / 电话'), T((o.principal || '') + (o.principalTel ? '　' + o.principalTel : ''))] }
+  ]));
+  body.push(dPara('', { line: 160 }));
+
+  h2('二、学校科学教育现状');
+  body.push(dTable(G4, [
+    { cells: [L('科学教师配置'), V3('专职：' + d(o.fullTime) + ' 人　　兼职：' + d(o.partTime) + ' 人')] },
+    { cells: [L('科学实验室'), V3(box(o.lab ? [o.lab] : [], ['有专用实验室','与综合实践共用','无专用实验室']) + (o.labNum ? '　共 ' + o.labNum + ' 间' : ''))] },
+    { cells: [L('网络教学条件'), V3(o.network.length ? o.network.map(x => '■ ' + x).join('　') : '')] },
+    { cells: [L('线上资源使用'), V3(box(o.onlineUse ? [o.onlineUse] : [], ['经常使用','偶尔使用','从未使用']) + (o.platforms ? '　使用平台：' + o.platforms : ''))] },
+    { cells: [L('科学教育特色' + String.fromCharCode(10) + '或成果'), V3(o.features)] }
+  ]));
+  body.push(dPara('', { line: 160 }));
+
+  h2('三、拟选择的课程单元');
+  const unitRows = o.units.map((u, i) => ({ cells: [
+    { t: String(i + 1), w: 700, align: 'center' },
+    { t: u.dom, w: 1700, align: 'center' },
+    { t: u.grade, w: 1200, align: 'center' },
+    { t: u.name, w: 5064, align: 'left' },
+    { t: String(u.hour), w: 1200, align: 'center' }
+  ]}));
+  if (!unitRows.length) unitRows.push({ cells: [{ t: '（未选择）', w: 9864, span: 5, align: 'center' }] });
+  const uHead = ['序号','学科领域','适用学段','单元名称','课时'].map((t, i) => ({ t: t, w: G5[i], shd: true, align: 'center', b: true, sz: 19 }));
+  body.push(dTable(G5, [{ cells: uHead }].concat(unitRows, [{
+    cells: [
+      { t: '合计', w: 3600, span: 3, align: 'center', shd: true, b: true, sz: 19 },
+      { t: '共 ' + o.units.length + ' 个单元', w: 5064, align: 'center' },
+      { t: String(o.unitHours), w: 1200, align: 'center' }
+    ]
+  }])));
+  body.push(dPara('', { line: 160 }));
+  pl('选择这些单元的主要考虑：');
+  boxed(o.unitReason, 600);
+
+  h2('四、拟开展场景');
+  const scenesAll = ['小学科学课（常规课堂教学）','综合实践活动课','课后服务 / 社团活动','“做中学”项目（教育部领航行动）','半天社会实践 / 研学活动','真实任务挑战 / 项目周','跨学科主题学习','校本课程 / 拓展性课程','科技节 / 科普活动','初、高中学段跨学科项目（学段延伸）'];
+  boxed(box(o.scenes.filter(s => s !== '其他'), scenesAll) + (o.scenes.includes('其他') ? '　■ 其他：' + o.sceneOther : ''), 700);
+  body.push(dPara('', { line: 160 }));
+  body.push(dTable(G4, [
+    { cells: [L('计划实施年级'), T(o.planGrade), L('计划启动时间'), T(o.planStart)] },
+    { cells: [L('课时安排'), T(o.planFreq), L('预计参与学生'), T(o.planStudents ? o.planStudents + ' 人' : '')] }
+  ]));
+  body.push(dPara('', { line: 160 }));
+  pl('场景落地的具体安排：');
+  boxed(o.planDetail, 700);
+
+  h2('五、拟参与项目教师名单');
+  const tHead = ['序号','姓名','性别','教龄','职称','任教学段/学科','联系电话','是否班主任'].map((t, i) => ({ t: t, w: G8[i], shd: true, align: 'center', b: true, sz: 19 }));
+  const tRows = o.teaches.map((t, i) => ({ cells: [
+    { t: String(i + 1), w: G8[0], align: 'center' }, { t: t.name, w: G8[1], align: 'center' },
+    { t: t.sex, w: G8[2], align: 'center' }, { t: t.years, w: G8[3], align: 'center' },
+    { t: t.title, w: G8[4], align: 'center' }, { t: t.subject, w: G8[5], align: 'center' },
+    { t: t.tel, w: G8[6], align: 'center' }, { t: t.head, w: G8[7], align: 'center' }
+  ]}));
+  for (let i = tRows.length; i < 5; i++) tRows.push({ cells: G8.map((w, k) => ({ t: k === 0 ? String(i + 1) : '', w: w, align: 'center' })) });
+  if (tRows.length) body.push(dTable(G8, [{ cells: tHead }].concat(tRows)));
+  else boxed('（本栏未填写）', 300);
+  body.push(dPara('', { line: 160 }));
+
+  h2('六、申报理由与预期目标');
+  pl('1. 申报理由');
+  boxed(o.reason, 900);
+  pl('2. 预期目标');
+  boxed(o.goal, 900);
+  pl('3. 学校可提供的支持条件');
+  boxed(o.support, 700);
+
+  h2('七、承诺与签字');
+  boxed('本单位自愿申报参与腾讯追光课堂推广研究项目，承诺：\n1. 如实填写本表全部信息，如有虚假愿承担相应责任；\n2. 按照项目要求组织教师参加培训、教研和案例开发等活动；\n3. 为项目开展提供必要的条件保障；\n4. 配合项目组完成前测、后测及成果收集工作。', 900);
+  body.push(dPara('', { line: 160 }));
+  body.push(dPara('学校负责人签字：＿＿＿＿＿＿＿＿＿＿　　　　单位盖章：＿＿＿＿＿＿＿＿＿＿', { before: 240, after: 120 }));
+  body.push(dPara('日期：　　　　年　　月　　日', { align: 'right', after: 120 }));
+
+  body.push(dPara('填报时间：' + new Date().toLocaleDateString('zh-CN') + '　　本表由学校在线填报后生成，可修改、打印并加盖公章。', { sz: 18, before: 200 }));
+
+  const sectPr = '<w:sectPr><w:pgSz w:w="11906" w:h="16838"/><w:pgMar w:top="1134" w:right="1021" w:bottom="1134" w:left="1021" w:header="851" w:footer="992" w:gutter="0"/><w:cols w:space="425"/><w:docGrid w:linePitch="312"/></w:sectPr>';
+  const NS_W = 'http://schemas.openxmlformats.org/wordprocessingml/2006/main';
+  const NS_R = 'http://schemas.openxmlformats.org/officeDocument/2006/relationships';
+  const HDR = '<?xml version="1.0" encoding="UTF-8" standalone="yes"?>\r\n';
+  const documentXml = HDR + '<w:document xmlns:w="' + NS_W + '" xmlns:r="' + NS_R + '"><w:body>'
+    + body.join('') + sectPr + '</w:body></w:document>';
+  const contentTypes = HDR + '<Types xmlns="http://schemas.openxmlformats.org/package/2006/content-types">'
+    + '<Default Extension="rels" ContentType="application/vnd.openxmlformats-package.relationships+xml"/>'
+    + '<Default Extension="xml" ContentType="application/xml"/>'
+    + '<Override PartName="/word/document.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.document.main+xml"/>'
+    + '<Override PartName="/word/styles.xml" ContentType="application/vnd.openxmlformats-officedocument.wordprocessingml.styles+xml"/>'
+    + '</Types>';
+  const rels = HDR + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+    + '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/officeDocument" Target="word/document.xml"/>'
+    + '</Relationships>';
+  const docRels = HDR + '<Relationships xmlns="http://schemas.openxmlformats.org/package/2006/relationships">'
+    + '<Relationship Id="rId1" Type="http://schemas.openxmlformats.org/officeDocument/2006/relationships/styles" Target="styles.xml"/>'
+    + '</Relationships>';
+  const styles = HDR + '<w:styles xmlns:w="' + NS_W + '">'
+    + '<w:docDefaults><w:rPrDefault><w:rPr><w:rFonts w:ascii="Times New Roman" w:eastAsia="仿宋" w:hAnsi="Times New Roman" w:cs="Times New Roman"/><w:sz w:val="21"/><w:szCs w:val="21"/></w:rPr></w:rPrDefault>'
+    + '<w:pPrDefault><w:pPr><w:spacing w:line="300" w:lineRule="auto"/></w:pPr></w:pPrDefault></w:docDefaults>'
+    + '<w:style w:type="paragraph" w:default="1" w:styleId="Normal"><w:name w:val="Normal"/><w:qFormat/></w:style>'
+    + '</w:styles>';
+  return zipStore([
+    { name: '[Content_Types].xml', data: contentTypes },
+    { name: '_rels/.rels', data: rels },
+    { name: 'word/document.xml', data: documentXml },
+    { name: 'word/styles.xml', data: styles },
+    { name: 'word/_rels/document.xml.rels', data: docRels }
+  ]);
+}
+
+/* ========== 生成 CSV 汇总（一行一所学校） ========== */
+function buildCsv(o){
+  const heads = ['学校全称','省份','城市','区县','学校类型','学校等级','所在区域','覆盖学段','班级数','学生数','教职工数','科学教师数',
+    '校长','校长电话','项目负责人','职务','联系电话','电子邮箱','专职科学教师','兼职科学教师','实验室情况','实验室间数',
+    '网络教学条件','线上资源使用','使用平台','科学教育特色或成果','拟选单元','单元数','合计课时','选择考虑',
+    '开展场景','其他场景说明','计划实施年级','计划启动时间','课时安排','预计参与学生数','具体安排',
+    '参与教师数','教师名单（姓名/职称/学科/电话）','申报理由','预期目标','支持条件','填报时间'];
+  const rows = [o.school, o.province, o.city, o.district, o.type, o.level, o.region, o.stages.join('、'), o.classes, o.students, o.teachers, o.sciTeachers,
+    o.principal, o.principalTel, o.contact, o.contactPost, o.contactTel, o.email, o.fullTime, o.partTime, o.lab, o.labNum,
+    o.network.join('；'), o.onlineUse, o.platforms, o.features,
+    o.units.map(u => u.name).join('；'), o.units.length, o.unitHours, o.unitReason,
+    o.scenes.join('；'), o.sceneOther, o.planGrade, o.planStart, o.planFreq, o.planStudents, o.planDetail,
+    o.teaches.length, o.teaches.map(t => [t.name, t.title, t.subject, t.tel].filter(Boolean).join('/')).join('；'),
+    o.reason, o.goal, o.support, new Date().toLocaleString('zh-CN')];
+  const q = v => '"' + String(v == null ? '' : v).replace(/"/g, '""').replace(/\r?\n/g, ' ') + '"';
+  return '\ufeff' + heads.map(q).join(',') + '\r\n' + rows.map(q).join(',') + '\r\n';
+}
+
+/* ========== 下载 ========== */
+function download(content, filename, mime){
+  const blob = (typeof Blob !== 'undefined' && content instanceof Blob) ? content : new Blob([content], { type: mime });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = filename;
+  document.body.appendChild(a); a.click();
+  setTimeout(() => { URL.revokeObjectURL(a.href); a.remove(); }, 4000);
+}
+function fileName(ext){
+  const s = (val('school_name') || '未命名学校').replace(/[\\/:*?"<>|\s]/g, '');
+  const dt = new Date();
+  const p = n => String(n).padStart(2, '0');
+  return `追光课堂报名表_${s}_${dt.getFullYear()}${p(dt.getMonth() + 1)}${p(dt.getDate())}.${ext}`;
+}
+
+/* ========== 校验 ========== */
+function validate(o){
+  const miss = [];
+  if (!o.school) miss.push(['school_name', '学校全称']);
+  if (!o.province) miss.push(['province', '所在省份']);
+  if (!o.city) miss.push(['city', '所在城市']);
+  if (!o.region) miss.push(['region_type', '学校所在区域']);
+  if (!o.stages.length) miss.push(['stage', '覆盖学段']);
+  if (!o.address) miss.push(['address', '详细地址']);
+  if (!o.contact) miss.push(['contact', '项目负责人']);
+  if (!o.contactTel) miss.push(['contact_tel', '负责人联系电话']);
+  if (!o.units.length) miss.push(['unit', '拟选择的课程单元']);
+  if (!o.scenes.length) miss.push(['scene', '拟开展场景']);
+  if (!o.planGrade) miss.push(['plan_grade', '计划实施年级']);
+  if (!o.reason) miss.push(['reason', '申报理由']);
+  if (!o.goal) miss.push(['goal', '预期目标']);
+  return miss;
+}
+function pickList(o){ return o.units.map(u => `${u.dom}/${u.grade}/${u.name}`); }
+
+/* ========== 按钮 ========== */
+document.getElementById('btnWord').addEventListener('click', () => {
+  const o = collect();
+  const miss = validate(o);
+  if (miss.length) {
+    toast('还有 ' + miss.length + ' 项必填未完成：' + miss.slice(0, 3).map(m => m[1]).join('、') + (miss.length > 3 ? ' 等' : ''));
+    const el = document.querySelector(`[name="${miss[0][0]}"]`) || document.querySelector(`input[name="${miss[0][0]}"]`);
+    if (el) { el.scrollIntoView({ behavior:'smooth', block:'center' }); el.focus({ preventScroll:true }); }
+    return;
+  }
+  const blob = new Blob([buildDocx(o)], { type: 'application/vnd.openxmlformats-officedocument.wordprocessingml.document' });
+  download(blob, fileName('docx'), blob.type);
+  toast('已生成 Word 报名表（.docx），请到浏览器"下载"文件夹查看');
+});
+document.getElementById('btnCsv').addEventListener('click', () => {
+  const o = collect();
+  if (!o.school) { toast('请先填写学校全称'); return; }
+  download(buildCsv(o), fileName('csv'), 'text/csv;charset=utf-8');
+  toast('已导出汇总数据（可用 Excel 打开）');
+});
+document.getElementById('btnClear').addEventListener('click', () => {
+  if (!confirm('确定清空所有已填内容？此操作不可撤销。')) return;
+  document.querySelectorAll('input').forEach(i => { if (i.type === 'checkbox' || i.type === 'radio') i.checked = false; else i.value = ''; });
+  document.querySelectorAll('textarea').forEach(t => t.value = '');
+  localStorage.removeItem(KEY);
+  refreshChips();
+  toast('已清空');
+});
+document.getElementById('btnDemo').addEventListener('click', () => { fillDemo(); toast('已填入示例数据，可直接测试导出'); });
+
+function fillDemo(){
+  const set = (n, v) => { const el = document.querySelector(`[name="${n}"]`); if (el) el.value = v; };
+  const pick = (n, v) => { const el = document.querySelector(`input[name="${n}"][value="${v}"]`); if (el) el.checked = true; };
+  set('school_name', '南通市××区实验小学');
+  set('province', '江苏省'); set('city', '南通市'); set('district', '崇川区');
+  set('address', '南通市崇川区××路 88 号');
+  pick('school_type', '公办'); pick('school_level', '市级示范'); pick('region_type', '城区');
+  pick('stage', '小学3-4年级'); pick('stage', '小学5-6年级');
+  set('classes', '36'); set('students', '1620'); set('teachers', '98'); set('sci_teachers', '9');
+  set('principal', '张××'); set('principal_tel', '13900000000');
+  set('contact', '李××'); set('contact_post', '教导主任'); set('contact_tel', '13900000001'); set('contact_email', 'demo@example.com');
+  set('full_time', '6'); set('part_time', '3'); pick('lab', '有专用实验室'); set('lab_num', '2');
+  pick('network', '教室配备多媒体投影/一体机'); pick('network', '校园网络全覆盖');
+  pick('online_use', '偶尔使用'); set('platforms', '国家中小学智慧教育平台');
+  set('features', '学校为江苏省科学教育特色学校，建有“小小工程师”社团，近三年获市级以上科技竞赛奖项 20 余项。');
+  document.getElementById('u_1_2').checked = true;   // 为什么萤火虫、水母会发光
+  document.getElementById('u_4_0').checked = true;   // 会“呼吸”的建筑
+  document.getElementById('u_6_1').checked = true;   // 如何在太阳系寻找生命
+  set('unit_reason', '“会呼吸的建筑”与五年级科学“热传递”单元衔接，学校已有节能屋模型套件；发光单元适合社团开展。');
+  pick('scene', '小学科学课（常规课堂教学）'); pick('scene', '课后服务 / 社团活动'); pick('scene', '“做中学”项目（教育部领航行动）');
+  set('plan_grade', '四年级、五年级'); set('plan_start', '2027年春季学期');
+  set('plan_freq', '每周 1 课时，一学期完成 1-2 个单元'); set('plan_students', '220');
+  set('plan_detail', '科学课内完成“会呼吸的建筑”6 课时；课后服务“追光科学社”开展发光生物单元，学期末组织成果展。');
+  const trs = tbody.querySelectorAll('tr');
+  const demo = [
+    ['李××','女','12','一级教师','五年级科学','13900000001','否'],
+    ['王××','男','8','二级教师','四年级科学','13900000002','是'],
+    ['赵××','女','15','高级教师','科学/综合实践','13900000003','否'],
+    ['陈××','男','5','二级教师','信息技术','13900000004','否'],
+    ['周××','女','3','二级教师','三年级科学','13900000005','是']
+  ];
+  demo.forEach((row, i) => { trs[i].querySelectorAll('input').forEach((inp, j) => inp.value = row[j]); });
+  set('reason', '学校希望在科学课中融入科技前沿内容，解决现有教材前沿性不足、跨学科项目缺少抓手的问题；已有科学教育特色与社团基础。');
+  set('goal', '形成 2 个可复用的跨学科课例，培养 3 名骨干教师，建成 1 个校本资源包，学生科学素养测评优良率提升 10%。');
+  set('support', '保障参与教师每周半天教研时间；提供专用教室与器材；纳入学校年度工作计划；安排校本教研经费配套。');
+  refreshChips();
+}
+
+/* ========== 初始化 ========== */
+loadDraft();
+refreshChips();
+window.addEventListener('beforeunload', e => { if (val('school_name') || document.querySelector('input[name="unit"]:checked')) { saveDraft(); } });
+
+/* 自检模式：地址栏加 #selftest 可直接验证导出逻辑 */
+if (location.hash === '#selftest') {
+  fillDemo();
+  const o = collect();
+  const u8 = buildDocx(o);
+  const csv = buildCsv(o);
+  console.log('SELFTEST docx bytes', u8.length, 'csv length', csv.length, 'units', o.units.length, 'hours', o.unitHours, 'teachers', o.teaches.length);
+  const pre = document.createElement('pre');
+  pre.id = 'selftest';
+  pre.style.cssText = 'background:#fff;padding:12px;border:1px solid #333;white-space:pre-wrap;font-size:11px;max-height:300px;overflow:auto';
+  pre.textContent = 'SELFTEST OK\ndoc=' + u8.length + ' bytes  csv=' + csv.length + ' chars  units=' + o.units.length + '  hours=' + o.unitHours + '\n' + csv.slice(0, 600);
+  document.body.appendChild(pre);
+}
+</script>
+</body>
+</html>
