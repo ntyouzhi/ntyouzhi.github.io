@@ -751,12 +751,169 @@ const TTS_WSS = 'wss://speech.platform.bing.com/consumer/speech/synthesize/reada
 const uuid32 = () => [...crypto.getRandomValues(new Uint8Array(16))].map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
 const ssmlEscape = (t) => String(t).replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;').replace(/"/g, '&quot;').replace(/'/g, '&apos;');
 
-async function secMsGec() {
-  const ticks = BigInt(Math.floor(Date.now() / 1000) + 11644473600) * 10000000n;
-  const rounded = ticks - (ticks % 3000000000n);
-  const digest = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(rounded.toString() + TTS_TOKEN));
-  return [...new Uint8Array(digest)].map(b => b.toString(16).padStart(2, '0')).join('').toUpperCase();
+/* ==== Edge TTS 安全令牌 v2（微软 2026-10 起强制要求 2- 版本 + 新摘要算法） ==== */
+const secMsGec = (function () {
+const M = 0xFFFFFFFF;
+const rol16 = v => (((v & M) << 16) | ((v & M) >>> 16)) & M;
+const ROUND = [
+  0x428A2F98,0x71374491,0xB5C0FBCF,0xE9B5DBA5,0x3956C25B,0x59F111F1,0x923F82A4,0xAB1C5ED5,
+  0xD807AA98,0x12835B01,0x243185BE,0x550C7DC3,0x72BE5D74,0x80DEB1FE,0x9BDC06A7,0xC19BF174,
+  0xE49B69C1,0xEFBE4786,0x0FC19DC6,0x240CA1CC,0x2DE92C6F,0x4A7484AA,0x5CB0A9DC,0x76F988DA,
+  0x983E5152,0xA831C66D,0xB00327C8,0xBF597FC7,0xC6E00BF3,0xD5A79147,0x06CA6351,0x14292967,
+  0x27B70A85,0x2E1B2138,0x4D2C6DFC,0x53380D13,0x650A7354,0x766A0ABB,0x81C2C92E,0x92722C85,
+  0xA2BFE8A1,0xA81A664B,0xC24B8B70,0xC76C51A3,0xD192E819,0xD6990624,0xF40E3585,0x106AA070,
+  0x19A4C116,0x1E376C08,0x2748774C,0x34B0BCB5,0x391C0CB3,0x4ED8AA4A,0x5B9CCA4F,0x682E6FF3,
+  0x748F82EE,0x78A5636F,0x84C87814,0x8CC70208,0x90BEFFFA,0xA4506CEB,0xBEF9A3F7,0xC67178F2
+];
+const ADJ = 0xC9DC06A7;
+const BLOCK = ROUND.slice(0, 14).concat([ADJ], ROUND.slice(15));
+const SIG0A = 0x059C0B80, SIG1A = 0x000B92C0;
+const INIT = [0x6A09E667,0xBB67AE85,0x3C6EF372,0xA54FF53A,0x510E527F,0x9B05688C,0x1F83D9AB,0x5BE0CD19];
+const STATE = [0xFD9FBEA2,0x91243CE7,0xBE499094,0xCD2E1E0A,0x6C006F49,0x04BD35AB,0xFEB0A7E4,0x03EFFBD2];
+const SCHED = [0xEB24BF9E,0x1558691F,0xA0C09EE2,0x0CFA32BA,0xA622EE8C,0xD1DD9491,0xC0DD25A0,0xF9E70AB6,0xF0C31573,0x7058CE4E,0x7188E606,0x00E5AB33,0xD258B060,0x72766564];
+const COEF = [
+  [0xE82E91B1,0xB32700D0],[0x44DE24C6,0x88DFF51D],[0x3BEB65BC,0x29514038],[0xC89C5933,0xB328CBDF],
+  [0x8D1EC211,0xD405B4D5],[0x314EF5D5,0x26E55F3C],[0xE92491B1,0x607801C6],[0xF0A5B9D5,0x82B2C1FB],
+  [0x06064CF3,0xFA51A3DA],[0xDA79FA60,0x207CC464],[0xBED20560,0x3C3C74F3],[0x89F9C9F8,0xD2D14B61],
+  [0x35FA38C6,0xBB04A2C1],[0xCB49E3C6,0xC5626167]
+];
+const CS_FACTOR = 0x82893933, CS_ADJ0 = 0xF2F90B1A, CS_ADJ1 = 0x0B1A0000;
+
+const sigma0 = v => (((v >>> 7) ^ (v << 25) ^ (v >>> 18) ^ (v << 14) ^ (v >>> 3)) >>> 0);
+const sigma1 = v => (((v >>> 17) ^ (v << 15) ^ (v >>> 19) ^ (v << 13) ^ (v >>> 10)) >>> 0);
+
+function rounds(state, words, first = 0) {
+  let [a,b,c,d,e,f,g,h] = state;
+  const K = first === 14 ? BLOCK : ROUND;
+  const rotr = (v, n) => ((v >>> n) | (v << (32 - n))) >>> 0;
+  for (let i = first; i < 64; i++) {
+    const t1 = (h + (rotr(e,6) ^ rotr(e,11) ^ rotr(e,25)) + (g ^ (e & (f ^ g))) + K[i] + words[i]) >>> 0;
+    const t2 = ((rotr(a,2) ^ rotr(a,13) ^ rotr(a,22)) + ((a & b) | (c & (a | b)))) >>> 0;
+    [a,b,c,d,e,f,g,h] = [(t1 + t2) >>> 0, a, b, c, (d + t1) >>> 0, e, f, g];
+  }
+  return [a,b,c,d,e,f,g,h];
 }
+
+function expand(words, first = 16) {
+  for (let i = first; i < 64; i++) {
+    const x = words[i-2], y = words[i-15];
+    const s1 = ((x>>>17)^(x<<15)^(x>>>19)^(x<<13)^(x>>>10)) >>> 0;
+    const s0 = ((y>>>7)^(y<<25)^(y>>>18)^(y<<14)^(y>>>3)) >>> 0;
+    words.push((s1 + words[i-7] + s0 + words[i-16]) >>> 0);
+  }
+}
+
+function sha256Init(data) {
+  const words = new Array(14).fill(0);
+  words.push(((data[0] << 16) | (data[1] << 8) | data[2]) >>> 0);
+  words.push(((data[3] << 24) | (data[4] << 16) | (data[5] << 8) | data[6]) >>> 0);
+  for (let i = 16; i < 30; i++) {
+    let v = SCHED[i-16];
+    if (i - 2 >= 14) v += (i === 16 ? (sigma1(words[i-2]) ^ SIG1A) : sigma1(words[i-2]));
+    if (i - 7 >= 14) v += words[i-7];
+    if (i - 15 >= 14) v += (i === 29 ? (sigma0(words[i-15]) ^ SIG0A) : sigma0(words[i-15]));
+    words.push(v >>> 0);
+  }
+  words.push((sigma1(words[28]) + words[23] + sigma0(words[15]) + words[14] + ADJ - ROUND[14]) >>> 0);
+  expand(words, 31);
+  const w = rounds(STATE, words, 14);
+  return w.map((v, i) => (v + INIT[i]) >>> 0);
+}
+
+function sha256Digest(data) {
+  const len = 57 + data.length;
+  let padLen = (55 - len) % 64; if (padLen < 0) padLen += 64;
+  const buf = [];
+  for (let i = 7; i < data.length; i++) buf.push(data[i]);
+  buf.push(0x80);
+  for (let i = 0; i < padLen; i++) buf.push(0);
+  const bits = len * 8;
+  for (let i = 7; i >= 0; i--) buf.push((bits / Math.pow(2, i*8)) & 0xFF);
+  let state = sha256Init(data.slice(0, 7));
+  for (let off = 0; off < buf.length; off += 64) {
+    const words = [];
+    for (let i = 0; i < 16; i++) {
+      const p = off + i*4;
+      words.push(((buf[p] << 24) | (buf[p+1] << 16) | (buf[p+2] << 8) | buf[p+3]) >>> 0);
+    }
+    expand(words);
+    const w = rounds(state, words);
+    state = state.map((v, i) => (v + w[i]) >>> 0);
+  }
+  const out = [];
+  for (const v of state) out.push((v >>> 24) & 255, (v >>> 16) & 255, (v >>> 8) & 255, v & 255);
+  return out;
+}
+
+function cs64(data, digest) {
+  let keyA = ((digest[0]) | (digest[1] << 8) | (digest[2] << 16) | (digest[3] << 24)) >>> 0;
+  let keyB = ((digest[4]) | (digest[5] << 8) | (digest[6] << 16) | (digest[7] << 24)) >>> 0;
+  keyA |= 1; keyB |= 1;
+  const factors = [Math.imul(keyA, CS_FACTOR) >>> 0, Math.imul(keyB, CS_FACTOR) >>> 0];
+  const terms = [], offsets = [];
+  for (let i = 0; i < COEF.length; i++) {
+    terms.push(Math.imul(COEF[i][0], factors[i % 2]) >>> 0);
+    offsets.push(COEF[i][1] >>> 0);
+  }
+  const bytes = [0].concat(data);
+  while (bytes.length % 4) bytes.push(0);
+  const words = [];
+  for (let i = 0; i < bytes.length / 4; i++) {
+    words.push((bytes[i*4] | (bytes[i*4+1] << 8) | (bytes[i*4+2] << 16) | (bytes[i*4+3] << 24)) >>> 0);
+  }
+  if (words.length % 2) words.push(0);
+  for (let i = 0; i < words.length; i++) {
+    const word = words[i];
+    let term = Math.imul(word, i % 2 === 0 ? keyA : keyB) >>> 0;
+    let offset = Math.imul(rol16(word), i % 2 === 0 ? 0xEF0569FB : 0xC31713DB) >>> 0;
+    if (i === 0) { term = (term + Math.imul(CS_ADJ0, factors[0])) >>> 0; offset = (offset + CS_ADJ1) >>> 0; }
+    terms.push(term); offsets.push(offset);
+  }
+  let swapAcc = 0, swapLast = 0, state = 0, acc = 0;
+  for (let i = 0; i < terms.length; i += 2) {
+    const x = terms[i], y = terms[i+1];
+    let t = rol16((offsets[i] + x) >>> 0);
+    let q = Math.imul(t, 0x76F50F34) >>> 0;
+    swapAcc = (swapAcc + ((Math.imul(rol16(q), 0xC3EFEA97) + q) >>> 0)) >>> 0;
+    t = rol16((offsets[i+1] + y) >>> 0);
+    q = Math.imul(t, 0x1881CE3C) >>> 0;
+    swapLast = ((Math.imul(rol16(q), 0x35BD1EC9) + q) >>> 0) >>> 0;
+    swapAcc = (swapAcc + swapLast) >>> 0;
+    state = (Math.imul(state, keyA) + x) >>> 0;
+    state = Math.imul(rol16(state), 0xCF98B111) >>> 0;
+    state = Math.imul(rol16(state), 0x87085B9F) >>> 0;
+    state = Math.imul(rol16(state), 0x12CEB96D) >>> 0;
+    state = Math.imul(rol16(state), 0x257E1D83) >>> 0;
+    acc = (acc + state) >>> 0;
+    t = (Math.imul(state, keyB) + y) >>> 0;
+    t = Math.imul(rol16(t), 0xA27416F5) >>> 0;
+    t = Math.imul(rol16(t), 0xD38396FF) >>> 0;
+    state = Math.imul(rol16(Math.imul(rol16(t), 0x7C932B89) >>> 0), 0xBFA49F69) >>> 0;
+    acc = (acc + state) >>> 0;
+  }
+  return [swapLast ^ state, swapAcc ^ acc].map(v => (v >>> 0));
+}
+
+function hex32(v) { return (v >>> 0).toString(16).toUpperCase().padStart(8, '0'); }
+function toHexWords(a) { return a.map(hex32).join(''); }
+function hexBytes(a) { return a.map(b => (b & 255).toString(16).toUpperCase().padStart(2, '0')).join(''); }
+
+function token(unixSec) {
+  let ticks = (unixSec === undefined ? Date.now() / 1000 : unixSec);
+  ticks += 11644473600;
+  ticks -= ticks % 300;
+  ticks = ticks * 1e7;
+  const s = ticks.toFixed(0) + TTS_TOKEN;
+  const data = [];
+  for (let i = 0; i < s.length; i++) data.push(s.charCodeAt(i) & 255);
+  const digest = sha256Digest(data);
+  const cs = cs64(data, digest);
+  const csBytes = [];
+  for (const w of cs) csBytes.push(w & 255, (w >>> 8) & 255, (w >>> 16) & 255, (w >>> 24) & 255);
+  return hexBytes(csBytes) + '-' + hexBytes(digest);
+}
+  return async function secMsGec() { return token(); };
+})();
 
 /** 按标点切句、贪心合并，避免单帧超长 */
 function splitForTTS(text, maxLen = 600) {
@@ -782,7 +939,7 @@ function splitForTTS(text, maxLen = 600) {
 function edgeTTS(text, voice, rate = '+0%', pitch = '+0Hz', timeoutMs = 20000) {
   return new Promise((resolve, reject) => {
     secMsGec().then(gec => {
-      const url = `${TTS_WSS}${TTS_TOKEN}&Sec-MS-GEC=${gec}&Sec-MS-GEC-Version=1-143.0.3650.75&ConnectionId=${uuid32()}`;
+      const url = `${TTS_WSS}${TTS_TOKEN}&Sec-MS-GEC=${gec}&Sec-MS-GEC-Version=2-143.0.3650.75&ConnectionId=${uuid32()}`;
       const chunks = [];
       let settled = false;
       const done = (err, data) => {
